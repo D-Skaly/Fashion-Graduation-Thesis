@@ -1,0 +1,1226 @@
+﻿Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a1)
+Maven home: C:\Users\DELL\.m2\wrapper\dists\apache-maven-3.9.12\59fe215c0ad6947fea90184bf7add084544567b927287592651fda3782e0e798
+Java version: 21.0.9, vendor: Eclipse Adoptium, runtime: C:\Program Files\Eclipse Adoptium\jdk-21.0.9.10-hotspot
+Default locale: en_US, platform encoding: UTF-8
+OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
+[DEBUG] Created new class realm maven.api
+[DEBUG] Importing foreign packages into class realm maven.api
+[DEBUG]   Imported: javax.annotation.* < plexus.core
+[DEBUG]   Imported: javax.annotation.security.* < plexus.core
+[DEBUG]   Imported: javax.inject.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.artifact < plexus.core
+[DEBUG]   Imported: org.apache.maven.classrealm < plexus.core
+[DEBUG]   Imported: org.apache.maven.cli < plexus.core
+[DEBUG]   Imported: org.apache.maven.configuration < plexus.core
+[DEBUG]   Imported: org.apache.maven.exception < plexus.core
+[DEBUG]   Imported: org.apache.maven.execution < plexus.core
+[DEBUG]   Imported: org.apache.maven.execution.scope < plexus.core
+[DEBUG]   Imported: org.apache.maven.graph < plexus.core
+[DEBUG]   Imported: org.apache.maven.lifecycle < plexus.core
+[DEBUG]   Imported: org.apache.maven.model < plexus.core
+[DEBUG]   Imported: org.apache.maven.monitor < plexus.core
+[DEBUG]   Imported: org.apache.maven.plugin < plexus.core
+[DEBUG]   Imported: org.apache.maven.profiles < plexus.core
+[DEBUG]   Imported: org.apache.maven.project < plexus.core
+[DEBUG]   Imported: org.apache.maven.reporting < plexus.core
+[DEBUG]   Imported: org.apache.maven.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.rtinfo < plexus.core
+[DEBUG]   Imported: org.apache.maven.settings < plexus.core
+[DEBUG]   Imported: org.apache.maven.toolchain < plexus.core
+[DEBUG]   Imported: org.apache.maven.usability < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.authentication < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.authorization < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.events < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.observers < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.proxy < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.resource < plexus.core
+[DEBUG]   Imported: org.codehaus.classworlds < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.* < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.classworlds < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.component < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.configuration < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.container < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.context < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.lifecycle < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.logging < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.personality < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.Xpp3Dom < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParser < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParserException < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlSerializer < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.* < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.artifact < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.collection < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.deployment < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.graph < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.impl < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.installation < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.internal.impl < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.metadata < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.repository < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.resolution < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.spi < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.transfer < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.util < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.version < plexus.core
+[DEBUG]   Imported: org.fusesource.jansi.* < plexus.core
+[DEBUG]   Imported: org.slf4j.* < plexus.core
+[DEBUG]   Imported: org.slf4j.event.* < plexus.core
+[DEBUG]   Imported: org.slf4j.helpers.* < plexus.core
+[DEBUG]   Imported: org.slf4j.spi.* < plexus.core
+[DEBUG] Populating class realm maven.api
+[DEBUG] Created adapter factory; available factories [file-lock, rwlock-local, semaphore-local, noop]; available name mappers [discriminating, file-gaecv, file-gav, file-hgaecv, file-hgav, file-static, gaecv, gav, static]
+[INFO] Error stacktraces are turned on.
+[DEBUG] Message scheme: color
+[DEBUG] Message styles: debug info warning error success failure strong mojo project
+[DEBUG] Reading global settings from C:\Users\DELL\.m2\wrapper\dists\apache-maven-3.9.12\59fe215c0ad6947fea90184bf7add084544567b927287592651fda3782e0e798\conf\settings.xml
+[DEBUG] Reading user settings from C:\Users\DELL\.m2\settings.xml
+[DEBUG] Reading global toolchains from C:\Users\DELL\.m2\wrapper\dists\apache-maven-3.9.12\59fe215c0ad6947fea90184bf7add084544567b927287592651fda3782e0e798\conf\toolchains.xml
+[DEBUG] Reading user toolchains from C:\Users\DELL\.m2\toolchains.xml
+[DEBUG] Using local repository at C:\Users\DELL\.m2\repository
+[DEBUG] Using manager EnhancedLocalRepositoryManager with priority 10.0 for C:\Users\DELL\.m2\repository
+[INFO] Scanning for projects...
+[DEBUG] Creating adapter using nameMapper 'gaecv' and factory 'rwlock-local'
+[DEBUG] Extension realms for project com.skaly:fashion-backend:jar:0.0.1-SNAPSHOT: (none)
+[DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
+[DEBUG] Extension realms for project org.springframework.boot:spring-boot-starter-parent:pom:3.5.11: (none)
+[DEBUG] Looking up lifecycle mappings for packaging pom from ClassRealm[plexus.core, parent: null]
+[DEBUG] Extension realms for project org.springframework.boot:spring-boot-dependencies:pom:3.5.11: (none)
+[DEBUG] Looking up lifecycle mappings for packaging pom from ClassRealm[plexus.core, parent: null]
+[DEBUG] Resolving plugin prefix lint from [org.apache.maven.plugins, org.codehaus.mojo]
+[DEBUG] Could not find metadata org.springframework.boot/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.cyclonedx/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.flywaydb/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata io.github.git-commit-id/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.jooq/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.jetbrains.kotlin/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.liquibase/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.graalvm.buildtools/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.apache.maven.plugins/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.codehaus.mojo/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.springframework.boot/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.cyclonedx/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.flywaydb/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata io.github.git-commit-id/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.jooq/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.jetbrains.kotlin/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.liquibase/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.graalvm.buildtools/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.apache.maven.plugins/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.codehaus.mojo/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/flywaydb/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/io/github/git-commit-id/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/org/cyclonedx/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/org/springframework/boot/maven-metadata.xml
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Progress (1): maven-metadata.xml (255 B)
+Progress (2): maven-metadata.xml (255 B) | maven-metadata.xml (249 B)
+Progress (3): maven-metadata.xml (255 B) | maven-metadata.xml (249 B) | maven-metadata.xml (243 B)
+Progress (4): maven-metadata.xml (255 B) | maven-metadata.xml (249 B) | maven-metadata.xml (243 B) | maven-metadata.xml (234 B)
+                                                                                                                               
+Downloaded from central: https://repo.maven.apache.org/maven2/org/cyclonedx/maven-metadata.xml (243 B at 337 B/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/springframework/boot/maven-metadata.xml (249 B at 345 B/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/flywaydb/maven-metadata.xml (234 B at 323 B/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/io/github/git-commit-id/maven-metadata.xml (255 B at 352 B/s)
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jooq/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/org/liquibase/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/org/graalvm/buildtools/maven-metadata.xml
+Progress (1): maven-metadata.xml (394 B)
+Progress (2): maven-metadata.xml (394 B) | maven-metadata.xml (398 B)
+Progress (3): maven-metadata.xml (394 B) | maven-metadata.xml (398 B) | maven-metadata.xml (375 B)
+                                                                                                  
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jooq/maven-metadata.xml (398 B at 5.8 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-metadata.xml
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloaded from central: https://repo.maven.apache.org/maven2/org/liquibase/maven-metadata.xml (394 B at 5.7 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/maven-metadata.xml (375 B at 5.4 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/maven-metadata.xml
+Progress (1): maven-metadata.xml (242 B)
+                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/graalvm/buildtools/maven-metadata.xml (242 B at 3.4 kB/s)
+Progress (1): maven-metadata.xml (3.1 kB)
+Progress (1): maven-metadata.xml (7.7 kB)
+Progress (1): maven-metadata.xml (12 kB) 
+Progress (1): maven-metadata.xml (17 kB)
+Progress (1): maven-metadata.xml (20 kB)
+Progress (1): maven-metadata.xml (21 kB)
+Progress (2): maven-metadata.xml (21 kB) | maven-metadata.xml (4.6 kB)
+Progress (2): maven-metadata.xml (21 kB) | maven-metadata.xml (9.7 kB)
+Progress (2): maven-metadata.xml (21 kB) | maven-metadata.xml (14 kB) 
+                                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-metadata.xml (14 kB at 179 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/maven-metadata.xml (21 kB at 146 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\springframework\boot\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\cyclonedx\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\flywaydb\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\io\github\git-commit-id\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\liquibase\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\graalvm\buildtools\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\resolver-status.properties'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\resolver-status.properties'
+[DEBUG] Could not find metadata org.springframework.boot/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.cyclonedx/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.flywaydb/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata io.github.git-commit-id/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.jooq/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.jetbrains.kotlin/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.liquibase/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.graalvm.buildtools/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.apache.maven.plugins/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Could not find metadata org.codehaus.mojo/maven-metadata.xml in local (C:\Users\DELL\.m2\repository)
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-clean-plugin:pom:3.4.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-clean-plugin:pom:3.4.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-clean-plugin/3.4.1/maven-clean-plugin-3.4.1.pom
+Progress (1): maven-clean-plugin-3.4.1.pom (797 B)
+Progress (1): maven-clean-plugin-3.4.1.pom (1.8 kB)
+Progress (1): maven-clean-plugin-3.4.1.pom (4.4 kB)
+Progress (1): maven-clean-plugin-3.4.1.pom (5.6 kB)
+                                                   
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-clean-plugin/3.4.1/maven-clean-plugin-3.4.1.pom (5.6 kB at 62 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-clean-plugin\3.4.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-clean-plugin\3.4.1\maven-clean-plugin-3.4.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-surefire-plugin:pom:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-surefire-plugin:pom:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-surefire-plugin/3.5.4/maven-surefire-plugin-3.5.4.pom
+Progress (1): maven-surefire-plugin-3.5.4.pom (838 B)
+Progress (1): maven-surefire-plugin-3.5.4.pom (2.3 kB)
+Progress (1): maven-surefire-plugin-3.5.4.pom (4.9 kB)
+Progress (1): maven-surefire-plugin-3.5.4.pom (4.9 kB)
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-surefire-plugin/3.5.4/maven-surefire-plugin-3.5.4.pom (4.9 kB at 76 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-surefire-plugin\3.5.4\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-surefire-plugin\3.5.4\maven-surefire-plugin-3.5.4.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.surefire:surefire:pom:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.surefire:surefire:pom:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire/3.5.4/surefire-3.5.4.pom
+Progress (1): surefire-3.5.4.pom (791 B)
+Progress (1): surefire-3.5.4.pom (1.8 kB)
+Progress (1): surefire-3.5.4.pom (3.6 kB)
+Progress (1): surefire-3.5.4.pom (6.2 kB)
+Progress (1): surefire-3.5.4.pom (8.7 kB)
+Progress (1): surefire-3.5.4.pom (12 kB) 
+Progress (1): surefire-3.5.4.pom (14 kB)
+Progress (1): surefire-3.5.4.pom (16 kB)
+Progress (1): surefire-3.5.4.pom (18 kB)
+Progress (1): surefire-3.5.4.pom (19 kB)
+                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire/3.5.4/surefire-3.5.4.pom (19 kB at 200 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\surefire\surefire\3.5.4\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\surefire\surefire\3.5.4\surefire-3.5.4.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-install-plugin:pom:3.1.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-install-plugin:pom:3.1.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-install-plugin/3.1.4/maven-install-plugin-3.1.4.pom
+Progress (1): maven-install-plugin-3.1.4.pom (786 B)
+Progress (1): maven-install-plugin-3.1.4.pom (2.3 kB)
+Progress (1): maven-install-plugin-3.1.4.pom (3.6 kB)
+Progress (1): maven-install-plugin-3.1.4.pom (7.3 kB)
+Progress (1): maven-install-plugin-3.1.4.pom (8.1 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-install-plugin/3.1.4/maven-install-plugin-3.1.4.pom (8.1 kB at 100 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-install-plugin\3.1.4\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-install-plugin\3.1.4\maven-install-plugin-3.1.4.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-deploy-plugin:pom:3.1.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-deploy-plugin:pom:3.1.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-deploy-plugin/3.1.4/maven-deploy-plugin-3.1.4.pom
+Progress (1): maven-deploy-plugin-3.1.4.pom (771 B)
+Progress (1): maven-deploy-plugin-3.1.4.pom (1.7 kB)
+Progress (1): maven-deploy-plugin-3.1.4.pom (3.8 kB)
+Progress (1): maven-deploy-plugin-3.1.4.pom (8.0 kB)
+Progress (1): maven-deploy-plugin-3.1.4.pom (9.2 kB)
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-deploy-plugin/3.1.4/maven-deploy-plugin-3.1.4.pom (9.2 kB at 114 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-deploy-plugin\3.1.4\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-deploy-plugin\3.1.4\maven-deploy-plugin-3.1.4.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-site-plugin:pom:3.12.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-site-plugin:pom:3.12.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-site-plugin/3.12.1/maven-site-plugin-3.12.1.pom
+Progress (1): maven-site-plugin-3.12.1.pom (745 B)
+Progress (1): maven-site-plugin-3.12.1.pom (1.7 kB)
+Progress (1): maven-site-plugin-3.12.1.pom (4.8 kB)
+Progress (1): maven-site-plugin-3.12.1.pom (6.6 kB)
+Progress (1): maven-site-plugin-3.12.1.pom (9.6 kB)
+Progress (1): maven-site-plugin-3.12.1.pom (16 kB) 
+Progress (1): maven-site-plugin-3.12.1.pom (19 kB)
+Progress (1): maven-site-plugin-3.12.1.pom (20 kB)
+                                                  
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-site-plugin/3.12.1/maven-site-plugin-3.12.1.pom (20 kB at 292 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-site-plugin\3.12.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-site-plugin\3.12.1\maven-site-plugin-3.12.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-plugins:pom:36 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-plugins:pom:36 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-plugins/36/maven-plugins-36.pom
+Progress (1): maven-plugins-36.pom (758 B)
+Progress (1): maven-plugins-36.pom (1.8 kB)
+Progress (1): maven-plugins-36.pom (3.7 kB)
+Progress (1): maven-plugins-36.pom (6.4 kB)
+Progress (1): maven-plugins-36.pom (7.7 kB)
+Progress (1): maven-plugins-36.pom (9.9 kB)
+                                           
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-plugins/36/maven-plugins-36.pom (9.9 kB at 108 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-plugins\36\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-plugins\36\maven-plugins-36.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:build-helper-maven-plugin:pom:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:build-helper-maven-plugin:pom:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/build-helper-maven-plugin/3.6.1/build-helper-maven-plugin-3.6.1.pom
+Progress (1): build-helper-maven-plugin-3.6.1.pom (1.0 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.pom (2.7 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.pom (6.0 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.pom (8.1 kB)
+                                                          
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/build-helper-maven-plugin/3.6.1/build-helper-maven-plugin-3.6.1.pom (8.1 kB at 82 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\build-helper-maven-plugin\3.6.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\build-helper-maven-plugin\3.6.1\build-helper-maven-plugin-3.6.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:mojo-parent:pom:91 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:mojo-parent:pom:91 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/mojo-parent/91/mojo-parent-91.pom
+Progress (1): mojo-parent-91.pom (715 B)
+Progress (1): mojo-parent-91.pom (1.6 kB)
+Progress (1): mojo-parent-91.pom (5.2 kB)
+Progress (1): mojo-parent-91.pom (7.2 kB)
+Progress (1): mojo-parent-91.pom (8.9 kB)
+Progress (1): mojo-parent-91.pom (11 kB) 
+Progress (1): mojo-parent-91.pom (14 kB)
+Progress (1): mojo-parent-91.pom (17 kB)
+Progress (1): mojo-parent-91.pom (23 kB)
+Progress (1): mojo-parent-91.pom (27 kB)
+Progress (1): mojo-parent-91.pom (29 kB)
+Progress (1): mojo-parent-91.pom (32 kB)
+Progress (1): mojo-parent-91.pom (37 kB)
+Progress (1): mojo-parent-91.pom (38 kB)
+                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/mojo-parent/91/mojo-parent-91.pom (38 kB at 455 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\mojo-parent\91\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\mojo-parent\91\mojo-parent-91.pom.lastUpdated'
+[DEBUG] Resolving artifact org.junit:junit-bom:pom:5.13.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.junit:junit-bom:pom:5.13.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/junit-bom/5.13.0/junit-bom-5.13.0.pom
+Progress (1): junit-bom-5.13.0.pom (908 B)
+Progress (1): junit-bom-5.13.0.pom (4.1 kB)
+Progress (1): junit-bom-5.13.0.pom (5.6 kB)
+                                           
+Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/junit-bom/5.13.0/junit-bom-5.13.0.pom (5.6 kB at 61 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\junit\junit-bom\5.13.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\junit\junit-bom\5.13.0\junit-bom-5.13.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:build-helper-maven-plugin:jar:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:build-helper-maven-plugin:jar:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/build-helper-maven-plugin/3.6.1/build-helper-maven-plugin-3.6.1.jar
+Progress (1): build-helper-maven-plugin-3.6.1.jar (3.8/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (8.0/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (12/72 kB) 
+Progress (1): build-helper-maven-plugin-3.6.1.jar (12/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (17/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (21/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (25/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (29/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (33/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (38/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (42/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (46/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (50/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (55/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (59/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (63/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (67/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (71/72 kB)
+Progress (1): build-helper-maven-plugin-3.6.1.jar (72 kB)   
+                                                         
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/build-helper-maven-plugin/3.6.1/build-helper-maven-plugin-3.6.1.jar (72 kB at 572 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\build-helper-maven-plugin\3.6.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\build-helper-maven-plugin\3.6.1\build-helper-maven-plugin-3.6.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.cyclonedx:cyclonedx-maven-plugin:pom:2.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.cyclonedx:cyclonedx-maven-plugin:pom:2.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/cyclonedx/cyclonedx-maven-plugin/2.9.1/cyclonedx-maven-plugin-2.9.1.pom
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (708 B)
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (2.2 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (4.5 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (8.7 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (12 kB) 
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (17 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.pom (19 kB)
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/cyclonedx/cyclonedx-maven-plugin/2.9.1/cyclonedx-maven-plugin-2.9.1.pom (19 kB at 100 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\cyclonedx\cyclonedx-maven-plugin\2.9.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\cyclonedx\cyclonedx-maven-plugin\2.9.1\cyclonedx-maven-plugin-2.9.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.cyclonedx:cyclonedx-maven-plugin:jar:2.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.cyclonedx:cyclonedx-maven-plugin:jar:2.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/cyclonedx/cyclonedx-maven-plugin/2.9.1/cyclonedx-maven-plugin-2.9.1.jar
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (3.8/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (8.0/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (12/52 kB) 
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (12/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (17/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (21/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (25/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (29/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (33/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (38/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (42/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (46/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (50/52 kB)
+Progress (1): cyclonedx-maven-plugin-2.9.1.jar (52 kB)   
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/cyclonedx/cyclonedx-maven-plugin/2.9.1/cyclonedx-maven-plugin-2.9.1.jar (52 kB at 215 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\cyclonedx\cyclonedx-maven-plugin\2.9.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\cyclonedx\cyclonedx-maven-plugin\2.9.1\cyclonedx-maven-plugin-2.9.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.flywaydb:flyway-maven-plugin:pom:11.7.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.flywaydb:flyway-maven-plugin:pom:11.7.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/flywaydb/flyway-maven-plugin/11.7.2/flyway-maven-plugin-11.7.2.pom
+Progress (1): flyway-maven-plugin-11.7.2.pom (2.1 kB)
+Progress (1): flyway-maven-plugin-11.7.2.pom (3.8 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/flywaydb/flyway-maven-plugin/11.7.2/flyway-maven-plugin-11.7.2.pom (3.8 kB at 30 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\flywaydb\flyway-maven-plugin\11.7.2\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\flywaydb\flyway-maven-plugin\11.7.2\flyway-maven-plugin-11.7.2.pom.lastUpdated'
+[DEBUG] Resolving artifact org.flywaydb:flyway-maven-plugin:jar:11.7.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.flywaydb:flyway-maven-plugin:jar:11.7.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/flywaydb/flyway-maven-plugin/11.7.2/flyway-maven-plugin-11.7.2.jar
+Progress (1): flyway-maven-plugin-11.7.2.jar (8.2/110 kB)
+Progress (1): flyway-maven-plugin-11.7.2.jar (25/110 kB) 
+Progress (1): flyway-maven-plugin-11.7.2.jar (41/110 kB)
+Progress (1): flyway-maven-plugin-11.7.2.jar (57/110 kB)
+Progress (1): flyway-maven-plugin-11.7.2.jar (74/110 kB)
+Progress (1): flyway-maven-plugin-11.7.2.jar (90/110 kB)
+Progress (1): flyway-maven-plugin-11.7.2.jar (106/110 kB)
+Progress (1): flyway-maven-plugin-11.7.2.jar (110 kB)    
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/flywaydb/flyway-maven-plugin/11.7.2/flyway-maven-plugin-11.7.2.jar (110 kB at 1.1 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\flywaydb\flyway-maven-plugin\11.7.2\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\flywaydb\flyway-maven-plugin\11.7.2\flyway-maven-plugin-11.7.2.jar.lastUpdated'
+[DEBUG] Resolving artifact io.github.git-commit-id:git-commit-id-maven-plugin:pom:9.0.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact io.github.git-commit-id:git-commit-id-maven-plugin:pom:9.0.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/io/github/git-commit-id/git-commit-id-maven-plugin/9.0.2/git-commit-id-maven-plugin-9.0.2.pom
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (960 B)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (2.7 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (7.9 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (11 kB) 
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (15 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (18 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (21 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (26 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.pom (28 kB)
+                                                          
+Downloaded from central: https://repo.maven.apache.org/maven2/io/github/git-commit-id/git-commit-id-maven-plugin/9.0.2/git-commit-id-maven-plugin-9.0.2.pom (28 kB at 377 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\io\github\git-commit-id\git-commit-id-maven-plugin\9.0.2\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\io\github\git-commit-id\git-commit-id-maven-plugin\9.0.2\git-commit-id-maven-plugin-9.0.2.pom.lastUpdated'
+[DEBUG] Resolving artifact io.github.git-commit-id:git-commit-id-maven-plugin:jar:9.0.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact io.github.git-commit-id:git-commit-id-maven-plugin:jar:9.0.2 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/io/github/git-commit-id/git-commit-id-maven-plugin/9.0.2/git-commit-id-maven-plugin-9.0.2.jar
+Progress (1): git-commit-id-maven-plugin-9.0.2.jar (7.7/55 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.jar (12/55 kB) 
+Progress (1): git-commit-id-maven-plugin-9.0.2.jar (29/55 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.jar (45/55 kB)
+Progress (1): git-commit-id-maven-plugin-9.0.2.jar (55 kB)   
+                                                          
+Downloaded from central: https://repo.maven.apache.org/maven2/io/github/git-commit-id/git-commit-id-maven-plugin/9.0.2/git-commit-id-maven-plugin-9.0.2.jar (55 kB at 637 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\io\github\git-commit-id\git-commit-id-maven-plugin\9.0.2\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\io\github\git-commit-id\git-commit-id-maven-plugin\9.0.2\git-commit-id-maven-plugin-9.0.2.jar.lastUpdated'
+[DEBUG] Resolving artifact org.jooq:jooq-codegen-maven:pom:3.19.30 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.jooq:jooq-codegen-maven:pom:3.19.30 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jooq/jooq-codegen-maven/3.19.30/jooq-codegen-maven-3.19.30.pom
+Progress (1): jooq-codegen-maven-3.19.30.pom (1.2 kB)
+Progress (1): jooq-codegen-maven-3.19.30.pom (3.9 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jooq/jooq-codegen-maven/3.19.30/jooq-codegen-maven-3.19.30.pom (3.9 kB at 60 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\jooq-codegen-maven\3.19.30\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\jooq-codegen-maven\3.19.30\jooq-codegen-maven-3.19.30.pom.lastUpdated'
+[DEBUG] Resolving artifact org.jooq:jooq-parent:pom:3.19.30 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.jooq:jooq-parent:pom:3.19.30 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jooq/jooq-parent/3.19.30/jooq-parent-3.19.30.pom
+Progress (1): jooq-parent-3.19.30.pom (909 B)
+Progress (1): jooq-parent-3.19.30.pom (2.3 kB)
+Progress (1): jooq-parent-3.19.30.pom (4.3 kB)
+Progress (1): jooq-parent-3.19.30.pom (11 kB) 
+Progress (1): jooq-parent-3.19.30.pom (17 kB)
+Progress (1): jooq-parent-3.19.30.pom (21 kB)
+Progress (1): jooq-parent-3.19.30.pom (24 kB)
+Progress (1): jooq-parent-3.19.30.pom (29 kB)
+Progress (1): jooq-parent-3.19.30.pom (33 kB)
+Progress (1): jooq-parent-3.19.30.pom (38 kB)
+Progress (1): jooq-parent-3.19.30.pom (41 kB)
+                                             
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jooq/jooq-parent/3.19.30/jooq-parent-3.19.30.pom (41 kB at 560 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\jooq-parent\3.19.30\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\jooq-parent\3.19.30\jooq-parent-3.19.30.pom.lastUpdated'
+[DEBUG] Resolving artifact org.jooq:jooq-codegen-maven:jar:3.19.30 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.jooq:jooq-codegen-maven:jar:3.19.30 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jooq/jooq-codegen-maven/3.19.30/jooq-codegen-maven-3.19.30.jar
+Progress (1): jooq-codegen-maven-3.19.30.jar (7.7/18 kB)
+Progress (1): jooq-codegen-maven-3.19.30.jar (16/18 kB) 
+Progress (1): jooq-codegen-maven-3.19.30.jar (18 kB)   
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jooq/jooq-codegen-maven/3.19.30/jooq-codegen-maven-3.19.30.jar (18 kB at 241 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\jooq-codegen-maven\3.19.30\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jooq\jooq-codegen-maven\3.19.30\jooq-codegen-maven-3.19.30.jar.lastUpdated'
+[DEBUG] Resolving artifact org.jetbrains.kotlin:kotlin-maven-plugin:pom:1.9.25 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.jetbrains.kotlin:kotlin-maven-plugin:pom:1.9.25 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-maven-plugin/1.9.25/kotlin-maven-plugin-1.9.25.pom
+Progress (1): kotlin-maven-plugin-1.9.25.pom (2.0 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.pom (4.9 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.pom (6.7 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-maven-plugin/1.9.25/kotlin-maven-plugin-1.9.25.pom (6.7 kB at 93 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\kotlin-maven-plugin\1.9.25\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\kotlin-maven-plugin\1.9.25\kotlin-maven-plugin-1.9.25.pom.lastUpdated'
+[DEBUG] Resolving artifact org.jetbrains.kotlin:kotlin-project:pom:1.9.25 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.jetbrains.kotlin:kotlin-project:pom:1.9.25 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-project/1.9.25/kotlin-project-1.9.25.pom
+Progress (1): kotlin-project-1.9.25.pom (963 B)
+Progress (1): kotlin-project-1.9.25.pom (2.9 kB)
+Progress (1): kotlin-project-1.9.25.pom (6.4 kB)
+Progress (1): kotlin-project-1.9.25.pom (11 kB) 
+Progress (1): kotlin-project-1.9.25.pom (16 kB)
+                                               
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-project/1.9.25/kotlin-project-1.9.25.pom (16 kB at 211 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\kotlin-project\1.9.25\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\kotlin-project\1.9.25\kotlin-project-1.9.25.pom.lastUpdated'
+[DEBUG] Resolving artifact org.jetbrains.kotlin:kotlin-maven-plugin:jar:1.9.25 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.jetbrains.kotlin:kotlin-maven-plugin:jar:1.9.25 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-maven-plugin/1.9.25/kotlin-maven-plugin-1.9.25.jar
+Progress (1): kotlin-maven-plugin-1.9.25.jar (7.7/82 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.jar (12/82 kB) 
+Progress (1): kotlin-maven-plugin-1.9.25.jar (29/82 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.jar (45/82 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.jar (61/82 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.jar (78/82 kB)
+Progress (1): kotlin-maven-plugin-1.9.25.jar (82 kB)   
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-maven-plugin/1.9.25/kotlin-maven-plugin-1.9.25.jar (82 kB at 995 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\kotlin-maven-plugin\1.9.25\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\jetbrains\kotlin\kotlin-maven-plugin\1.9.25\kotlin-maven-plugin-1.9.25.jar.lastUpdated'
+[DEBUG] Resolving artifact org.liquibase:liquibase-maven-plugin:pom:4.31.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.liquibase:liquibase-maven-plugin:pom:4.31.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/liquibase/liquibase-maven-plugin/4.31.1/liquibase-maven-plugin-4.31.1.pom
+Progress (1): liquibase-maven-plugin-4.31.1.pom (1.3 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.pom (2.0 kB)
+                                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/liquibase/liquibase-maven-plugin/4.31.1/liquibase-maven-plugin-4.31.1.pom (2.0 kB at 29 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\liquibase\liquibase-maven-plugin\4.31.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\liquibase\liquibase-maven-plugin\4.31.1\liquibase-maven-plugin-4.31.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.liquibase:liquibase-maven-plugin:jar:4.31.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.liquibase:liquibase-maven-plugin:jar:4.31.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/liquibase/liquibase-maven-plugin/4.31.1/liquibase-maven-plugin-4.31.1.jar
+Progress (1): liquibase-maven-plugin-4.31.1.jar (7.7/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (16/352 kB) 
+Progress (1): liquibase-maven-plugin-4.31.1.jar (32/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (49/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (61/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (78/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (94/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (111/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (127/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (143/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (160/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (176/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (193/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (209/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (225/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (242/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (258/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (274/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (291/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (307/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (324/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (340/352 kB)
+Progress (1): liquibase-maven-plugin-4.31.1.jar (352 kB)    
+                                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/liquibase/liquibase-maven-plugin/4.31.1/liquibase-maven-plugin-4.31.1.jar (352 kB at 1.8 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\liquibase\liquibase-maven-plugin\4.31.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\liquibase\liquibase-maven-plugin\4.31.1\liquibase-maven-plugin-4.31.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-antrun-plugin:pom:3.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-antrun-plugin:pom:3.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/3.1.0/maven-antrun-plugin-3.1.0.pom
+Progress (1): maven-antrun-plugin-3.1.0.pom (759 B)
+Progress (1): maven-antrun-plugin-3.1.0.pom (2.2 kB)
+Progress (1): maven-antrun-plugin-3.1.0.pom (5.0 kB)
+Progress (1): maven-antrun-plugin-3.1.0.pom (8.3 kB)
+Progress (1): maven-antrun-plugin-3.1.0.pom (9.1 kB)
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/3.1.0/maven-antrun-plugin-3.1.0.pom (9.1 kB at 142 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-antrun-plugin\3.1.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-antrun-plugin\3.1.0\maven-antrun-plugin-3.1.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-plugins:pom:34 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-plugins:pom:34 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-plugins/34/maven-plugins-34.pom
+Progress (1): maven-plugins-34.pom (757 B)
+Progress (1): maven-plugins-34.pom (2.3 kB)
+Progress (1): maven-plugins-34.pom (4.7 kB)
+Progress (1): maven-plugins-34.pom (7.6 kB)
+Progress (1): maven-plugins-34.pom (9.9 kB)
+Progress (1): maven-plugins-34.pom (11 kB) 
+                                          
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-plugins/34/maven-plugins-34.pom (11 kB at 126 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-plugins\34\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-plugins\34\maven-plugins-34.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven:maven-parent:pom:34 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven:maven-parent:pom:34 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-parent/34/maven-parent-34.pom
+Progress (1): maven-parent-34.pom (727 B)
+Progress (1): maven-parent-34.pom (1.9 kB)
+Progress (1): maven-parent-34.pom (5.4 kB)
+Progress (1): maven-parent-34.pom (9.8 kB)
+Progress (1): maven-parent-34.pom (14 kB) 
+Progress (1): maven-parent-34.pom (19 kB)
+Progress (1): maven-parent-34.pom (23 kB)
+Progress (1): maven-parent-34.pom (26 kB)
+Progress (1): maven-parent-34.pom (27 kB)
+Progress (1): maven-parent-34.pom (30 kB)
+Progress (1): maven-parent-34.pom (34 kB)
+Progress (1): maven-parent-34.pom (37 kB)
+Progress (1): maven-parent-34.pom (41 kB)
+Progress (1): maven-parent-34.pom (43 kB)
+                                         
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-parent/34/maven-parent-34.pom (43 kB at 379 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\maven-parent\34\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\maven-parent\34\maven-parent-34.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-antrun-plugin:jar:3.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-antrun-plugin:jar:3.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/3.1.0/maven-antrun-plugin-3.1.0.jar
+Progress (1): maven-antrun-plugin-3.1.0.jar (7.7/41 kB)
+Progress (1): maven-antrun-plugin-3.1.0.jar (16/41 kB) 
+Progress (1): maven-antrun-plugin-3.1.0.jar (25/41 kB)
+Progress (1): maven-antrun-plugin-3.1.0.jar (41/41 kB)
+Progress (1): maven-antrun-plugin-3.1.0.jar (41 kB)   
+                                                   
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/3.1.0/maven-antrun-plugin-3.1.0.jar (41 kB at 522 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-antrun-plugin\3.1.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-antrun-plugin\3.1.0\maven-antrun-plugin-3.1.0.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-assembly-plugin:pom:3.7.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-assembly-plugin:pom:3.7.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.pom
+Progress (1): maven-assembly-plugin-3.7.1.pom (744 B)
+Progress (1): maven-assembly-plugin-3.7.1.pom (2.1 kB)
+Progress (1): maven-assembly-plugin-3.7.1.pom (4.8 kB)
+Progress (1): maven-assembly-plugin-3.7.1.pom (8.3 kB)
+Progress (1): maven-assembly-plugin-3.7.1.pom (10 kB) 
+Progress (1): maven-assembly-plugin-3.7.1.pom (14 kB)
+Progress (1): maven-assembly-plugin-3.7.1.pom (15 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.pom (15 kB at 195 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-assembly-plugin\3.7.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-assembly-plugin\3.7.1\maven-assembly-plugin-3.7.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-assembly-plugin:jar:3.7.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-assembly-plugin:jar:3.7.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.jar
+Progress (1): maven-assembly-plugin-3.7.1.jar (7.7/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (16/240 kB) 
+Progress (1): maven-assembly-plugin-3.7.1.jar (32/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (49/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (65/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (81/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (98/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (114/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (131/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (147/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (163/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (180/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (196/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (212/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (229/240 kB)
+Progress (1): maven-assembly-plugin-3.7.1.jar (240 kB)    
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.jar (240 kB at 1.7 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-assembly-plugin\3.7.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-assembly-plugin\3.7.1\maven-assembly-plugin-3.7.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-release-plugin:pom:3.0.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-release-plugin:pom:3.0.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-release-plugin/3.0.1/maven-release-plugin-3.0.1.pom
+Progress (1): maven-release-plugin-3.0.1.pom (806 B)
+Progress (1): maven-release-plugin-3.0.1.pom (3.6 kB)
+Progress (1): maven-release-plugin-3.0.1.pom (6.6 kB)
+Progress (1): maven-release-plugin-3.0.1.pom (9.2 kB)
+Progress (1): maven-release-plugin-3.0.1.pom (9.8 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-release-plugin/3.0.1/maven-release-plugin-3.0.1.pom (9.8 kB at 114 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-release-plugin\3.0.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-release-plugin\3.0.1\maven-release-plugin-3.0.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.release:maven-release:pom:3.0.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.release:maven-release:pom:3.0.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/release/maven-release/3.0.1/maven-release-3.0.1.pom
+Progress (1): maven-release-3.0.1.pom (805 B)
+Progress (1): maven-release-3.0.1.pom (2.5 kB)
+Progress (1): maven-release-3.0.1.pom (4.2 kB)
+Progress (1): maven-release-3.0.1.pom (11 kB) 
+Progress (1): maven-release-3.0.1.pom (11 kB)
+                                             
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/release/maven-release/3.0.1/maven-release-3.0.1.pom (11 kB at 126 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\release\maven-release\3.0.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\release\maven-release\3.0.1\maven-release-3.0.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-release-plugin:jar:3.0.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-release-plugin:jar:3.0.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-release-plugin/3.0.1/maven-release-plugin-3.0.1.jar
+Progress (1): maven-release-plugin-3.0.1.jar (7.7/61 kB)
+Progress (1): maven-release-plugin-3.0.1.jar (16/61 kB) 
+Progress (1): maven-release-plugin-3.0.1.jar (32/61 kB)
+Progress (1): maven-release-plugin-3.0.1.jar (49/61 kB)
+Progress (1): maven-release-plugin-3.0.1.jar (61 kB)   
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-release-plugin/3.0.1/maven-release-plugin-3.0.1.jar (61 kB at 569 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-release-plugin\3.0.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-release-plugin\3.0.1\maven-release-plugin-3.0.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-enforcer-plugin:pom:3.5.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-enforcer-plugin:pom:3.5.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-enforcer-plugin/3.5.0/maven-enforcer-plugin-3.5.0.pom
+Progress (1): maven-enforcer-plugin-3.5.0.pom (810 B)
+Progress (1): maven-enforcer-plugin-3.5.0.pom (3.5 kB)
+Progress (1): maven-enforcer-plugin-3.5.0.pom (5.4 kB)
+Progress (1): maven-enforcer-plugin-3.5.0.pom (8.1 kB)
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-enforcer-plugin/3.5.0/maven-enforcer-plugin-3.5.0.pom (8.1 kB at 85 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-enforcer-plugin\3.5.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-enforcer-plugin\3.5.0\maven-enforcer-plugin-3.5.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.enforcer:enforcer:pom:3.5.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.enforcer:enforcer:pom:3.5.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/enforcer/enforcer/3.5.0/enforcer-3.5.0.pom
+Progress (1): enforcer-3.5.0.pom (807 B)
+Progress (1): enforcer-3.5.0.pom (2.3 kB)
+Progress (1): enforcer-3.5.0.pom (4.4 kB)
+Progress (1): enforcer-3.5.0.pom (9.0 kB)
+Progress (1): enforcer-3.5.0.pom (9.3 kB)
+                                         
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/enforcer/enforcer/3.5.0/enforcer-3.5.0.pom (9.3 kB at 98 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\enforcer\enforcer\3.5.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\enforcer\enforcer\3.5.0\enforcer-3.5.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-enforcer-plugin:jar:3.5.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-enforcer-plugin:jar:3.5.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-enforcer-plugin/3.5.0/maven-enforcer-plugin-3.5.0.jar
+Progress (1): maven-enforcer-plugin-3.5.0.jar (7.7/39 kB)
+Progress (1): maven-enforcer-plugin-3.5.0.jar (16/39 kB) 
+Progress (1): maven-enforcer-plugin-3.5.0.jar (24/39 kB)
+Progress (1): maven-enforcer-plugin-3.5.0.jar (39 kB)   
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-enforcer-plugin/3.5.0/maven-enforcer-plugin-3.5.0.jar (39 kB at 509 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-enforcer-plugin\3.5.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-enforcer-plugin\3.5.0\maven-enforcer-plugin-3.5.0.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-failsafe-plugin:pom:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-failsafe-plugin:pom:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-failsafe-plugin/3.5.4/maven-failsafe-plugin-3.5.4.pom
+Progress (1): maven-failsafe-plugin-3.5.4.pom (815 B)
+Progress (1): maven-failsafe-plugin-3.5.4.pom (3.1 kB)
+Progress (1): maven-failsafe-plugin-3.5.4.pom (6.2 kB)
+Progress (1): maven-failsafe-plugin-3.5.4.pom (9.7 kB)
+Progress (1): maven-failsafe-plugin-3.5.4.pom (10 kB) 
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-failsafe-plugin/3.5.4/maven-failsafe-plugin-3.5.4.pom (10 kB at 147 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-failsafe-plugin\3.5.4\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-failsafe-plugin\3.5.4\maven-failsafe-plugin-3.5.4.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-failsafe-plugin:jar:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-failsafe-plugin:jar:3.5.4 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-failsafe-plugin/3.5.4/maven-failsafe-plugin-3.5.4.jar
+Progress (1): maven-failsafe-plugin-3.5.4.jar (7.7/57 kB)
+Progress (1): maven-failsafe-plugin-3.5.4.jar (16/57 kB) 
+Progress (1): maven-failsafe-plugin-3.5.4.jar (28/57 kB)
+Progress (1): maven-failsafe-plugin-3.5.4.jar (44/57 kB)
+Progress (1): maven-failsafe-plugin-3.5.4.jar (57 kB)   
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-failsafe-plugin/3.5.4/maven-failsafe-plugin-3.5.4.jar (57 kB at 721 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-failsafe-plugin\3.5.4\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-failsafe-plugin\3.5.4\maven-failsafe-plugin-3.5.4.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-help-plugin:pom:3.5.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-help-plugin:pom:3.5.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-help-plugin/3.5.1/maven-help-plugin-3.5.1.pom
+Progress (1): maven-help-plugin-3.5.1.pom (780 B)
+Progress (1): maven-help-plugin-3.5.1.pom (2.0 kB)
+Progress (1): maven-help-plugin-3.5.1.pom (5.0 kB)
+Progress (1): maven-help-plugin-3.5.1.pom (9.1 kB)
+Progress (1): maven-help-plugin-3.5.1.pom (10 kB) 
+                                                 
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-help-plugin/3.5.1/maven-help-plugin-3.5.1.pom (10 kB at 128 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-help-plugin\3.5.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-help-plugin\3.5.1\maven-help-plugin-3.5.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-help-plugin:jar:3.5.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-help-plugin:jar:3.5.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-help-plugin/3.5.1/maven-help-plugin-3.5.1.jar
+Progress (1): maven-help-plugin-3.5.1.jar (7.7/65 kB)
+Progress (1): maven-help-plugin-3.5.1.jar (16/65 kB) 
+Progress (1): maven-help-plugin-3.5.1.jar (25/65 kB)
+Progress (1): maven-help-plugin-3.5.1.jar (41/65 kB)
+Progress (1): maven-help-plugin-3.5.1.jar (57/65 kB)
+Progress (1): maven-help-plugin-3.5.1.jar (65 kB)   
+                                                 
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-help-plugin/3.5.1/maven-help-plugin-3.5.1.jar (65 kB at 789 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-help-plugin\3.5.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-help-plugin\3.5.1\maven-help-plugin-3.5.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-invoker-plugin:pom:3.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-invoker-plugin:pom:3.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-invoker-plugin/3.9.1/maven-invoker-plugin-3.9.1.pom
+Progress (1): maven-invoker-plugin-3.9.1.pom (752 B)
+Progress (1): maven-invoker-plugin-3.9.1.pom (2.1 kB)
+Progress (1): maven-invoker-plugin-3.9.1.pom (4.3 kB)
+Progress (1): maven-invoker-plugin-3.9.1.pom (9.8 kB)
+Progress (1): maven-invoker-plugin-3.9.1.pom (12 kB) 
+Progress (1): maven-invoker-plugin-3.9.1.pom (15 kB)
+Progress (1): maven-invoker-plugin-3.9.1.pom (16 kB)
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-invoker-plugin/3.9.1/maven-invoker-plugin-3.9.1.pom (16 kB at 202 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-invoker-plugin\3.9.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-invoker-plugin\3.9.1\maven-invoker-plugin-3.9.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-invoker-plugin:jar:3.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-invoker-plugin:jar:3.9.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-invoker-plugin/3.9.1/maven-invoker-plugin-3.9.1.jar
+Progress (1): maven-invoker-plugin-3.9.1.jar (7.7/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (16/141 kB) 
+Progress (1): maven-invoker-plugin-3.9.1.jar (32/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (49/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (65/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (81/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (98/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (114/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (131/141 kB)
+Progress (1): maven-invoker-plugin-3.9.1.jar (141 kB)    
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-invoker-plugin/3.9.1/maven-invoker-plugin-3.9.1.jar (141 kB at 1.5 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-invoker-plugin\3.9.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-invoker-plugin\3.9.1\maven-invoker-plugin-3.9.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-javadoc-plugin:pom:3.11.3 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-javadoc-plugin:pom:3.11.3 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-javadoc-plugin/3.11.3/maven-javadoc-plugin-3.11.3.pom
+Progress (1): maven-javadoc-plugin-3.11.3.pom (741 B)
+Progress (1): maven-javadoc-plugin-3.11.3.pom (2.5 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.pom (4.2 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.pom (8.3 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.pom (13 kB) 
+Progress (1): maven-javadoc-plugin-3.11.3.pom (16 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.pom (18 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.pom (21 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-javadoc-plugin/3.11.3/maven-javadoc-plugin-3.11.3.pom (21 kB at 314 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-javadoc-plugin\3.11.3\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-javadoc-plugin\3.11.3\maven-javadoc-plugin-3.11.3.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-javadoc-plugin:jar:3.11.3 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-javadoc-plugin:jar:3.11.3 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-javadoc-plugin/3.11.3/maven-javadoc-plugin-3.11.3.jar
+Progress (1): maven-javadoc-plugin-3.11.3.jar (7.7/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (16/529 kB) 
+Progress (1): maven-javadoc-plugin-3.11.3.jar (29/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (45/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (61/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (78/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (94/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (111/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (127/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (143/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (160/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (176/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (193/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (209/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (225/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (242/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (258/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (274/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (291/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (307/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (324/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (340/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (356/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (373/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (389/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (406/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (422/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (438/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (455/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (470/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (486/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (503/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (519/529 kB)
+Progress (1): maven-javadoc-plugin-3.11.3.jar (529 kB)    
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-javadoc-plugin/3.11.3/maven-javadoc-plugin-3.11.3.jar (529 kB at 2.3 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-javadoc-plugin\3.11.3\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-javadoc-plugin\3.11.3\maven-javadoc-plugin-3.11.3.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-shade-plugin:pom:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-shade-plugin:pom:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-shade-plugin/3.6.1/maven-shade-plugin-3.6.1.pom
+Progress (1): maven-shade-plugin-3.6.1.pom (775 B)
+Progress (1): maven-shade-plugin-3.6.1.pom (2.3 kB)
+Progress (1): maven-shade-plugin-3.6.1.pom (5.1 kB)
+Progress (1): maven-shade-plugin-3.6.1.pom (8.1 kB)
+Progress (1): maven-shade-plugin-3.6.1.pom (11 kB) 
+Progress (1): maven-shade-plugin-3.6.1.pom (12 kB)
+                                                  
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-shade-plugin/3.6.1/maven-shade-plugin-3.6.1.pom (12 kB at 179 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-shade-plugin\3.6.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-shade-plugin\3.6.1\maven-shade-plugin-3.6.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-shade-plugin:jar:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-shade-plugin:jar:3.6.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-shade-plugin/3.6.1/maven-shade-plugin-3.6.1.jar
+Progress (1): maven-shade-plugin-3.6.1.jar (7.7/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (12/150 kB) 
+Progress (1): maven-shade-plugin-3.6.1.jar (29/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (45/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (61/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (78/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (94/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (111/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (127/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (143/150 kB)
+Progress (1): maven-shade-plugin-3.6.1.jar (150 kB)    
+                                                   
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-shade-plugin/3.6.1/maven-shade-plugin-3.6.1.jar (150 kB at 1.5 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-shade-plugin\3.6.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-shade-plugin\3.6.1\maven-shade-plugin-3.6.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-source-plugin:pom:3.3.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-source-plugin:pom:3.3.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-source-plugin/3.3.1/maven-source-plugin-3.3.1.pom
+Progress (1): maven-source-plugin-3.3.1.pom (773 B)
+Progress (1): maven-source-plugin-3.3.1.pom (2.3 kB)
+Progress (1): maven-source-plugin-3.3.1.pom (5.4 kB)
+Progress (1): maven-source-plugin-3.3.1.pom (6.7 kB)
+                                                    
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-source-plugin/3.3.1/maven-source-plugin-3.3.1.pom (6.7 kB at 98 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-source-plugin\3.3.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-source-plugin\3.3.1\maven-source-plugin-3.3.1.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-source-plugin:jar:3.3.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-source-plugin:jar:3.3.1 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-source-plugin/3.3.1/maven-source-plugin-3.3.1.jar
+Progress (1): maven-source-plugin-3.3.1.jar (7.7/32 kB)
+Progress (1): maven-source-plugin-3.3.1.jar (16/32 kB) 
+Progress (1): maven-source-plugin-3.3.1.jar (24/32 kB)
+Progress (1): maven-source-plugin-3.3.1.jar (32 kB)   
+                                                   
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-source-plugin/3.3.1/maven-source-plugin-3.3.1.jar (32 kB at 366 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-source-plugin\3.3.1\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-source-plugin\3.3.1\maven-source-plugin-3.3.1.jar.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-war-plugin:pom:3.4.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-war-plugin:pom:3.4.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-war-plugin/3.4.0/maven-war-plugin-3.4.0.pom
+Progress (1): maven-war-plugin-3.4.0.pom (794 B)
+Progress (1): maven-war-plugin-3.4.0.pom (2.3 kB)
+Progress (1): maven-war-plugin-3.4.0.pom (5.6 kB)
+Progress (1): maven-war-plugin-3.4.0.pom (8.3 kB)
+Progress (1): maven-war-plugin-3.4.0.pom (8.4 kB)
+                                                 
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-war-plugin/3.4.0/maven-war-plugin-3.4.0.pom (8.4 kB at 94 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-war-plugin\3.4.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-war-plugin\3.4.0\maven-war-plugin-3.4.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-war-plugin:jar:3.4.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.apache.maven.plugins:maven-war-plugin:jar:3.4.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-war-plugin/3.4.0/maven-war-plugin-3.4.0.jar
+Progress (1): maven-war-plugin-3.4.0.jar (7.7/83 kB)
+Progress (1): maven-war-plugin-3.4.0.jar (16/83 kB) 
+Progress (1): maven-war-plugin-3.4.0.jar (25/83 kB)
+Progress (1): maven-war-plugin-3.4.0.jar (41/83 kB)
+Progress (1): maven-war-plugin-3.4.0.jar (57/83 kB)
+Progress (1): maven-war-plugin-3.4.0.jar (74/83 kB)
+Progress (1): maven-war-plugin-3.4.0.jar (83 kB)   
+                                                
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-war-plugin/3.4.0/maven-war-plugin-3.4.0.jar (83 kB at 951 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-war-plugin\3.4.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\apache\maven\plugins\maven-war-plugin\3.4.0\maven-war-plugin-3.4.0.jar.lastUpdated'
+[DEBUG] Resolving artifact org.graalvm.buildtools:native-maven-plugin:pom:0.10.6 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.graalvm.buildtools:native-maven-plugin:pom:0.10.6 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/graalvm/buildtools/native-maven-plugin/0.10.6/native-maven-plugin-0.10.6.pom
+Progress (1): native-maven-plugin-0.10.6.pom (937 B)
+Progress (1): native-maven-plugin-0.10.6.pom (2.7 kB)
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/graalvm/buildtools/native-maven-plugin/0.10.6/native-maven-plugin-0.10.6.pom (2.7 kB at 42 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\graalvm\buildtools\native-maven-plugin\0.10.6\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\graalvm\buildtools\native-maven-plugin\0.10.6\native-maven-plugin-0.10.6.pom.lastUpdated'
+[DEBUG] Resolving artifact org.graalvm.buildtools:native-maven-plugin:jar:0.10.6 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.graalvm.buildtools:native-maven-plugin:jar:0.10.6 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/graalvm/buildtools/native-maven-plugin/0.10.6/native-maven-plugin-0.10.6.jar
+Progress (1): native-maven-plugin-0.10.6.jar (7.7/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (16/113 kB) 
+Progress (1): native-maven-plugin-0.10.6.jar (25/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (41/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (57/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (74/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (90/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (106/113 kB)
+Progress (1): native-maven-plugin-0.10.6.jar (113 kB)    
+                                                     
+Downloaded from central: https://repo.maven.apache.org/maven2/org/graalvm/buildtools/native-maven-plugin/0.10.6/native-maven-plugin-0.10.6.jar (113 kB at 1.2 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\graalvm\buildtools\native-maven-plugin\0.10.6\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\graalvm\buildtools\native-maven-plugin\0.10.6\native-maven-plugin-0.10.6.jar.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:versions-maven-plugin:pom:2.18.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:versions-maven-plugin:pom:2.18.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/versions-maven-plugin/2.18.0/versions-maven-plugin-2.18.0.pom
+Progress (1): versions-maven-plugin-2.18.0.pom (1.9 kB)
+Progress (1): versions-maven-plugin-2.18.0.pom (6.8 kB)
+Progress (1): versions-maven-plugin-2.18.0.pom (8.2 kB)
+Progress (1): versions-maven-plugin-2.18.0.pom (11 kB) 
+Progress (1): versions-maven-plugin-2.18.0.pom (12 kB)
+                                                      
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/versions-maven-plugin/2.18.0/versions-maven-plugin-2.18.0.pom (12 kB at 178 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\versions-maven-plugin\2.18.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\versions-maven-plugin\2.18.0\versions-maven-plugin-2.18.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo.versions:versions:pom:2.18.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo.versions:versions:pom:2.18.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/versions/versions/2.18.0/versions-2.18.0.pom
+Progress (1): versions-2.18.0.pom (1.1 kB)
+Progress (1): versions-2.18.0.pom (3.5 kB)
+Progress (1): versions-2.18.0.pom (5.5 kB)
+Progress (1): versions-2.18.0.pom (11 kB) 
+Progress (1): versions-2.18.0.pom (14 kB)
+Progress (1): versions-2.18.0.pom (15 kB)
+                                         
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/versions/versions/2.18.0/versions-2.18.0.pom (15 kB at 232 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\versions\versions\2.18.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\versions\versions\2.18.0\versions-2.18.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:mojo-parent:pom:86 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:mojo-parent:pom:86 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/mojo-parent/86/mojo-parent-86.pom
+Progress (1): mojo-parent-86.pom (714 B)
+Progress (1): mojo-parent-86.pom (2.5 kB)
+Progress (1): mojo-parent-86.pom (5.8 kB)
+Progress (1): mojo-parent-86.pom (7.6 kB)
+Progress (1): mojo-parent-86.pom (11 kB) 
+Progress (1): mojo-parent-86.pom (13 kB)
+Progress (1): mojo-parent-86.pom (18 kB)
+Progress (1): mojo-parent-86.pom (23 kB)
+Progress (1): mojo-parent-86.pom (27 kB)
+Progress (1): mojo-parent-86.pom (29 kB)
+Progress (1): mojo-parent-86.pom (32 kB)
+Progress (1): mojo-parent-86.pom (37 kB)
+                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/mojo-parent/86/mojo-parent-86.pom (37 kB at 536 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\mojo-parent\86\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\mojo-parent\86\mojo-parent-86.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:versions-maven-plugin:jar:2.18.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:versions-maven-plugin:jar:2.18.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/versions-maven-plugin/2.18.0/versions-maven-plugin-2.18.0.jar
+Progress (1): versions-maven-plugin-2.18.0.jar (7.7/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (16/299 kB) 
+Progress (1): versions-maven-plugin-2.18.0.jar (32/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (49/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (57/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (74/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (90/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (106/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (123/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (139/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (156/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (172/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (188/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (205/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (221/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (238/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (254/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (270/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (287/299 kB)
+Progress (1): versions-maven-plugin-2.18.0.jar (299 kB)    
+                                                       
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/versions-maven-plugin/2.18.0/versions-maven-plugin-2.18.0.jar (299 kB at 2.5 MB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\versions-maven-plugin\2.18.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\versions-maven-plugin\2.18.0\versions-maven-plugin-2.18.0.jar.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:xml-maven-plugin:pom:1.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:xml-maven-plugin:pom:1.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/xml-maven-plugin/1.1.0/xml-maven-plugin-1.1.0.pom
+Progress (1): xml-maven-plugin-1.1.0.pom (996 B)
+Progress (1): xml-maven-plugin-1.1.0.pom (3.3 kB)
+Progress (1): xml-maven-plugin-1.1.0.pom (6.9 kB)
+Progress (1): xml-maven-plugin-1.1.0.pom (8.5 kB)
+                                                 
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/xml-maven-plugin/1.1.0/xml-maven-plugin-1.1.0.pom (8.5 kB at 119 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\xml-maven-plugin\1.1.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\xml-maven-plugin\1.1.0\xml-maven-plugin-1.1.0.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:mojo-parent:pom:75 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:mojo-parent:pom:75 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/mojo-parent/75/mojo-parent-75.pom
+Progress (1): mojo-parent-75.pom (711 B)
+Progress (1): mojo-parent-75.pom (2.5 kB)
+Progress (1): mojo-parent-75.pom (6.2 kB)
+Progress (1): mojo-parent-75.pom (8.0 kB)
+Progress (1): mojo-parent-75.pom (11 kB) 
+Progress (1): mojo-parent-75.pom (13 kB)
+Progress (1): mojo-parent-75.pom (18 kB)
+Progress (1): mojo-parent-75.pom (24 kB)
+Progress (1): mojo-parent-75.pom (26 kB)
+Progress (1): mojo-parent-75.pom (29 kB)
+Progress (1): mojo-parent-75.pom (32 kB)
+Progress (1): mojo-parent-75.pom (36 kB)
+                                        
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/mojo-parent/75/mojo-parent-75.pom (36 kB at 477 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\mojo-parent\75\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\mojo-parent\75\mojo-parent-75.pom.lastUpdated'
+[DEBUG] Resolving artifact org.codehaus.mojo:xml-maven-plugin:jar:1.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Resolving artifact org.codehaus.mojo:xml-maven-plugin:jar:1.1.0 from [central (https://repo.maven.apache.org/maven2, default, releases)]
+[DEBUG] Using transporter HttpTransporter with priority 5.0 for https://repo.maven.apache.org/maven2
+[DEBUG] Using connector BasicRepositoryConnector with priority 0.0 for https://repo.maven.apache.org/maven2
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/xml-maven-plugin/1.1.0/xml-maven-plugin-1.1.0.jar
+Progress (1): xml-maven-plugin-1.1.0.jar (7.7/65 kB)
+Progress (1): xml-maven-plugin-1.1.0.jar (16/65 kB) 
+Progress (1): xml-maven-plugin-1.1.0.jar (32/65 kB)
+Progress (1): xml-maven-plugin-1.1.0.jar (49/65 kB)
+Progress (1): xml-maven-plugin-1.1.0.jar (57/65 kB)
+Progress (1): xml-maven-plugin-1.1.0.jar (65 kB)   
+                                                
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/xml-maven-plugin/1.1.0/xml-maven-plugin-1.1.0.jar (65 kB at 751 kB/s)
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\xml-maven-plugin\1.1.0\_remote.repositories'
+[DEBUG] Writing tracking file 'C:\Users\DELL\.m2\repository\org\codehaus\mojo\xml-maven-plugin\1.1.0\xml-maven-plugin-1.1.0.jar.lastUpdated'
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.458 s
+[INFO] Finished at: 2026-03-10T19:03:24+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] No plugin found for prefix 'lint' in the current project and in the plugin groups [org.springframework.boot, org.cyclonedx, org.flywaydb, io.github.git-commit-id, org.jooq, org.jetbrains.kotlin, org.liquibase, org.graalvm.buildtools, org.apache.maven.plugins, org.codehaus.mojo] available from the repositories [local (C:\Users\DELL\.m2\repository), central (https://repo.maven.apache.org/maven2)] -> [Help 1]
+org.apache.maven.plugin.prefix.NoPluginFoundForPrefixException: No plugin found for prefix 'lint' in the current project and in the plugin groups [org.springframework.boot, org.cyclonedx, org.flywaydb, io.github.git-commit-id, org.jooq, org.jetbrains.kotlin, org.liquibase, org.graalvm.buildtools, org.apache.maven.plugins, org.codehaus.mojo] available from the repositories [local (C:\Users\DELL\.m2\repository), central (https://repo.maven.apache.org/maven2)]
+    at org.apache.maven.plugin.prefix.internal.DefaultPluginPrefixResolver.resolve (DefaultPluginPrefixResolver.java:122)
+    at org.apache.maven.lifecycle.internal.MojoDescriptorCreator.findPluginForPrefix (MojoDescriptorCreator.java:247)
+    at org.apache.maven.lifecycle.internal.MojoDescriptorCreator.getMojoDescriptor (MojoDescriptorCreator.java:209)
+    at org.apache.maven.lifecycle.internal.DefaultLifecycleTaskSegmentCalculator.calculateTaskSegments (DefaultLifecycleTaskSegmentCalculator.java:94)
+    at org.apache.maven.lifecycle.internal.DefaultLifecycleTaskSegmentCalculator.calculateTaskSegments (DefaultLifecycleTaskSegmentCalculator.java:76)
+    at org.apache.maven.lifecycle.internal.LifecycleStarter.execute (LifecycleStarter.java:84)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:261)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:173)
+    at org.apache.maven.DefaultMaven.execute (DefaultMaven.java:101)
+    at org.apache.maven.cli.MavenCli.execute (MavenCli.java:919)
+    at org.apache.maven.cli.MavenCli.doMain (MavenCli.java:285)
+    at org.apache.maven.cli.MavenCli.main (MavenCli.java:207)
+    at jdk.internal.reflect.DirectMethodHandleAccessor.invoke (DirectMethodHandleAccessor.java:103)
+    at java.lang.reflect.Method.invoke (Method.java:580)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (Launcher.java:255)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:201)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:361)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:314)
+[ERROR] 
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoPluginFoundForPrefixException
+[DEBUG] Shutting down adapter factory; available factories [file-lock, rwlock-local, semaphore-local, noop]; available name mappers [discriminating, file-gaecv, file-gav, file-hgaecv, file-hgav, file-static, gaecv, gav, static]
+[DEBUG] Shutting down 'file-lock' factory
+[DEBUG] Shutting down 'rwlock-local' factory
+[DEBUG] Shutting down 'semaphore-local' factory
+[DEBUG] Shutting down 'noop' factory

@@ -25,12 +25,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 @SpringBootTest(properties = {
         "spring.datasource.hikari.maximum-pool-size=20",
         "spring.flyway.enabled=true"
 })
 @Slf4j
 public class CartMergeIsolationBenchmarkTest {
+
+    @MockitoBean
+    private VectorStore vectorStore;
 
     @Autowired
     private CartService cartService;

@@ -10,8 +10,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -59,8 +61,11 @@ public class ProductSemanticSearchTest {
                 savedCat.getId(), List.of());
         ProductResponse res = productService.createProduct(req);
 
-        // Sleep to wait for the @Async event listener to finish
-        Thread.sleep(1000);
+        // Wait up to 5s for the @Async event listener to save the embedding vector
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> productRepository.findById(res.id())
+                        .map(p -> p.getEmbeddingVector() != null)
+                        .orElse(false));
 
         // Verify vector is saved
         Product savedProduct = productRepository.findById(res.id()).orElseThrow();
