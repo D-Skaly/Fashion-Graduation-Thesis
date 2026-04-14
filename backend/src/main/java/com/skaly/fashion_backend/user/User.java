@@ -33,6 +33,12 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Column(name = "phone")
+    private String phone;
+
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
@@ -45,7 +51,11 @@ public class User implements UserDetails {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
 
     @PrePersist
     protected void onCreate() {

@@ -1,0 +1,159 @@
+spring:
+  application:
+    name: fashion-backend
+  docker:
+    compose:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/fashion_db?options=-c%20timezone=UTC}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${HIKARI_MAX_POOL_SIZE:50}
+      minimum-idle: ${HIKARI_MIN_IDLE:10}
+      idle-timeout: ${HIKARI_IDLE_TIMEOUT:300000}
+      connection-timeout: ${HIKARI_CONNECTION_TIMEOUT:20000}
+      max-lifetime: ${HIKARI_MAX_LIFETIME:1200000}
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_TIMEOUT:2000ms}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:20}
+          max-idle: ${REDIS_POOL_MAX_IDLE:10}
+          min-idle: ${REDIS_POOL_MIN_IDLE:5}
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          enabled: ${AI_ENABLED:true}
+          options:
+            model: ${AI_MODEL:gemini-1.5-flash}
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 384
+
+server:
+  port: ${SERVER_PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/javascript,text/css,application/javascript
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+
+logging:
+  level:
+    root: INFO
+    com.skaly: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.springframework.ai: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  health:
+    defaults:
+      enabled: true
+    diskspace:
+      enabled: true
+      threshold: 1GB
+    db:
+      enabled: true
+    redis:
+      enabled: true
+  server:
+    port: ${MANAGEMENT_PORT:8081}
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION:86400000}
+    refresh-token:
+      expiration: ${REFRESH_TOKEN_EXPIRATION:604800000}  # 7 days
+      max-tokens-per-user: ${MAX_TOKENS_PER_USER:5}  # Max devices
+  ai:
+    assistant:
+      enabled: ${AI_ASSISTANT_ENABLED:true}
+      max-message-length: ${AI_ASSISTANT_MAX_MESSAGE_LENGTH:1000}
+      retry:
+        max-attempts: ${AI_ASSISTANT_RETRY_MAX_ATTEMPTS:3}
+        backoff-ms: ${AI_ASSISTANT_RETRY_BACKOFF_MS:250}
+      timeout:
+        response-ms: ${AI_ASSISTANT_TIMEOUT_MS:8000}
+      rate-limit:
+        enabled: ${AI_ASSISTANT_RATE_LIMIT_ENABLED:true}
+        max-requests: ${AI_ASSISTANT_RATE_LIMIT_MAX_REQUESTS:20}
+        window-seconds: ${AI_ASSISTANT_RATE_LIMIT_WINDOW_SECONDS:60}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://fashion.skaly.com}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+
+storage:
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket-name: ${MINIO_BUCKET:fashion-images}
+    url-expiry: ${MINIO_URL_EXPIRY:3600}

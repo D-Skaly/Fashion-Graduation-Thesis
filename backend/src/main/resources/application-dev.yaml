@@ -1,0 +1,139 @@
+# ============================================
+# DEVELOPMENT PROFILE CONFIGURATION
+# ============================================
+
+spring:
+  application:
+    name: fashion-backend-dev
+  docker:
+    compose:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:not-set}
+            client-secret: ${GOOGLE_CLIENT_SECRET:not-set}
+            scope:
+              - email
+              - profile
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fashion_db_dev?options=-c%20timezone=UTC
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        use_sql_comments: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY:}
+        chat:
+          enabled: ${AI_ENABLED:false}
+          options:
+            model: gemini-1.5-flash
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 384
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: always
+    include-message: always
+    include-binding-errors: always
+
+logging:
+  level:
+    root: INFO
+    com.skaly: DEBUG
+    com.skaly.fashion_backend: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.ai: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Expose all endpoints in dev
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  health:
+    defaults:
+      enabled: true
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:dev-secret-key-change-in-production}
+      expiration: ${JWT_EXPIRATION:86400000}  # 24 hours
+    refresh-token:
+      expiration: ${REFRESH_TOKEN_EXPIRATION:604800000}  # 7 days
+      max-tokens-per-user: ${MAX_TOKENS_PER_USER:10}  # More lenient in dev
+  ai:
+    assistant:
+      enabled: ${AI_ASSISTANT_ENABLED:false}
+      max-message-length: ${AI_ASSISTANT_MAX_MESSAGE_LENGTH:1000}
+      retry:
+        max-attempts: ${AI_ASSISTANT_RETRY_MAX_ATTEMPTS:3}
+        backoff-ms: ${AI_ASSISTANT_RETRY_BACKOFF_MS:250}
+      timeout:
+        response-ms: ${AI_ASSISTANT_TIMEOUT_MS:8000}
+      rate-limit:
+        enabled: ${AI_ASSISTANT_RATE_LIMIT_ENABLED:false}  # Disabled in dev
+        max-requests: ${AI_ASSISTANT_RATE_LIMIT_MAX_REQUESTS:100}
+        window-seconds: ${AI_ASSISTANT_RATE_LIMIT_WINDOW_SECONDS:60}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+
+storage:
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket-name: ${MINIO_BUCKET:fashion-images-dev}
+    url-expiry: ${MINIO_URL_EXPIRY:3600}

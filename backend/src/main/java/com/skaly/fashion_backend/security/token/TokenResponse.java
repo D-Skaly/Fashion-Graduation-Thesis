@@ -1,10 +1,10 @@
-package com.skaly.fashion_backend.auth;
+package com.skaly.fashion_backend.security.token;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 
-public record AuthenticationResponse(
+public record TokenResponse(
         @JsonProperty("access_token")
         String accessToken,
 
@@ -23,12 +23,12 @@ public record AuthenticationResponse(
         @JsonProperty("user")
         UserInfo user
 ) {
-    public AuthenticationResponse {
+    public TokenResponse {
         tokenType = "Bearer";
     }
 
-    public AuthenticationResponse(String accessToken, String refreshToken, long expiresIn,
-                                  Instant refreshTokenExpiresAt, UserInfo user) {
+    public TokenResponse(String accessToken, String refreshToken, long expiresIn,
+                         Instant refreshTokenExpiresAt, UserInfo user) {
         this(accessToken, refreshToken, "Bearer", expiresIn, refreshTokenExpiresAt, user);
     }
 
@@ -37,7 +37,6 @@ public record AuthenticationResponse(
             String email,
             String firstName,
             String lastName,
-            String role,
-            String avatarUrl
+            String role
     ) {}
 }
