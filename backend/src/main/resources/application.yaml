@@ -57,6 +57,16 @@ application:
   ai:
     assistant:
       enabled: ${AI_ASSISTANT_ENABLED:false}
+      max-message-length: ${AI_ASSISTANT_MAX_MESSAGE_LENGTH:1000}
+      retry:
+        max-attempts: ${AI_ASSISTANT_RETRY_MAX_ATTEMPTS:3}
+        backoff-ms: ${AI_ASSISTANT_RETRY_BACKOFF_MS:250}
+      timeout:
+        response-ms: ${AI_ASSISTANT_TIMEOUT_MS:8000}
+      rate-limit:
+        enabled: ${AI_ASSISTANT_RATE_LIMIT_ENABLED:true}
+        max-requests: ${AI_ASSISTANT_RATE_LIMIT_MAX_REQUESTS:20}
+        window-seconds: ${AI_ASSISTANT_RATE_LIMIT_WINDOW_SECONDS:60}
   security:
     jwt:
       secret-key: NoPEkExKyE9nWtQ+edD8KTTTAc1KZOcQoI7kOI/Gj7Gs= # 256-bit Base64 secret
