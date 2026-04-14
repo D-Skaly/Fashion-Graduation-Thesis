@@ -39,19 +39,20 @@ spring:
       genai:
         api-key: ${GEMINI_API_KEY:}
         chat:
+          enabled: true
           options:
-            model: gemini-2.5-pro
-        embedding:
-          options:
-            model: text-embedding-004
+            model: gemini-3-flash-preview
     vectorstore:
       pgvector:
         index-type: HNSW
         distance-type: COSINE_DISTANCE
-        dimensions: 768
+        dimensions: 384
 
 server:
   port: 8080
+logging:
+  level:
+    org.springframework.ai: DEBUG
 
 application:
   ai:

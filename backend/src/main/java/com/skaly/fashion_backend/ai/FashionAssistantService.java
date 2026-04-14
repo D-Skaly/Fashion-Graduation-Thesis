@@ -22,13 +22,16 @@ public class FashionAssistantService {
     private final Counter successCounter;
     private final Counter failureCounter;
     private final Counter unavailableCounter;
+    private final com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService;
 
     public FashionAssistantService(
             ObjectProvider<ChatModel> chatModelProvider,
             AiAssistantProperties properties,
-            MeterRegistry meterRegistry) {
+            MeterRegistry meterRegistry,
+            com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService) {
         this.chatModel = chatModelProvider.getIfAvailable();
         this.properties = properties;
+        this.productEmbeddingService = productEmbeddingService;
         this.latencyTimer = Timer.builder("ai.chat.latency")
                 .description("Latency for AI chat completion")
                 .register(meterRegistry);
@@ -122,5 +125,9 @@ public class FashionAssistantService {
 
     private String normalize(String message) {
         return message == null ? "" : message.trim().replaceAll("\\s+", " ");
+    }
+
+    public void reindex() {
+        productEmbeddingService.generateEmbeddingsForAllMissing();
     }
 }

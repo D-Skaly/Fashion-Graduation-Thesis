@@ -1,73 +1,13 @@
-import { Product, ProductCard } from "@/components/product/ProductCard";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-const featuredProducts: Product[] = [
-    {
-        id: "1",
-        name: "Oversized Cotton T-Shirt",
-        price: 49.99,
-        category: "Tops",
-        image: "bg-slate-200", // placeholder class
-        isNew: true,
-    },
-    {
-        id: "2",
-        name: "Classic Denim Jacket",
-        price: 129.99,
-        salePrice: 89.99,
-        category: "Outerwear",
-        image: "bg-blue-100",
-        isSale: true,
-    },
-    {
-        id: "3",
-        name: "Slim Fit Chino Pants",
-        price: 69.99,
-        category: "Bottoms",
-        image: "bg-stone-200",
-    },
-    {
-        id: "4",
-        name: "Minimalist Leather Sneakers",
-        price: 159.00,
-        category: "Footwear",
-        image: "bg-gray-100",
-    },
-    {
-        id: "5",
-        name: "Textured Knit Sweater",
-        price: 79.99,
-        category: "Knitwear",
-        image: "bg-orange-100",
-        isNew: true,
-    },
-    {
-        id: "6",
-        name: "Waterproof Trench Coat",
-        price: 249.99,
-        category: "Outerwear",
-        image: "bg-amber-100",
-    },
-    {
-        id: "7",
-        name: "Linen Blend Shorts",
-        price: 55.00,
-        salePrice: 35.00,
-        category: "Bottoms",
-        image: "bg-emerald-100",
-        isSale: true,
-    },
-    {
-        id: "8",
-        name: "Canvas Tote Bag",
-        price: 39.99,
-        category: "Accessories",
-        image: "bg-yellow-100",
-    },
-];
-
+import api from "@/lib/axios";
+import { ProductCard } from "@/components/product/ProductCard";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
     Carousel,
     CarouselContent,
@@ -76,7 +16,20 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel";
 
+const fetchProducts = async () => {
+    const { data } = await api.get("/products?size=8");
+    return data.data.content; // Accessing the content from Page object
+};
+
 export function FeaturedProducts() {
+    const { data: products, isLoading, isError } = useQuery({
+        queryKey: ["featured-products"],
+        queryFn: fetchProducts,
+    });
+
+    const placeholders = Array.from({ length: 4 });
+    const colors = ["bg-slate-200", "bg-blue-100", "bg-stone-200", "bg-gray-100", "bg-orange-100", "bg-amber-100", "bg-emerald-100", "bg-yellow-100"];
+
     return (
         <section className="container mx-auto px-4 py-16 md:py-24">
             <div className="flex flex-col md:flex-row items-end justify-between gap-4 mb-10">
@@ -93,25 +46,55 @@ export function FeaturedProducts() {
                 </Button>
             </div>
 
-            <Carousel
-                opts={{
-                    align: "start",
-                    loop: true,
-                }}
-                className="w-full"
-            >
-                <CarouselContent className="-ml-4">
-                    {featuredProducts.map((product) => (
-                        <CarouselItem key={product.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                            <ProductCard product={product} />
-                        </CarouselItem>
+            {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {placeholders.map((_, i) => (
+                        <div key={i} className="space-y-4">
+                            <Skeleton className="aspect-[3/4] w-full rounded-xl" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-1/4" />
+                                <Skeleton className="h-6 w-3/4" />
+                                <Skeleton className="h-6 w-1/2" />
+                            </div>
+                        </div>
                     ))}
-                </CarouselContent>
-                <div className="flex justify-end gap-2 mt-6">
-                    <CarouselPrevious className="relative left-0 top-0 translate-y-0 h-10 w-10 border-primary/20 hover:bg-primary hover:text-primary-foreground" />
-                    <CarouselNext className="relative right-0 top-0 translate-y-0 h-10 w-10 border-primary/20 hover:bg-primary hover:text-primary-foreground" />
                 </div>
-            </Carousel>
+            ) : isError ? (
+                <div className="py-20 text-center border rounded-xl bg-muted/20">
+                    <p className="text-muted-foreground">Failed to load collection. Please try again later.</p>
+                </div>
+            ) : (
+                <Carousel
+                    opts={{
+                        align: "start",
+                        loop: products?.length > 4,
+                    }}
+                    className="w-full"
+                >
+                    <CarouselContent className="-ml-4">
+                        {products?.map((serverProduct: any, index: number) => {
+                            const product = {
+                                id: serverProduct.id,
+                                name: serverProduct.name,
+                                price: serverProduct.basePrice,
+                                category: serverProduct.categoryName,
+                                image: colors[index % colors.length],
+                                isNew: index < 2
+                            };
+                            return (
+                                <CarouselItem key={product.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                                    <ProductCard product={product} />
+                                </CarouselItem>
+                            );
+                        })}
+                    </CarouselContent>
+                    <div className="flex justify-end gap-2 mt-6">
+                        <CarouselPrevious className="relative left-0 top-0 translate-y-0 h-10 w-10 border-primary/20 hover:bg-primary hover:text-primary-foreground" />
+                        <CarouselNext className="relative right-0 top-0 translate-y-0 h-10 w-10 border-primary/20 hover:bg-primary hover:text-primary-foreground" />
+                    </div>
+                </Carousel>
+            )}
         </section>
     );
 }
+

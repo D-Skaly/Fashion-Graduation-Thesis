@@ -8,6 +8,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import com.skaly.fashion_backend.product.ProductEmbeddingService;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,7 +26,8 @@ class AiAssistantIntegrationTest {
         ChatModel chatModel = mock(ChatModel.class);
         when(chatModel.call(anyString())).thenReturn("Gợi ý: Áo blazer + quần tây đen");
 
-        ObjectProvider<ChatModel> provider = () -> chatModel;
+        ObjectProvider<ChatModel> provider = mock(ObjectProvider.class);
+        when(provider.getIfAvailable()).thenReturn(chatModel);
         AiAssistantProperties properties = new AiAssistantProperties(
                 true,
                 1000,
@@ -33,7 +35,8 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.Timeout(2000),
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
-        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry());
+        ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
+        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService);
         AiController controller = new AiController(service);
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
@@ -60,7 +63,8 @@ class AiAssistantIntegrationTest {
             return "Đầm đen tối giản + phụ kiện bạc";
         }).when(chatModel).call(anyString());
 
-        ObjectProvider<ChatModel> provider = () -> chatModel;
+        ObjectProvider<ChatModel> provider = mock(ObjectProvider.class);
+        when(provider.getIfAvailable()).thenReturn(chatModel);
         AiAssistantProperties properties = new AiAssistantProperties(
                 true,
                 1000,
@@ -68,7 +72,8 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.Timeout(2000),
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
-        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry());
+        ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
+        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService);
 
         String response = service.chat("Tư vấn đi tiệc");
         org.assertj.core.api.Assertions.assertThat(response).contains("Đầm đen");
@@ -82,7 +87,8 @@ class AiAssistantIntegrationTest {
             return "Too late";
         }).when(chatModel).call(anyString());
 
-        ObjectProvider<ChatModel> provider = () -> chatModel;
+        ObjectProvider<ChatModel> provider = mock(ObjectProvider.class);
+        when(provider.getIfAvailable()).thenReturn(chatModel);
         AiAssistantProperties properties = new AiAssistantProperties(
                 true,
                 1000,
@@ -90,7 +96,8 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.Timeout(50),
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
-        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry());
+        ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
+        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService);
 
         assertThatThrownBy(() -> service.chat("Tư vấn nhanh"))
                 .isInstanceOf(RuntimeException.class)

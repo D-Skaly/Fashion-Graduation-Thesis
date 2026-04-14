@@ -34,4 +34,10 @@ public class AiController {
         String answer = fashionAssistantService.chat(request.message());
         return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer)));
     }
+
+    @PostMapping("/reindex")
+    public ResponseEntity<ApiResponse<String>> reindex() {
+        fashionAssistantService.reindex();
+        return ResponseEntity.ok(ApiResponse.success("Re-indexing started"));
+    }
 }

@@ -34,6 +34,15 @@ public class ProductEmbeddingService {
         generateEmbeddingForProductId(event.getProductId(), "updated");
     }
 
+    @Transactional
+    public void generateEmbeddingsForAllMissing() {
+        log.info("Starting manual re-indexing for products with missing embeddings");
+        productRepository.findAll().stream()
+                .filter(p -> p.getEmbeddingVector() == null)
+                .forEach(p -> generateEmbeddingForProductId(p.getId(), "manual-reindex"));
+        log.info("Finished manual re-indexing");
+    }
+
     private void generateEmbeddingForProductId(UUID productId, String type) {
         log.info("Generating embedding for {} Product ID: {}", type, productId);
 

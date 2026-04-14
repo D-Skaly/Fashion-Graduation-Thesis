@@ -110,7 +110,7 @@ export default function ProductDetailPage() {
     }
 
     if (isError || !product) {
-        return <div className="container mx-auto px-4 py-32 text-center">Produkt not found</div>
+        return <div className="container mx-auto px-4 py-32 text-center">Product not found</div>
     }
 
     const currentPrice = product.basePrice + (selectedVariant?.priceAdjustment || 0);
