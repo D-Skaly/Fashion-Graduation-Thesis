@@ -14,9 +14,15 @@ import api from "@/lib/axios";
 interface Product {
   id: string;
   name: string;
-  category: string;
-  price: number;
+  categoryName?: string;
+  basePrice: number;
   featuredImageUrl?: string;
+}
+
+interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
 }
 
 export function SemanticSearchDialog() {
@@ -36,10 +42,10 @@ export function SemanticSearchDialog() {
     queryKey: ["semanticSearch", debouncedTerm],
     queryFn: async () => {
       if (!debouncedTerm) return [];
-      const res = await api.get<Product[]>(`/products/search/semantic`, {
+      const res = await api.get<ApiResponse<Product[]>>(`/products/search/semantic`, {
         params: { q: debouncedTerm },
       });
-      return res.data;
+      return res.data.data;
     },
     enabled: debouncedTerm.length > 2, // only run if input > 2 chars
   });
@@ -99,10 +105,10 @@ export function SemanticSearchDialog() {
                              </div>
                              <div className="flex-1 min-w-0">
                                 <h4 className="font-semibold text-zinc-900 truncate group-hover:text-primary transition-colors">{product.name}</h4>
-                                <p className="text-sm text-zinc-500 truncate">{product.category}</p>
+                                <p className="text-sm text-zinc-500 truncate">{product.categoryName || "Uncategorized"}</p>
                              </div>
                              <div className="flex items-center gap-3">
-                                <span className="font-bold text-zinc-900">${product.price.toFixed(2)}</span>
+                                <span className="font-bold text-zinc-900">${product.basePrice.toFixed(2)}</span>
                                 <ArrowRight className="h-4 w-4 text-zinc-300 group-hover:text-primary transition-colors" />
                              </div>
                           </div>

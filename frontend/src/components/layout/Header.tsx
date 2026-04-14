@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { useState } from "react";
 import { SemanticSearchDialog } from "@/components/ui/SemanticSearchDialog";
+import { AiAssistantSheet } from "@/components/ui/AiAssistantSheet";
 
 export function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -78,6 +79,7 @@ export function Header() {
                     </div>
 
                     <div className="flex items-center gap-1 md:gap-2">
+                        <AiAssistantSheet />
                         <Button variant="ghost" size="icon" className="hover:bg-transparent hover:text-primary/70" asChild>
                             <Link href="/account">
                                 <User className="h-5 w-5" />
