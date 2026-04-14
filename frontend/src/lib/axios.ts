@@ -1,15 +1,15 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api/v1',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true // Important for cookies if backend sets them, but here we use JS-Cookie
+  withCredentials: true,
 });
-
-// Request Interceptor: Attach Token
-import Cookies from 'js-cookie';
 
 api.interceptors.request.use(
   (config) => {
@@ -19,9 +19,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default api;

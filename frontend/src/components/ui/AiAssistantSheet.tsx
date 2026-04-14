@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Bot, Loader2, MessageCircle, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,8 @@ interface AiChatData {
   answer: string;
 }
 
+const MAX_HISTORY = 20;
+
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
@@ -32,26 +34,31 @@ export function AiAssistantSheet() {
     },
   ]);
 
+  const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading]);
+
+  const pushMessage = (message: ChatMessage) => {
+    setMessages((prev) => [...prev, message].slice(-MAX_HISTORY));
+  };
+
   const handleSend = async () => {
     const message = input.trim();
     if (!message || isLoading) return;
 
-    setMessages((prev) => [...prev, { role: "user", content: message }]);
+    pushMessage({ role: "user", content: message });
     setInput("");
     setIsLoading(true);
 
     try {
       const response = await api.post<ApiResponse<AiChatData>>("/ai/chat", { message });
-      setMessages((prev) => [...prev, { role: "assistant", content: response.data.data.answer }]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            "Hiện chưa kết nối được AI service (có thể API key chưa bật ở backend). Bạn thử lại sau nhé.",
-        },
-      ]);
+      pushMessage({ role: "assistant", content: response.data.data.answer });
+    } catch (error) {
+      const backendMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      pushMessage({
+        role: "assistant",
+        content:
+          backendMessage ||
+          "Hiện chưa kết nối được AI service (có thể API key chưa bật ở backend). Bạn thử lại sau nhé.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +118,7 @@ export function AiAssistantSheet() {
               }
             }}
           />
-          <Button onClick={handleSend} disabled={isLoading || !input.trim()}>
+          <Button onClick={handleSend} disabled={!canSend}>
             <Send className="h-4 w-4" />
           </Button>
         </div>

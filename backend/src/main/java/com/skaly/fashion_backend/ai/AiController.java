@@ -2,8 +2,9 @@ package com.skaly.fashion_backend.ai;
 
 import com.skaly.fashion_backend.common.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/ai")
-@ConditionalOnProperty(name = "spring.ai.google.genai.api-key")
+@Validated
 public class AiController {
 
     private final FashionAssistantService fashionAssistantService;
@@ -23,7 +24,7 @@ public class AiController {
     }
 
     @GetMapping("/chat")
-    public ResponseEntity<ApiResponse<AiChatResponse>> chat(@RequestParam String message) {
+    public ResponseEntity<ApiResponse<AiChatResponse>> chat(@RequestParam @NotBlank String message) {
         String answer = fashionAssistantService.chat(message);
         return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer)));
     }

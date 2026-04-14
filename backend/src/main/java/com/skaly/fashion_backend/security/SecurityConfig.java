@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**", "/api/v1/health", "/error", "/swagger-ui/**",
-                                "/v3/api-docs/**", "/api/v1/products/**", "/api/v1/categories/**")
+                                "/v3/api-docs/**", "/api/v1/products/**", "/api/v1/categories/**", "/api/v1/ai/**")
                         .permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
