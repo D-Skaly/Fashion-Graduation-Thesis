@@ -68,8 +68,8 @@
 
 ## Phase 2: Product & Catalog
 
-### Product Model Enhancement
-- [ ] Update `Product.java` - Add fields:
+### Product Model Enhancement ✅ **HOÀN THÀNH**
+- [x] Update `Product.java` - Add fields:
   - `sku` (unique)
   - `slug` (unique, URL-friendly)
   - `isActive`
@@ -86,19 +86,19 @@
   - `metaTitle`
   - `metaDescription`
 
-### Product Image
-- [ ] `ProductImage.java` - Entity
+### Product Image ✅ **HOÀN THÀNH**
+- [x] `ProductImage.java` - Entity
   - `product_id`
   - `url`
   - `alt`
   - `sortOrder`
   - `isPrimary`
-- [ ] `ProductImageRepository.java`
-- [ ] `ProductImageService.java`
-- [ ] Update `ProductResponse` - Include images
+- [x] `ProductImageRepository.java`
+- [x] `ProductImageService.java`
+- [ ] Update `ProductResponse` - Include images (Phase 2.2)
 
-### Product Review
-- [ ] `Review.java` - Entity
+### Product Review ✅ **HOÀN THÀNH**
+- [x] `Review.java` - Entity
   - `user_id`
   - `product_id`
   - `rating` (1-5)
@@ -106,17 +106,22 @@
   - `images[]`
   - `isVerifiedPurchase`
   - `isHelpful` count
-- [ ] `ReviewRepository.java`
-- [ ] `ReviewController.java` - CRUD + helpful vote
-- [ ] `ReviewService.java`
-- [ ] Update `Product` - Calculate average rating
+- [x] `ReviewRepository.java`
+- [x] `ReviewController.java` - CRUD + helpful vote
+- [x] `ReviewService.java`
+- [x] Update `Product` - Calculate average rating (implemented in ReviewService)
 
-### Product Search & Filter
-- [ ] Update `ProductController`:
-  - `/products/search?keyword=`
-  - `/products?category=&minPrice=&maxPrice=&sort=`
-  - `/products/featured`
-  - `/products/new-arrivals`
+### Product Search & Filter ✅ **HOÀN THÀNH**
+- [x] Update `ProductController`:
+  - `GET /products/search?keyword=` - Search by keyword
+  - `GET /products?category=&minPrice=&maxPrice=&sort=` - Filter products
+  - `GET /products/featured` - Featured products
+  - `GET /products/new-arrivals` - New arrivals
+  - `GET /products/brand/{brand}` - Products by brand
+  - `GET /products/tag/{tag}` - Products by tag
+  - `GET /products/filters/brands` - Get all brands
+  - `GET /products/filters/tags` - Get all tags
+  - `POST /products/{id}/view` - Increment view count
 
 ### Frontend - Product Detail
 - [ ] `ImageGallery.tsx` - Zoom, thumbnails
@@ -138,8 +143,8 @@
 
 ## Phase 3: Order & Checkout
 
-### Order Workflow
-- [ ] Update `Order.java` - Add fields:
+### Order Workflow ✅ **HOÀN THÀNH**
+- [x] Update `Order.java` - Add fields:
   - `orderNumber` (formatted: ORD-2024-001)
   - `subTotal`
   - `taxAmount`
@@ -149,32 +154,33 @@
   - `totalAmount`
   - `notes`
   - `cancelledAt`, `cancelledReason`
-- [ ] `OrderStatusHistory.java` - Audit log
-- [ ] `OrderNote.java` - Internal notes
-- [ ] `Shipping.java` - Shipping info
-- [ ] `OrderController.java` - Complete endpoints:
+- [x] `OrderStatusHistory.java` - Audit log
+- [x] `OrderNote.java` - Internal notes
+- [x] `Shipping.java` - Shipping info
+- [x] `OrderController.java` - Complete endpoints:
   - `POST /orders` - Create from cart
   - `GET /orders` - List user orders
   - `GET /orders/{id}` - Order detail
   - `PUT /orders/{id}/cancel` - Cancel order
-  - `GET /orders/{id}/track` - Tracking info
+  - `GET /orders/{id}/status-history` - Order status history
+  - `GET /orders/{id}/tracking` - Tracking info
 
-### Payment Integration
-- [ ] `PaymentGateway.java` - Interface
-- [ ] `StripeService.java` - Stripe implementation
-- [ ] `VNPayService.java` - VNPay implementation
-- [ ] `MomoService.java` - Momo implementation
-- [ ] `PaymentController.java` - Webhook handlers
-- [ ] `PaymentCallback.tsx` - Frontend callback page
+### Payment Integration ✅ **HOÀN THÀNH**
+- [x] `PaymentGateway.java` - Interface
+- [ ] `StripeService.java` - Stripe implementation (future)
+- [x] `VNPayService.java` - VNPay implementation
+- [x] `MomoService.java` - Momo implementation
+- [x] `PaymentController.java` - Webhook handlers (VNPay/Momo)
+- [ ] `PaymentCallback.tsx` - Frontend callback page (Phase 3.2)
 
-### Frontend - Checkout
+### Frontend - Checkout (Phase 3.2)
 - [ ] `CheckoutPage.tsx` - Main checkout
 - [ ] `ShippingForm.tsx` - Address input
 - [ ] `PaymentMethodSelector.tsx`
 - [ ] `OrderSummary.tsx`
 - [ ] `CheckoutProvider.tsx` - Context
 
-### Frontend - Order Tracking
+### Frontend - Order Tracking (Phase 3.2)
 - [ ] `OrderListPage.tsx`
 - [ ] `OrderDetailPage.tsx`
 - [ ] `OrderStatusTimeline.tsx`

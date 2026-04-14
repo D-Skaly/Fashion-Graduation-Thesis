@@ -3,11 +3,14 @@ package com.skaly.fashion_backend.product;
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -87,5 +90,65 @@ public class ProductService {
         return products.stream()
                 .map(productMapper::toProductResponse)
                 .collect(Collectors.toList());
+    }
+
+    // Search and Filter Methods
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> searchProducts(String keyword, Pageable pageable) {
+        return productRepository.searchByKeyword(keyword, pageable)
+                .map(productMapper::toProductResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> filterProducts(UUID categoryId, BigDecimal minPrice, BigDecimal maxPrice,
+                                                String sortBy, String sortDirection, Pageable pageable) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        return productRepository.findByFilters(categoryId, minPrice, maxPrice, sortedPageable)
+                .map(productMapper::toProductResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getFeaturedProducts(Pageable pageable) {
+        return productRepository.findFeaturedProducts(pageable)
+                .map(productMapper::toProductResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getNewArrivals(Pageable pageable) {
+        return productRepository.findNewArrivals(pageable)
+                .map(productMapper::toProductResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getProductsByBrand(String brand, Pageable pageable) {
+        return productRepository.findByBrandAndIsActiveTrue(brand, pageable)
+                .map(productMapper::toProductResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getProductsByTag(String tag, Pageable pageable) {
+        return productRepository.findByTag(tag, pageable)
+                .map(productMapper::toProductResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getAllBrands() {
+        return productRepository.findAllBrands();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getAllTags() {
+        return productRepository.findAllTags();
+    }
+
+    @Transactional
+    public void incrementProductViewCount(UUID productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+        product.incrementViewCount();
+        productRepository.save(product);
     }
 }

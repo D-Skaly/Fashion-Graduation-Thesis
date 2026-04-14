@@ -1,16 +1,24 @@
 package com.skaly.fashion_backend.payment;
 
 import com.skaly.fashion_backend.common.ApiResponse;
+import com.skaly.fashion_backend.payment.gateway.MomoService;
+import com.skaly.fashion_backend.payment.gateway.PaymentGateway;
+import com.skaly.fashion_backend.payment.gateway.VNPayService;
 import com.skaly.fashion_backend.user.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+@Slf4j
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -19,6 +27,8 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
+    private final VNPayService vnPayService;
+    private final MomoService momoService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PaymentResponse>> getPayment(
@@ -104,4 +114,51 @@ public class PaymentController {
             String failureReason,
             java.time.LocalDateTime createdAt
     ) {}
+
+    // Payment Gateway Webhook Handlers
+
+    @GetMapping("/vnpay/callback")
+    public ResponseEntity<ApiResponse<String>> vnpayCallback(
+            @RequestParam Map<String, String> params,
+            HttpServletRequest request) {
+        log.info("Received VNPay callback from IP: {}", request.getRemoteAddr());
+
+        PaymentGateway.CallbackResult result = vnPayService.processCallback(params);
+
+        if (result.success()) {
+            // Find and update payment
+            try {
+                Payment payment = paymentService.getPaymentByTransactionId(result.transactionId());
+                paymentService.processPayment(payment.getId(), result.transactionId());
+                return ResponseEntity.ok(ApiResponse.success("Payment successful"));
+            } catch (Exception e) {
+                log.error("Error processing successful payment", e);
+                return ResponseEntity.ok(ApiResponse.success("Payment processed but error updating order"));
+            }
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, result.message()));
+        }
+    }
+
+    @GetMapping("/momo/callback")
+    public ResponseEntity<ApiResponse<String>> momoCallback(
+            @RequestParam Map<String, String> params,
+            HttpServletRequest request) {
+        log.info("Received Momo callback from IP: {}", request.getRemoteAddr());
+
+        PaymentGateway.CallbackResult result = momoService.processCallback(params);
+
+        if (result.success()) {
+            try {
+                Payment payment = paymentService.getPaymentByTransactionId(result.transactionId());
+                paymentService.processPayment(payment.getId(), result.transactionId());
+                return ResponseEntity.ok(ApiResponse.success("Payment successful"));
+            } catch (Exception e) {
+                log.error("Error processing successful payment", e);
+                return ResponseEntity.ok(ApiResponse.success("Payment processed but error updating order"));
+            }
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, result.message()));
+        }
+    }
 }
