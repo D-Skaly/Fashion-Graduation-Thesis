@@ -16,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findTopKByEmbeddingVectorClosestTo(@Param("vector") float[] vector, @Param("limit") int limit);
 
     // Search by keyword (name or description)
-    @Query("SELECT p FROM Product p WHERE p.isActive = true AND " +
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.images WHERE p.isActive = true AND " +
            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
@@ -36,18 +36,18 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
                                 Pageable pageable);
 
     // Get featured products
-    @Query("SELECT p FROM Product p WHERE p.isActive = true AND p.isFeatured = true ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.images WHERE p.isActive = true AND p.isFeatured = true ORDER BY p.createdAt DESC")
     Page<Product> findFeaturedProducts(Pageable pageable);
 
     // Get new arrivals (recently created)
-    @Query("SELECT p FROM Product p WHERE p.isActive = true ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.images WHERE p.isActive = true ORDER BY p.createdAt DESC")
     Page<Product> findNewArrivals(Pageable pageable);
 
     // Get products by brand
     Page<Product> findByBrandAndIsActiveTrue(String brand, Pageable pageable);
 
     // Get products by tags
-    @Query("SELECT p FROM Product p JOIN p.tags t WHERE p.isActive = true AND t = :tag")
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.images JOIN p.tags t WHERE p.isActive = true AND t = :tag")
     Page<Product> findByTag(@Param("tag") String tag, Pageable pageable);
 
     // Get all active brands

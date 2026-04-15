@@ -25,6 +25,7 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final ProductEmbeddingService productEmbeddingService;
+    private final ProductCacheService productCacheService;
 
     @Transactional
     public ProductResponse createProduct(CreateProductRequest request) {
@@ -48,6 +49,11 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
         eventPublisher.publishEvent(new ProductCreatedEvent(this, savedProduct.getId()));
+        
+        // Evict cache
+        productCacheService.evictBrands();
+        productCacheService.evictTags();
+        
         return productMapper.toProductResponse(savedProduct);
     }
 
@@ -59,9 +65,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductResponse getProductById(UUID id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
-        return productMapper.toProductResponse(product);
+        return productCacheService.getProductById(id);
     }
 
     @Transactional(readOnly = true)
@@ -112,14 +116,12 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getFeaturedProducts(Pageable pageable) {
-        return productRepository.findFeaturedProducts(pageable)
-                .map(productMapper::toProductResponse);
+        return productCacheService.getFeaturedProducts(pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getNewArrivals(Pageable pageable) {
-        return productRepository.findNewArrivals(pageable)
-                .map(productMapper::toProductResponse);
+        return productCacheService.getNewArrivals(pageable);
     }
 
     @Transactional(readOnly = true)
@@ -136,12 +138,12 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<String> getAllBrands() {
-        return productRepository.findAllBrands();
+        return productCacheService.getAllBrands();
     }
 
     @Transactional(readOnly = true)
     public List<String> getAllTags() {
-        return productRepository.findAllTags();
+        return productCacheService.getAllTags();
     }
 
     @Transactional
@@ -150,5 +152,8 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
         product.incrementViewCount();
         productRepository.save(product);
+        
+        // Evict cache since view count changed
+        productCacheService.evictProduct(productId);
     }
 }

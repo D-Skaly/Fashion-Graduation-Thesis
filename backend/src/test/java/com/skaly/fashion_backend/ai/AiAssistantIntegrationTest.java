@@ -36,7 +36,8 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
         ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
-        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService);
+        ChatSessionService chatSessionService = mock(ChatSessionService.class);
+        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService, chatSessionService);
         AiController controller = new AiController(service);
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
@@ -73,7 +74,8 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
         ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
-        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService);
+        ChatSessionService chatSessionService = mock(ChatSessionService.class);
+        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService, chatSessionService);
 
         String response = service.chat("Tư vấn đi tiệc");
         org.assertj.core.api.Assertions.assertThat(response).contains("Đầm đen");
@@ -97,7 +99,8 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
         ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
-        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService);
+        ChatSessionService chatSessionService = mock(ChatSessionService.class);
+        FashionAssistantService service = new FashionAssistantService(provider, properties, new SimpleMeterRegistry(), productEmbeddingService, chatSessionService);
 
         assertThatThrownBy(() -> service.chat("Tư vấn nhanh"))
                 .isInstanceOf(RuntimeException.class)

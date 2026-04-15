@@ -11,7 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "carts")
+@Table(name = "carts", indexes = {
+    @Index(name = "idx_cart_user_id", columnList = "user_id"),
+    @Index(name = "idx_cart_guest_id", columnList = "guestId", unique = true),
+    @Index(name = "idx_cart_created_at", columnList = "createdAt"),
+    @Index(name = "idx_cart_updated_at", columnList = "updatedAt")
+})
 @Getter
 @Setter
 @NoArgsConstructor

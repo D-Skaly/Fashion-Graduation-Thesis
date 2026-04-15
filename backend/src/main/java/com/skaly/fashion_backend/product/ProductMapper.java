@@ -15,6 +15,12 @@ public class ProductMapper {
                 .map(this::toProductVariantDto)
                 .collect(Collectors.toList());
 
+        List<ProductImageDto> imageDtos = product.getImages() != null 
+                ? product.getImages().stream()
+                    .map(this::toProductImageDto)
+                    .collect(Collectors.toList())
+                : List.of();
+
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
@@ -22,6 +28,7 @@ public class ProductMapper {
                 product.getBasePrice(),
                 categoryName,
                 variantDtos,
+                imageDtos,
                 product.getCreatedAt(),
                 product.getUpdatedAt());
     }
@@ -44,5 +51,15 @@ public class ProductMapper {
                 .priceAdjustment(dto.priceAdjustment())
                 .skuCode(dto.skuCode())
                 .build();
+    }
+
+    public ProductImageDto toProductImageDto(ProductImage image) {
+        return new ProductImageDto(
+                image.getId(),
+                image.getUrl(),
+                image.getAlt(),
+                image.getSortOrder(),
+                image.getIsPrimary(),
+                image.getCreatedAt());
     }
 }

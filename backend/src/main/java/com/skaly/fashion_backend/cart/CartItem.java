@@ -9,7 +9,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cart_items")
+@Table(name = "cart_items", indexes = {
+    @Index(name = "idx_cart_item_cart_id", columnList = "cart_id"),
+    @Index(name = "idx_cart_item_product_variant_id", columnList = "product_variant_id"),
+    @Index(name = "idx_cart_item_added_at", columnList = "addedAt")
+})
 @Getter
 @Setter
 @NoArgsConstructor

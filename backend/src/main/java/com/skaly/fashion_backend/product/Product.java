@@ -66,6 +66,10 @@ public class Product {
     @Builder.Default
     private List<ProductVariant> variants = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ProductImage> images = new ArrayList<>();
+
     @Column(length = 100)
     private String brand;
 
@@ -155,5 +159,16 @@ public class Product {
     public void removeVariant(ProductVariant variant) {
         variants.remove(variant);
         variant.setProduct(null);
+    }
+
+    // Helper method to add image
+    public void addImage(ProductImage image) {
+        images.add(image);
+        image.setProduct(this);
+    }
+
+    public void removeImage(ProductImage image) {
+        images.remove(image);
+        image.setProduct(null);
     }
 }

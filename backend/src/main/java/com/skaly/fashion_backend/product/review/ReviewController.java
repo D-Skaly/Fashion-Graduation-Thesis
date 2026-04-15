@@ -123,17 +123,32 @@ public class ReviewController {
     // Mark review as helpful
     @PostMapping("/{reviewId}/helpful")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> markHelpful(@PathVariable UUID reviewId) {
-        reviewService.voteHelpful(reviewId);
+    public ResponseEntity<Void> markHelpful(
+            @PathVariable UUID reviewId,
+            @AuthenticationPrincipal User user) {
+        reviewService.voteHelpful(reviewId, user.getId());
         return ResponseEntity.ok().build();
     }
 
     // Remove helpful vote
     @DeleteMapping("/{reviewId}/helpful")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> removeHelpful(@PathVariable UUID reviewId) {
-        reviewService.removeHelpfulVote(reviewId);
+    public ResponseEntity<Void> removeHelpful(
+            @PathVariable UUID reviewId,
+            @AuthenticationPrincipal User user) {
+        reviewService.removeHelpfulVote(reviewId, user.getId());
         return ResponseEntity.ok().build();
+    }
+
+    // Check if user has voted helpful
+    @GetMapping("/{reviewId}/helpful/check")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String, Boolean>> hasUserVotedHelpful(
+            @PathVariable UUID reviewId,
+            @AuthenticationPrincipal User user) {
+
+        boolean hasVoted = reviewService.hasUserVotedHelpful(reviewId, user.getId());
+        return ResponseEntity.ok(Map.of("hasVoted", hasVoted));
     }
 
     // DTO Records

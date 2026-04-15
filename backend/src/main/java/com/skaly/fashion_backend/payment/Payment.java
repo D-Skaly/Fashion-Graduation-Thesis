@@ -9,7 +9,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payments", indexes = {
+    @Index(name = "idx_payment_order_id", columnList = "order_id", unique = true),
+    @Index(name = "idx_payment_transaction_id", columnList = "transactionId", unique = true),
+    @Index(name = "idx_payment_status", columnList = "status"),
+    @Index(name = "idx_payment_method", columnList = "method"),
+    @Index(name = "idx_payment_created_at", columnList = "createdAt")
+})
 @Getter
 @Setter
 @NoArgsConstructor

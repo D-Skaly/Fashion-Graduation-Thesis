@@ -24,6 +24,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
+    private final ReviewHelpfulVoteRepository helpfulVoteRepository;
 
     @Transactional(readOnly = true)
     public Page<Review> getProductReviews(UUID productId, Integer rating, Pageable pageable) {
@@ -132,19 +133,42 @@ public class ReviewService {
     }
 
     @Transactional
-    public void voteHelpful(UUID reviewId) {
+    public void voteHelpful(UUID reviewId, UUID userId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found: " + reviewId));
+
+        if (helpfulVoteRepository.existsByUserIdAndReviewId(userId, reviewId)) {
+            throw new IllegalArgumentException("User has already voted this review as helpful");
+        }
+
+        User user = User.builder().id(userId).build();
+        ReviewHelpfulVote vote = ReviewHelpfulVote.builder()
+                .user(user)
+                .review(review)
+                .build();
+        helpfulVoteRepository.save(vote);
+
         review.incrementHelpfulCount();
         reviewRepository.save(review);
     }
 
     @Transactional
-    public void removeHelpfulVote(UUID reviewId) {
+    public void removeHelpfulVote(UUID reviewId, UUID userId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found: " + reviewId));
+
+        if (!helpfulVoteRepository.existsByUserIdAndReviewId(userId, reviewId)) {
+            throw new IllegalArgumentException("User has not voted this review as helpful");
+        }
+
+        helpfulVoteRepository.deleteByUserIdAndReviewId(userId, reviewId);
         review.decrementHelpfulCount();
         reviewRepository.save(review);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasUserVotedHelpful(UUID reviewId, UUID userId) {
+        return helpfulVoteRepository.existsByUserIdAndReviewId(userId, reviewId);
     }
 
     @Transactional(readOnly = true)

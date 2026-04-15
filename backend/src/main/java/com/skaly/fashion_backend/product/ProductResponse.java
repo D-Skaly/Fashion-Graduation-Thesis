@@ -12,6 +12,7 @@ public record ProductResponse(
         BigDecimal basePrice,
         String categoryName,
         List<ProductVariantDto> variants,
+        List<ProductImageDto> images,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
 }

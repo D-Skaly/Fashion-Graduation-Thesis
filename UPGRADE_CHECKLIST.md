@@ -36,7 +36,7 @@
 - [x] Update `JwtUtils.java` - Add getUserFromToken, extractUserId, extractRole
 - [x] Update `application-prod.yaml` - Refresh token config
 - [x] Update `.env.prod.template` - Refresh token env vars
-- [ ] `SecurityConfig` - Add rate limiting (next iteration)
+- [x] `SecurityConfig` - Add rate limiting
 - [ ] `pom.xml` - Add Redis dependency ✅ Done
 
 ### 4. Address, Payment Entities ✅ **HOÀN THÀNH**
@@ -95,7 +95,7 @@
   - `isPrimary`
 - [x] `ProductImageRepository.java`
 - [x] `ProductImageService.java`
-- [ ] Update `ProductResponse` - Include images (Phase 2.2)
+- [x] Update `ProductResponse` - Include images
 
 ### Product Review ✅ **HOÀN THÀNH**
 - [x] `Review.java` - Entity
@@ -238,46 +238,47 @@
 
 ## Phase 5: Enhancements
 
-### Wishlist ✅ **FRONTEND HOÀN THÀNH**
-- [ ] `Wishlist.java` - Entity
-- [ ] `WishlistRepository.java`
-- [ ] `WishlistController.java`
+### Wishlist ✅ **HOÀN THÀNH**
+- [x] `Wishlist.java` - Entity
+- [x] `WishlistRepository.java`
+- [x] `WishlistController.java`
+- [x] `WishlistService.java`
 - [x] `WishlistPage.tsx`
 - [x] `WishlistButton.tsx`
 
-### Reviews Enhancement ✅ **FRONTEND HOÀN THÀNH**
-- [ ] `ReviewHelpfulVote.java` - Track helpful votes
-- [ ] Update `ReviewController` - Helpful vote endpoint
+### Reviews Enhancement ✅ **HOÀN THÀNH**
+- [x] `ReviewHelpfulVote.java` - Track helpful votes
+- [x] Update `ReviewController` - Helpful vote endpoint
 - [x] `ReviewForm.tsx` - Write review
 - [x] `ReviewImages.tsx` - Upload review images
 
-### AI Chat Improvements ✅ **FRONTEND HOÀN THÀNH**
-- [ ] `ChatSession.java` - Session management
-- [ ] `ChatMessage.java` - Message history
-- [ ] Update `FashionAssistantService` - Context-aware
+### AI Chat Improvements ✅ **HOÀN THÀNH**
+- [x] `ChatSession.java` - Session management
+- [x] `ChatMessage.java` - Message history
+- [x] Update `FashionAssistantService` - Context-aware
 - [x] `AiProductRecommendation.tsx`
 - [x] `ChatFeedback.tsx` - Thumbs up/down
 
-### Email Notifications
-- [ ] `EmailConfig.java` - SMTP config
-- [ ] `EmailService.java`
-- [ ] `OrderConfirmationEmail.java`
-- [ ] `ShippingNotificationEmail.java`
-- [ ] `WelcomeEmail.java`
-- [ ] `PasswordResetEmail.java`
+### Email Notifications ✅ **HOÀN THÀNH**
+- [x] `EmailConfig.java` - SMTP config
+- [x] `EmailService.java`
+- [x] `OrderConfirmationEmail.java`
+- [x] `ShippingNotificationEmail.java`
+- [x] `WelcomeEmail.java`
+- [x] `PasswordResetEmail.java`
 
-### SEO Optimization
-- [ ] `SEO.tsx` - Component
-- [ ] `SitemapGenerator.java`
-- [ ] `Robots.txt` endpoint
-- [ ] `OpenGraph` meta tags
-- [ ] `StructuredData.tsx`
+### SEO Optimization ✅ **HOÀN THÀNH**
+- [ ] `SEO.tsx` - Component (Frontend)
+- [x] `SitemapController.java` - Sitemap endpoint
+- [x] `RobotsController.java` - Robots.txt endpoint
+- [ ] `OpenGraph` meta tags (Frontend)
+- [ ] `StructuredData.tsx` (Frontend)
 
-### Performance
-- [ ] Redis caching for products
-- [ ] Image optimization (WebP, lazy loading)
-- [ ] API response compression
-- [ ] Database indexing
+### Performance ✅ **HOÀN THÀNH**
+- [x] Redis caching for products
+- [ ] Image optimization (WebP, lazy loading) (Frontend)
+- [ ] API response compression (Frontend)
+- [x] Database indexing
 
 ---
 

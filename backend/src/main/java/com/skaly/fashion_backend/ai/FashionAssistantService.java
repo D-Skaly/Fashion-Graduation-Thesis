@@ -9,6 +9,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -23,15 +24,18 @@ public class FashionAssistantService {
     private final Counter failureCounter;
     private final Counter unavailableCounter;
     private final com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService;
+    private final ChatSessionService chatSessionService;
 
     public FashionAssistantService(
             ObjectProvider<ChatModel> chatModelProvider,
             AiAssistantProperties properties,
             MeterRegistry meterRegistry,
-            com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService) {
+            com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService,
+            ChatSessionService chatSessionService) {
         this.chatModel = chatModelProvider.getIfAvailable();
         this.properties = properties;
         this.productEmbeddingService = productEmbeddingService;
+        this.chatSessionService = chatSessionService;
         this.latencyTimer = Timer.builder("ai.chat.latency")
                 .description("Latency for AI chat completion")
                 .register(meterRegistry);
@@ -47,6 +51,10 @@ public class FashionAssistantService {
     }
 
     public String chat(String message) {
+        return chatWithContext(message, null, 0);
+    }
+
+    public String chatWithContext(String message, UUID sessionId, int maxHistoryMessages) {
         long startNs = System.nanoTime();
 
         if (!properties.enabled() || chatModel == null) {
@@ -64,7 +72,12 @@ public class FashionAssistantService {
                     "message exceeds maximum length of " + properties.maxMessageLength() + " characters");
         }
 
-        String prompt = buildPrompt(cleanedMessage);
+        String context = "";
+        if (sessionId != null && maxHistoryMessages > 0) {
+            context = chatSessionService.buildContextFromHistory(sessionId, maxHistoryMessages);
+        }
+
+        String prompt = buildPromptWithContext(cleanedMessage, context);
 
         try {
             String answer = invokeModelWithRetry(prompt);
@@ -116,11 +129,22 @@ public class FashionAssistantService {
         }
     }
 
-    private String buildPrompt(String cleanedMessage) {
-        return "Bạn là stylist AI cho một shop thời trang cao cấp. " +
-                "Trả lời ngắn gọn, thực tế, ưu tiên tư vấn phối đồ và gợi ý theo dịp sử dụng. " +
-                "Nếu người dùng không nói rõ, hãy hỏi thêm tối đa 1 câu để làm rõ nhu cầu.\n\n" +
-                "Yêu cầu người dùng: " + cleanedMessage;
+    private String buildPromptWithContext(String cleanedMessage, String context) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Bạn là stylist AI cho một shop thời trang cao cấp. ");
+        prompt.append("Trả lời ngắn gọn, thực tế, ưu tiên tư vấn phối đồ và gợi ý theo dịp sử dụng. ");
+        prompt.append("Nếu người dùng không nói rõ, hãy hỏi thêm tối đa 1 câu để làm rõ nhu cầu.\n\n");
+
+        if (!context.isEmpty()) {
+            prompt.append("Lịch sử trò chuyện gần đây:\n");
+            prompt.append(context);
+            prompt.append("\n");
+        }
+
+        prompt.append("Yêu cầu hiện tại: ");
+        prompt.append(cleanedMessage);
+
+        return prompt.toString();
     }
 
     private String normalize(String message) {
