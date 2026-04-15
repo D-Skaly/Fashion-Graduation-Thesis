@@ -4,24 +4,38 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, ArrowLeft, ShieldCheck } from "lucide-react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea"; // Using Textarea for address
+import { Form } from "@/components/ui/form";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+
+import { ShippingForm } from "@/components/checkout/ShippingForm";
+import { PaymentMethodSelector, PaymentMethod } from "@/components/checkout/PaymentMethodSelector";
+import { OrderSummary } from "@/components/checkout/OrderSummary";
+
+// Cart types
+interface CartItem {
+  id: string;
+  productVariantId: string;
+  productName: string;
+  size: string;
+  color: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+}
+
+interface Cart {
+  id: string;
+  items: CartItem[];
+  totalAmount: number;
+}
 
 // Validation Schema
 const checkoutSchema = z.object({
@@ -29,15 +43,27 @@ const checkoutSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   address: z.string().min(10, "Address must be at least 10 characters"),
   note: z.string().optional(),
+  paymentMethod: z.nativeEnum(PaymentMethod).default(PaymentMethod.COD),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
+
+const fetchCart = async (): Promise<Cart> => {
+  const { data } = await api.get("/cart");
+  return data;
+};
 
 export default function CheckoutPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // 1. Setup Form
+  // Fetch cart data
+  const { data: cart, isLoading: isCartLoading } = useQuery({
+    queryKey: ["cart"],
+    queryFn: fetchCart,
+  });
+
+  // Setup Form
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
@@ -45,31 +71,41 @@ export default function CheckoutPage() {
       phone: "",
       address: "",
       note: "",
+      paymentMethod: PaymentMethod.COD,
     },
   });
 
-  // 2. Setup Mutation
+  // Setup Order Mutation
   const orderMutation = useMutation({
     mutationFn: async (values: CheckoutFormValues) => {
-        // Backend expects { shippingAddress } inside body
-        // We might need to adjust based on exact backend DTO.
-        // Assuming PlaceOrderRequest(String shippingAddress)
-        // We'll concatenate values for now or just send address.
-        const payload = {
-            shippingAddress: `${values.fullName}, ${values.phone}, ${values.address} ${values.note ? `(Note: ${values.note})` : ''}`
-        };
-        const response = await api.post("/orders/place", payload);
-        return response.data;
+      const shippingAddress = `${values.fullName}, ${values.phone}, ${values.address}${values.note ? ` (Note: ${values.note})` : ""}`;
+      
+      const payload = {
+        shippingAddress,
+        paymentMethod: values.paymentMethod,
+      };
+      
+      const response = await api.post("/orders", payload);
+      return response.data;
     },
     onSuccess: (data) => {
-        toast.success("Order placed successfully!");
-        queryClient.invalidateQueries({ queryKey: ["cart"] }); // Cart is now empty
-        // Redirect to success page or order history
-        router.push("/checkout/success"); 
+      toast.success("Order placed successfully!");
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      
+      // Handle different payment methods
+      const paymentMethod = form.getValues("paymentMethod");
+      if (paymentMethod === PaymentMethod.VNPAY || paymentMethod === PaymentMethod.MOMO) {
+        // Redirect to payment gateway
+        const orderId = data.data?.id;
+        router.push(`/payment/callback?orderId=${orderId}&method=${paymentMethod}`);
+      } else {
+        // COD - go to success page
+        router.push("/checkout/success");
+      }
     },
     onError: (error: any) => {
-        console.error("Order failed:", error);
-        toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
+      console.error("Order failed:", error);
+      toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
     }
   });
 
@@ -77,112 +113,86 @@ export default function CheckoutPage() {
     orderMutation.mutate(values);
   }
 
+  // Redirect to cart if cart is empty
+  if (!isCartLoading && (!cart || cart.items.length === 0)) {
+    return (
+      <div className="container mx-auto px-4 py-16 max-w-2xl">
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Your cart is empty. Please add items before checkout.
+          </AlertDescription>
+        </Alert>
+        <div className="mt-6 text-center">
+          <Button asChild>
+            <Link href="/shop">Continue Shopping</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8">
       <Link href="/cart" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6">
         <ArrowLeft className="h-4 w-4 mr-2" /> Back to Cart
       </Link>
 
-      <div className="grid md:grid-cols-2 gap-12">
-        {/* Left Column: Form */}
-        <div>
-           <div className="mb-8">
-             <h1 className="text-3xl font-bold mb-2">Checkout</h1>
-             <p className="text-muted-foreground">Please enter your shipping details.</p>
-           </div>
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
-           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="fullName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Left Column: Forms */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Shipping Information */}
+                <div className="bg-card border rounded-lg p-6">
+                  <ShippingForm disabled={orderMutation.isPending} />
+                </div>
 
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="0912345678" type="tel" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Payment Method */}
+                <div className="bg-card border rounded-lg p-6">
+                  <PaymentMethodSelector disabled={orderMutation.isPending} />
+                </div>
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Shipping Address</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                            placeholder="123 Street Name, District, City" 
-                            className="resize-none min-h-[100px]"
-                            {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Right Column: Order Summary */}
+              <div className="lg:col-span-1">
+                <div className="sticky top-24 space-y-4">
+                  <OrderSummary 
+                    cart={cart}
+                    isLoading={isCartLoading}
+                    shippingCost={0}
+                  />
 
-                 <FormField
-                  control={form.control}
-                  name="note"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Order Note (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Gate code, delivery instructions..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <Separator />
 
-                <Button type="submit" size="lg" className="w-full text-lg h-12" disabled={orderMutation.isPending}>
+                  {/* Submit Button */}
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="w-full text-lg h-14" 
+                    disabled={orderMutation.isPending || isCartLoading}
+                  >
                     {orderMutation.isPending ? (
-                         <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Processing...
-                         </>
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
                     ) : (
-                        "Place Order"
+                      `Place Order ${cart ? `($${cart.totalAmount.toFixed(2)})` : ""}`
                     )}
-                </Button>
-            </form>
-          </Form>
-        </div>
+                  </Button>
 
-        {/* Right Column: Trust Badges / Info */}
-        <div className="hidden md:flex flex-col justify-center space-y-8 p-8 bg-secondary/10 rounded-xl">
-             <div className="flex items-start gap-4">
-                 <ShieldCheck className="h-10 w-10 text-primary" />
-                 <div>
-                     <h3 className="font-bold text-lg">Secure Payment</h3>
-                     <p className="text-muted-foreground text-sm">Your payment information is processed securely. We do not store credit card details.</p>
-                 </div>
-             </div>
-             {/* Can add more trust signals here */}
-             <Separator />
-             <div className="text-center">
-                 <p className="font-medium">Need Help?</p>
-                 <p className="text-sm text-muted-foreground">Contact us at support@fashionthesis.com</p>
-             </div>
-        </div>
+                  <p className="text-xs text-center text-muted-foreground">
+                    By placing this order, you agree to our Terms of Service and Privacy Policy
+                  </p>
+                </div>
+              </div>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

@@ -173,12 +173,12 @@
 - [x] `PaymentController.java` - Webhook handlers (VNPay/Momo)
 - [ ] `PaymentCallback.tsx` - Frontend callback page (Phase 3.2)
 
-### Frontend - Checkout (Phase 3.2)
-- [ ] `CheckoutPage.tsx` - Main checkout
-- [ ] `ShippingForm.tsx` - Address input
-- [ ] `PaymentMethodSelector.tsx`
-- [ ] `OrderSummary.tsx`
-- [ ] `CheckoutProvider.tsx` - Context
+### Frontend - Checkout (Phase 3.2) ✅ **HOÀN THÀNH**
+- [x] `CheckoutPage.tsx` - Main checkout
+- [x] `ShippingForm.tsx` - Address input
+- [x] `PaymentMethodSelector.tsx`
+- [x] `OrderSummary.tsx`
+- [x] `CheckoutProvider.tsx` - Context
 
 ### Frontend - Order Tracking (Phase 3.2)
 - [ ] `OrderListPage.tsx`
