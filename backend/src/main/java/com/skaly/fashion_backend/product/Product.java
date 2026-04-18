@@ -108,6 +108,17 @@ public class Product {
     @Column(name = "embedding_vector", columnDefinition = "vector(1536)")
     private String embeddingVectorStr;
 
+    /**
+     * Dedicated style vector for FI-Agent module.
+     *
+     * Kept separate from generic embedding_vector so that stylist recommendations can
+     * evolve its own dimensionality and retraining lifecycle without affecting other
+     * embedding-based features.
+     */
+    @org.hibernate.annotations.ColumnTransformer(read = "style_vector::text", write = "?::vector")
+    @Column(name = "style_vector", columnDefinition = "vector(384)")
+    private String styleVectorStr;
+
     public void setEmbeddingVector(float[] vector) {
         if (vector == null) {
             this.embeddingVectorStr = null;
@@ -120,6 +131,27 @@ public class Product {
         if (embeddingVectorStr == null)
             return null;
         String[] parts = embeddingVectorStr.replace("[", "").replace("]", "").split(",");
+        float[] res = new float[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            res[i] = Float.parseFloat(parts[i].trim());
+        }
+        return res;
+    }
+
+    public void setStyleVector(float[] vector) {
+        if (vector == null) {
+            this.styleVectorStr = null;
+            return;
+        }
+        this.styleVectorStr = java.util.Arrays.toString(vector);
+    }
+
+    public float[] getStyleVector() {
+        if (styleVectorStr == null) {
+            return null;
+        }
+
+        String[] parts = styleVectorStr.replace("[", "").replace("]", "").split(",");
         float[] res = new float[parts.length];
         for (int i = 0; i < parts.length; i++) {
             res[i] = Float.parseFloat(parts[i].trim());

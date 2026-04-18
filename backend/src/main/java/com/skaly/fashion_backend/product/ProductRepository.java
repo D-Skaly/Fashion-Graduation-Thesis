@@ -15,6 +15,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query(value = "SELECT * FROM products p WHERE p.embedding_vector IS NOT NULL ORDER BY p.embedding_vector <=> cast(:vector as vector) LIMIT :limit", nativeQuery = true)
     List<Product> findTopKByEmbeddingVectorClosestTo(@Param("vector") float[] vector, @Param("limit") int limit);
 
+    @Query(value = "SELECT * FROM products p WHERE p.style_vector IS NOT NULL ORDER BY p.style_vector <=> cast(:vector as vector) LIMIT :limit", nativeQuery = true)
+    List<Product> findTopKByStyleVectorClosestTo(@Param("vector") float[] vector, @Param("limit") int limit);
+
     // Search by keyword (name or description)
     @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.images WHERE p.isActive = true AND " +
            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
