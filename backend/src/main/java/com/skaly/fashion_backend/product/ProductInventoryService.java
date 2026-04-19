@@ -25,6 +25,7 @@ public class ProductInventoryService {
     public void reduceStock(UUID variantId, Integer quantity) {
         ProductVariant variant = productVariantRepository.findByIdForUpdate(variantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product Variant not found with id: " + variantId));
+        ProductVariant variant = getProductVariantById(variantId);
 
         if (variant.getStockQuantity() < quantity) {
             throw new IllegalStateException(
