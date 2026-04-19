@@ -35,6 +35,9 @@ public class EncryptionUtil {
      */
     public static String encrypt(String plaintext, String base64Key) throws Exception {
         byte[] keyBytes = Base64.getDecoder().decode(base64Key);
+        if (keyBytes.length != 32) {
+            throw new IllegalArgumentException("Invalid AES key length. Must be 256-bit (32 bytes)");
+        }
         SecretKeySpec secretKey = new SecretKeySpec(keyBytes, ALGORITHM);
 
         // Generate random IV
@@ -45,7 +48,9 @@ public class EncryptionUtil {
         GCMParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
 
-        byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
+        byte[] encryptedBytes = cipher.doFinal(
+            plaintext != null ? plaintext.getBytes(StandardCharsets.UTF_8) : new byte[0]
+        );
 
         // Combine IV and encrypted data
         ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encryptedBytes.length);

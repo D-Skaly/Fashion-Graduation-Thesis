@@ -1,10 +1,13 @@
 package com.skaly.fashion_backend.security;
 
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@Converter(autoApply = true)
 public class AttributeEncryptor implements AttributeConverter<String, String> {
 
     @Value("${app.security.encryption.key}")
