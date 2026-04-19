@@ -22,13 +22,14 @@ spring:
               - email
               - profile
   datasource:
-    url: jdbc:postgresql://localhost:5432/fashion_db_dev
+    url: jdbc:postgresql://localhost:5432/fashion_db_dev?options=-c%20timezone=UTC
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
+      connection-init-sql: SET TIME ZONE 'UTC'
   flyway:
     enabled: false
     baseline-on-migrate: true
@@ -42,6 +43,8 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         use_sql_comments: true
+        jdbc:
+          time_zone: UTC
   data:
     redis:
       host: localhost
@@ -61,6 +64,26 @@ spring:
         index-type: HNSW
         distance-type: COSINE_DISTANCE
         dimensions: 384
+  # --- Mail (Optional - mock values for dev) ---
+  mail:
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:1025}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+    default-encoding: UTF-8
+    from: ${SPRING_MAIL_FROM:noreply@fashion.local}
+
+# --- Application Settings ---
+app:
+  frontend:
+    url: ${APP_FRONTEND_URL:http://localhost:3000}
 
 server:
   port: 8080
@@ -114,7 +137,7 @@ application:
       expiration: 604800000
       max-tokens-per-user: 5
     encryption:
-      key: fashion-encryption-key-change-in-production
+      key: ${APP_SECURITY_ENCRYPTION_KEY:fashion-encryption-key-change-in-production}
   ai:
     assistant:
       enabled: false

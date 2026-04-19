@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: fashion_db_dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
+      TZ: UTC
+    command: postgres -c timezone=UTC
     ports:
       - "5432:5432"
     volumes:
