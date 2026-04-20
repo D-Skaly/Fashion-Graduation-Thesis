@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.service;
 
 import com.skaly.fashion_backend.email.EmailService;
-import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.OrderEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -15,14 +15,14 @@ public class AsyncOrderService {
     private final EmailService emailService;
 
     @Async("taskExecutor")
-    public void processOrderAsync(Order order) {
+    public void processOrderAsync(OrderEntity order) {
         try {
             log.info("Processing order asynchronously: {}", order.getId());
             
             // Simulate heavy processing
             Thread.sleep(1000);
             
-            log.info("Order processed successfully: {}", order.getId());
+            log.info("OrderEntity processed successfully: {}", order.getId());
         } catch (InterruptedException e) {
             log.error("Error processing order: {}", order.getId(), e);
             Thread.currentThread().interrupt();
@@ -35,7 +35,7 @@ public class AsyncOrderService {
         try {
             log.info("Sending order confirmation email asynchronously for order: {}", orderNumber);
             emailService.sendOrderConfirmationEmail(to, orderNumber, customerName, totalAmount, orderDetailsUrl);
-            log.info("Order confirmation email sent successfully for order: {}", orderNumber);
+            log.info("OrderEntity confirmation email sent successfully for order: {}", orderNumber);
         } catch (Exception e) {
             log.error("Error sending order confirmation email for order: {}", orderNumber, e);
         }
@@ -49,10 +49,11 @@ public class AsyncOrderService {
             // Simulate heavy report generation
             Thread.sleep(5000);
             
-            log.info("Order report generated successfully");
+            log.info("OrderEntity report generated successfully");
         } catch (InterruptedException e) {
             log.error("Error generating order report", e);
             Thread.currentThread().interrupt();
         }
     }
 }
+

@@ -1,12 +1,14 @@
 package com.skaly.fashion_backend.order;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.skaly.fashion_backend.order.Order;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-public interface OrderRepository extends JpaRepository<Order, UUID> {
+public interface OrderRepository {
+    Order save(Order order);
+    Optional<Order> findById(UUID id);
     List<Order> findByUserId(UUID userId);
 }
+

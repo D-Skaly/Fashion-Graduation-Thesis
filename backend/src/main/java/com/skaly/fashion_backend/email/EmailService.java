@@ -61,7 +61,7 @@ public class EmailService {
                 "totalAmount", totalAmount,
                 "orderDetailsUrl", orderDetailsUrl
         );
-        sendEmail(to, "Order Confirmation - " + orderNumber, "order-confirmation", variables);
+        sendEmail(to, "OrderEntity Confirmation - " + orderNumber, "order-confirmation", variables);
     }
 
     @Async
@@ -73,7 +73,7 @@ public class EmailService {
                 "carrier", carrier,
                 "trackingUrl", trackingUrl
         );
-        sendEmail(to, "Your Order Has Been Shipped - " + orderNumber, "shipping-notification", variables);
+        sendEmail(to, "Your OrderEntity Has Been Shipped - " + orderNumber, "shipping-notification", variables);
     }
 
     @Async

@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.cart;
 
-import com.skaly.fashion_backend.product.Product;
+import com.skaly.fashion_backend.product.ProductEntity;
 import com.skaly.fashion_backend.product.ProductRepository;
-import com.skaly.fashion_backend.product.ProductVariant;
+import com.skaly.fashion_backend.product.ProductVariantEntity;
 import com.skaly.fashion_backend.product.ProductVariantRepository;
 import com.skaly.fashion_backend.user.Role;
 import com.skaly.fashion_backend.user.User;
@@ -58,13 +58,13 @@ public class CartMergeBenchmarkTest {
         int totalRequests = 1000;
 
         // 1. Setup global product
-        Product product = productRepository.save(Product.builder()
+        ProductEntity product = productRepository.save(ProductEntity.builder()
                 .name("Benchmark Shirt")
                 .description("Perf test")
                 .basePrice(new BigDecimal("100"))
                 .build());
 
-        ProductVariant variant = productVariantRepository.save(ProductVariant.builder()
+        ProductVariantEntity variant = productVariantRepository.save(ProductVariantEntity.builder()
                 .product(product)
                 .size("M")
                 .color("Black")

@@ -10,3 +10,4 @@ public record ProductVariantDto(
                 BigDecimal priceAdjustment,
                 String skuCode) {
 }
+

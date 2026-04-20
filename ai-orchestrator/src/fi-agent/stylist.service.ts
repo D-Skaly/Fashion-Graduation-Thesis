@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { LlmClient } from '../common/llm/llm.client';
+import { Inject, Injectable } from '@nestjs/common';
+import { LLM_PROVIDER, LlmProvider } from '../common/llm/llm-provider.interface';
 import { StylistAdviceRequestDto, StylistAdviceResponseDto } from './dto/stylist.dto';
 import { SpringFiAgentGateway } from './spring-fiagent.gateway';
 
@@ -7,7 +7,8 @@ import { SpringFiAgentGateway } from './spring-fiagent.gateway';
 export class StylistService {
   constructor(
     private readonly springGateway: SpringFiAgentGateway,
-    private readonly llmClient: LlmClient,
+    @Inject(LLM_PROVIDER)
+    private readonly llmProvider: LlmProvider,
   ) {}
 
   /**
@@ -37,7 +38,7 @@ Rules:
 - Keep tone consultative and specific.
 `;
 
-    const advice = await this.llmClient.complete(prompt);
+    const advice = await this.llmProvider.complete(prompt);
 
     return {
       recommendedProducts: candidates,

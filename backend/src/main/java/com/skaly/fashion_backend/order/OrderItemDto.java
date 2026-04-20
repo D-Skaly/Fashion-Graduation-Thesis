@@ -12,3 +12,4 @@ public record OrderItemDto(
         BigDecimal snapshotPrice,
         BigDecimal subtotal) {
 }
+

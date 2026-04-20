@@ -22,4 +22,9 @@ export class StrategistController {
   async reviewDraft(@Body() body: StrategistReviewDto): Promise<StrategistFinalInsightDto> {
     return this.strategistService.reviewDraft(body);
   }
+
+  @Post('plan')
+  async createPlan(@Body() body: { goal: string }) {
+    return this.strategistService.createPlanFromGoal(body.goal);
+  }
 }

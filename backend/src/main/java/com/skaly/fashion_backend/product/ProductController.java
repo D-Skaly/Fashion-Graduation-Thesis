@@ -29,8 +29,18 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<ProductResponse>>> getAllProducts(
+            @RequestParam(required = false) UUID category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sort,
             @PageableDefault(size = 10) Pageable pageable) {
-        Page<ProductResponse> products = productService.getAllProducts(pageable);
+        Page<ProductResponse> products;
+        if (category != null || minPrice != null || maxPrice != null) {
+            products = productService.filterProducts(category, minPrice, maxPrice, sortBy, sort, pageable);
+        } else {
+            products = productService.getAllProducts(pageable);
+        }
         return ResponseEntity.ok(ApiResponse.success(products));
     }
 
@@ -54,19 +64,6 @@ public class ProductController {
             @RequestParam String keyword,
             @PageableDefault(size = 12) Pageable pageable) {
         Page<ProductResponse> products = productService.searchProducts(keyword, pageable);
-        return ResponseEntity.ok(ApiResponse.success(products));
-    }
-
-    // Filter products with pagination
-    @GetMapping
-    public ResponseEntity<ApiResponse<Page<ProductResponse>>> getProducts(
-            @RequestParam(required = false) UUID category,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "DESC") String sort,
-            @PageableDefault(size = 12) Pageable pageable) {
-        Page<ProductResponse> products = productService.filterProducts(category, minPrice, maxPrice, sortBy, sort, pageable);
         return ResponseEntity.ok(ApiResponse.success(products));
     }
 
@@ -125,3 +122,4 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
+

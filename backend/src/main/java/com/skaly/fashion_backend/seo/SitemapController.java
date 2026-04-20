@@ -28,7 +28,7 @@ public class SitemapController {
         sitemap.append("    <priority>1.0</priority>\n");
         sitemap.append("  </url>\n");
 
-        // Product pages
+        // ProductEntity pages
         productRepository.findAll().forEach(product -> {
             sitemap.append("  <url>\n");
             sitemap.append("    <loc>https://fashion-store.com/products/").append(product.getSlug()).append("</loc>\n");

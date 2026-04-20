@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.wishlist;
 
-import com.skaly.fashion_backend.product.Product;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.product.ProductEntity;
+import com.skaly.fashion_backend.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,11 +27,11 @@ public class Wishlist {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private ProductEntity product;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -41,3 +41,5 @@ public class Wishlist {
         createdAt = LocalDateTime.now();
     }
 }
+
+

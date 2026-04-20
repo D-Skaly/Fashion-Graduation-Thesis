@@ -1,6 +1,9 @@
 package com.skaly.fashion_backend.order;
 
 import com.skaly.fashion_backend.common.ApiResponse;
+import com.skaly.fashion_backend.order.application.PlaceOrderUseCase;
+import com.skaly.fashion_backend.order.OrderStatusHistoryEntity;
+import com.skaly.fashion_backend.order.ShippingEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,12 +18,13 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
+    private final PlaceOrderUseCase placeOrderUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponse<OrderDto>> placeOrder(
             @RequestBody PlaceOrderRequest request,
             Authentication authentication) {
-        return ResponseEntity.ok(ApiResponse.success(orderService.placeOrder(authentication.getName(), request)));
+        return ResponseEntity.ok(ApiResponse.success(placeOrderUseCase.execute(authentication.getName(), request)));
     }
 
     @GetMapping
@@ -45,13 +49,13 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}/status-history")
-    public ResponseEntity<ApiResponse<List<OrderStatusHistory>>> getOrderStatusHistory(
+    public ResponseEntity<ApiResponse<List<OrderStatusHistoryEntity>>> getOrderStatusHistory(
             @PathVariable UUID orderId) {
         return ResponseEntity.ok(ApiResponse.success(orderService.getOrderStatusHistory(orderId)));
     }
 
     @GetMapping("/{orderId}/tracking")
-    public ResponseEntity<ApiResponse<Shipping>> getOrderTracking(
+    public ResponseEntity<ApiResponse<ShippingEntity>> getOrderTracking(
             @PathVariable UUID orderId) {
         return ResponseEntity.ok(ApiResponse.success(orderService.getOrderShipping(orderId)));
     }
@@ -59,3 +63,4 @@ public class OrderController {
     // DTO Records
     public record CancelOrderRequest(String reason) {}
 }
+

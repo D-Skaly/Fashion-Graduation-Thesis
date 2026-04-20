@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,7 +27,7 @@ public class ChatSession {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @Column(length = 255)
     private String title;
@@ -68,3 +68,5 @@ public class ChatSession {
         message.setSession(null);
     }
 }
+
+

@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.wishlist;
 
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
-import com.skaly.fashion_backend.product.Product;
+import com.skaly.fashion_backend.product.ProductEntity;
 import com.skaly.fashion_backend.product.ProductMapper;
 import com.skaly.fashion_backend.product.ProductRepository;
 import com.skaly.fashion_backend.user.User;
@@ -29,11 +29,11 @@ public class WishlistService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("ProductEntity not found with id: " + productId));
 
         if (wishlistRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new IllegalStateException("Product already in wishlist");
+            throw new IllegalStateException("ProductEntity already in wishlist");
         }
 
         Wishlist wishlist = Wishlist.builder()
@@ -59,7 +59,7 @@ public class WishlistService {
     @Transactional
     public void removeFromWishlist(UUID userId, UUID productId) {
         if (!wishlistRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new ResourceNotFoundException("Product not found in wishlist");
+            throw new ResourceNotFoundException("ProductEntity not found in wishlist");
         }
         wishlistRepository.deleteByUserIdAndProductId(userId, productId);
     }
@@ -75,7 +75,7 @@ public class WishlistService {
     @Transactional
     public WishlistResponse moveToCart(UUID userId, UUID productId) {
         Wishlist wishlist = wishlistRepository.findByUserIdAndProductId(userId, productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found in wishlist"));
+                .orElseThrow(() -> new ResourceNotFoundException("ProductEntity not found in wishlist"));
         
         // Delete from wishlist after adding to cart logic should be handled in CartService
         wishlistRepository.delete(wishlist);
@@ -92,3 +92,4 @@ public class WishlistService {
         );
     }
 }
+

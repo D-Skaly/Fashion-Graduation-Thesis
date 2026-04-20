@@ -14,3 +14,4 @@ public class ProductUpdatedEvent extends ApplicationEvent {
         this.productId = productId;
     }
 }
+

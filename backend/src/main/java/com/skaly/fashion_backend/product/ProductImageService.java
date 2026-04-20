@@ -19,20 +19,20 @@ public class ProductImageService {
     private final StorageService storageService;
 
     @Transactional(readOnly = true)
-    public List<ProductImage> getProductImages(UUID productId) {
+    public List<ProductImageEntity> getProductImages(UUID productId) {
         return productImageRepository.findByProductIdOrderBySortOrderAsc(productId);
     }
 
     @Transactional(readOnly = true)
-    public ProductImage getPrimaryImage(UUID productId) {
+    public ProductImageEntity getPrimaryImage(UUID productId) {
         return productImageRepository.findByProductIdAndIsPrimaryTrue(productId)
                 .orElse(null);
     }
 
     @Transactional
-    public ProductImage addImage(UUID productId, String imageUrl, String alt, boolean isPrimary) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
+    public ProductImageEntity addImage(UUID productId, String imageUrl, String alt, boolean isPrimary) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("ProductEntity not found: " + productId));
 
         if (isPrimary) {
             productImageRepository.clearPrimaryImage(productId);
@@ -40,7 +40,7 @@ public class ProductImageService {
 
         int sortOrder = (int) productImageRepository.countByProductId(productId);
 
-        ProductImage image = ProductImage.builder()
+        ProductImageEntity image = ProductImageEntity.builder()
                 .product(product)
                 .url(imageUrl)
                 .alt(alt != null ? alt : product.getName())
@@ -53,7 +53,7 @@ public class ProductImageService {
 
     @Transactional
     public void setPrimaryImage(UUID imageId) {
-        ProductImage image = productImageRepository.findById(imageId)
+        ProductImageEntity image = productImageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("Image not found: " + imageId));
 
         productImageRepository.clearPrimaryImage(image.getProduct().getId());
@@ -63,7 +63,7 @@ public class ProductImageService {
 
     @Transactional
     public void deleteImage(UUID imageId) {
-        ProductImage image = productImageRepository.findById(imageId)
+        ProductImageEntity image = productImageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("Image not found: " + imageId));
 
         // Delete from storage
@@ -78,10 +78,10 @@ public class ProductImageService {
 
         // If deleted image was primary, set new primary
         if (Boolean.TRUE.equals(image.getIsPrimary())) {
-            List<ProductImage> remainingImages = productImageRepository
+            List<ProductImageEntity> remainingImages = productImageRepository
                     .findByProductIdOrderBySortOrderAsc(image.getProduct().getId());
             if (!remainingImages.isEmpty()) {
-                ProductImage newPrimary = remainingImages.get(0);
+                ProductImageEntity newPrimary = remainingImages.get(0);
                 newPrimary.setIsPrimary(true);
                 productImageRepository.save(newPrimary);
             }
@@ -90,7 +90,7 @@ public class ProductImageService {
 
     @Transactional
     public void updateImageOrder(UUID productId, List<UUID> imageIds) {
-        List<ProductImage> images = productImageRepository.findByProductIdOrderBySortOrderAsc(productId);
+        List<ProductImageEntity> images = productImageRepository.findByProductIdOrderBySortOrderAsc(productId);
 
         for (int i = 0; i < imageIds.size(); i++) {
             final int order = i;
@@ -112,3 +112,4 @@ public class ProductImageService {
         return parts[parts.length - 1];
     }
 }
+

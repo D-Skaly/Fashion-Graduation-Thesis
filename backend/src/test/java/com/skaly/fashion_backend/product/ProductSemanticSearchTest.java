@@ -50,11 +50,11 @@ public class ProductSemanticSearchTest {
             return fakeEmbedding2;
         });
 
-        Category cat = new Category();
+        CategoryEntity cat = new CategoryEntity();
         cat.setName("Women " + UUID.randomUUID().toString().substring(0, 8));
         cat.setDescription("Women Clothing");
         cat.setSlug("women-" + UUID.randomUUID().toString().substring(0, 8));
-        Category savedCat = categoryRepository.save(cat);
+        CategoryEntity savedCat = categoryRepository.save(cat);
 
         // Create product (this will fire ProductCreatedEvent and trigger Embedding)
         CreateProductRequest req = new CreateProductRequest("Đầm dạ hội màu đen", "100% lụa", BigDecimal.valueOf(100),
@@ -68,7 +68,7 @@ public class ProductSemanticSearchTest {
                         .orElse(false));
 
         // Verify vector is saved
-        Product savedProduct = productRepository.findById(res.id()).orElseThrow();
+        ProductEntity savedProduct = productRepository.findById(res.id()).orElseThrow();
         assertThat(savedProduct.getEmbeddingVector()).isNotNull();
         assertThat(savedProduct.getEmbeddingVector()[0]).isEqualTo(0.9f);
 

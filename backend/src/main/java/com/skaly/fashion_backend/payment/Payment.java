@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment;
 
-import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.OrderEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,7 +29,7 @@ public class Payment {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private Order order;
+    private OrderEntity order;
 
     @Column(name = "transaction_id", unique = true)
     private String transactionId;
@@ -91,3 +91,4 @@ public class Payment {
         this.status = PaymentStatus.REFUNDED;
     }
 }
+

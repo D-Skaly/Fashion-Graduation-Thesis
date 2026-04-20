@@ -11,3 +11,4 @@ public record CreateProductRequest(
         UUID categoryId,
         List<ProductVariantDto> variants) {
 }
+

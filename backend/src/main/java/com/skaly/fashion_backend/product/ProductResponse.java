@@ -16,3 +16,4 @@ public record ProductResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
 }
+

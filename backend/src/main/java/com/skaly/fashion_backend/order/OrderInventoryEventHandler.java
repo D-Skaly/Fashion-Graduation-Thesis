@@ -2,6 +2,9 @@ package com.skaly.fashion_backend.order;
 
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import com.skaly.fashion_backend.events.OrderCreatedEvent;
+import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.OrderItem;
+import com.skaly.fashion_backend.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,9 +28,10 @@ public class OrderInventoryEventHandler {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found for stock update: " + event.getOrderId()));
 
         for (OrderItem item : order.getItems()) {
-            orderInventoryGateway.reduceStock(item.getProductVariant().getId(), item.getQuantity());
+            orderInventoryGateway.reduceStock(item.getProductVariantId(), item.getQuantity());
         }
 
         log.info("Stock successfully updated for order {}", event.getOrderId());
     }
 }
+

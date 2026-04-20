@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.product.review;
 
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +26,7 @@ public class ReviewHelpfulVote {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
@@ -40,3 +40,5 @@ public class ReviewHelpfulVote {
         createdAt = LocalDateTime.now();
     }
 }
+
+

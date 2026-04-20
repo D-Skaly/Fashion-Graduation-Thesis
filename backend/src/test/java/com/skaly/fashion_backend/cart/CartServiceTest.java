@@ -3,9 +3,9 @@ package com.skaly.fashion_backend.cart;
 import org.springframework.ai.vectorstore.VectorStore;
 import com.skaly.fashion_backend.coupon.Coupon;
 import com.skaly.fashion_backend.coupon.CouponRepository;
-import com.skaly.fashion_backend.product.Product;
+import com.skaly.fashion_backend.product.ProductEntity;
 import com.skaly.fashion_backend.product.ProductRepository;
-import com.skaly.fashion_backend.product.ProductVariant;
+import com.skaly.fashion_backend.product.ProductVariantEntity;
 import com.skaly.fashion_backend.product.ProductVariantRepository;
 import com.skaly.fashion_backend.user.Role;
 import com.skaly.fashion_backend.user.User;
@@ -47,8 +47,8 @@ class CartServiceTest {
     private CouponRepository couponRepository;
 
     private User testUser;
-    private ProductVariant testVariant;
-    private ProductVariant outOfStockVariant;
+    private ProductVariantEntity testVariant;
+    private ProductVariantEntity outOfStockVariant;
 
     @BeforeEach
     void setUp() {
@@ -59,14 +59,16 @@ class CartServiceTest {
                 .build();
         userRepository.save(testUser);
 
-        Product product = Product.builder()
+        ProductEntity product = ProductEntity.builder()
                 .name("Test Shirt")
+                .sku("TS-SHIRT-001")
+                .slug("test-shirt-001")
                 .description("A high quality test shirt")
                 .basePrice(new BigDecimal("100.00"))
                 .build();
         productRepository.save(product);
 
-        testVariant = ProductVariant.builder()
+        testVariant = ProductVariantEntity.builder()
                 .product(product)
                 .size("M")
                 .color("Red")
@@ -75,7 +77,7 @@ class CartServiceTest {
                 .priceAdjustment(BigDecimal.ZERO)
                 .build();
 
-        outOfStockVariant = ProductVariant.builder()
+        outOfStockVariant = ProductVariantEntity.builder()
                 .product(product)
                 .size("S")
                 .color("Blue")

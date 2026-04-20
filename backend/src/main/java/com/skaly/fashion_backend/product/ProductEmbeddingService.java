@@ -44,13 +44,13 @@ public class ProductEmbeddingService {
     }
 
     private void generateEmbeddingForProductId(UUID productId, String type) {
-        log.info("Generating embedding for {} Product ID: {}", type, productId);
+        log.info("Generating embedding for {} ProductEntity ID: {}", type, productId);
 
         productRepository.findById(productId).ifPresent(product -> {
             try {
                 // Prepare content for embedding
                 String categoryName = product.getCategory() != null ? product.getCategory().getName() : "";
-                String contentToEmbed = String.format("Product: %s. Category: %s. Description: %s",
+                String contentToEmbed = String.format("ProductEntity: %s. CategoryEntity: %s. Description: %s",
                         product.getName(),
                         categoryName,
                         product.getDescription() != null ? product.getDescription() : "");
@@ -61,9 +61,9 @@ public class ProductEmbeddingService {
                 // Update product
                 product.setEmbeddingVector(embeddingArray);
                 productRepository.save(product);
-                log.info("Successfully saved embedding for Product ID: {}", productId);
+                log.info("Successfully saved embedding for ProductEntity ID: {}", productId);
             } catch (Exception e) {
-                log.error("Failed to generate embedding for Product ID: {}", productId, e);
+                log.error("Failed to generate embedding for ProductEntity ID: {}", productId, e);
             }
         });
     }
@@ -72,3 +72,4 @@ public class ProductEmbeddingService {
         return embeddingModel.embed(query);
     }
 }
+

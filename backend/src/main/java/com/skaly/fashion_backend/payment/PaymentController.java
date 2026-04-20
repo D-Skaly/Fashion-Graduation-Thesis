@@ -36,7 +36,7 @@ public class PaymentController {
             @AuthenticationPrincipal User user) {
         Payment payment = paymentService.getPaymentById(id);
         // Check if user owns this payment
-        if (!payment.getOrder().getUser().getId().equals(user.getId())) {
+        if (!payment.getOrder().getUserId().equals(user.getId())) {
             throw new SecurityException("Not authorized to view this payment");
         }
         return ResponseEntity.ok(ApiResponse.success(mapToResponse(payment)));
@@ -48,7 +48,7 @@ public class PaymentController {
             @AuthenticationPrincipal User user) {
         Payment payment = paymentService.getPaymentByOrderId(orderId);
         // Check if user owns this order
-        if (!payment.getOrder().getUser().getId().equals(user.getId())) {
+        if (!payment.getOrder().getUserId().equals(user.getId())) {
             throw new SecurityException("Not authorized to view this payment");
         }
         return ResponseEntity.ok(ApiResponse.success(mapToResponse(payment)));

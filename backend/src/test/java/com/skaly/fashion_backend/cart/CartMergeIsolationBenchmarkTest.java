@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.cart;
 
-import com.skaly.fashion_backend.product.Product;
+import com.skaly.fashion_backend.product.ProductEntity;
 import com.skaly.fashion_backend.product.ProductRepository;
-import com.skaly.fashion_backend.product.ProductVariant;
+import com.skaly.fashion_backend.product.ProductVariantEntity;
 import com.skaly.fashion_backend.product.ProductVariantRepository;
 import com.skaly.fashion_backend.user.Role;
 import com.skaly.fashion_backend.user.User;
@@ -86,12 +86,12 @@ public class CartMergeIsolationBenchmarkTest {
         int totalRequests = 100;
         String batchId = UUID.randomUUID().toString().substring(0, 5);
 
-        Product product = productRepository.save(Product.builder()
-                .name("Iso-Product-" + batchId)
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+                .name("Iso-ProductEntity-" + batchId)
                 .basePrice(new BigDecimal("100"))
                 .build());
 
-        ProductVariant variant = productVariantRepository.save(ProductVariant.builder()
+        ProductVariantEntity variant = productVariantRepository.save(ProductVariantEntity.builder()
                 .product(product)
                 .size("M").color("Red")
                 .skuCode("ISO-" + batchId)

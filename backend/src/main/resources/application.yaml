@@ -17,7 +17,7 @@ spring:
               - email
               - profile
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/fashion_db?options=-c%20timezone=UTC
+    url: jdbc:postgresql://127.0.0.1:5432/fashion_db_dev?options=-c%20timezone=UTC
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -37,6 +37,8 @@ spring:
       host: localhost
       port: 6379
   ai:
+    service:
+      url: ${AI_SERVICE_URL:http://localhost:8001}
     google:
       genai:
         api-key: ${GEMINI_API_KEY:}
@@ -81,14 +83,38 @@ application:
       secret-key: ${JWT_SECRET_KEY:change-me-in-production}
       expiration: ${JWT_EXPIRATION:86400000}
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      aiAssistant:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      aiAssistant:
+        maxAttempts: ${AI_ASSISTANT_RETRY_MAX_ATTEMPTS:3}
+        waitDuration: ${AI_ASSISTANT_RETRY_BACKOFF_MS:250ms}
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+  timelimiter:
+    instances:
+      aiAssistant:
+        timeoutDuration: ${AI_ASSISTANT_TIMEOUT_MS:8s}
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,circuitbreakers,retries
   endpoint:
     health:
       show-details: always
+      show-components: always
   health:
     defaults:
       enabled: true

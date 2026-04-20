@@ -1,8 +1,10 @@
 package com.skaly.fashion_backend.security;
 
+import com.skaly.fashion_backend.user.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -38,10 +40,39 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/health", "/error", "/swagger-ui/**",
-                                "/v3/api-docs/**", "/api/v1/products/**", "/api/v1/categories/**", "/api/v1/ai/**")
+                        // Public Endpoints
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/health", "/error", "/swagger-ui/**", "/v3/api-docs/**")
                         .permitAll()
+                        .requestMatchers("/robots.txt", "/sitemap.xml").permitAll()
+                        
+                        // ProductEntity & CategoryEntity Public Access (GET only)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**", "/api/v1/categories/**")
+                        .permitAll()
+                        
+                        // Increment view count is a public POST action
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/*/view")
+                        .permitAll()
+                        
+                        // Cart Public Access (Guest support)
+                        .requestMatchers("/api/v1/cart/**").permitAll()
+                        
+                        // Review Public Access (GET only)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
+                        
+                        // AI Public Access (Chat)
+                        .requestMatchers("/api/v1/ai/chat").permitAll()
+                        
+                        // Payment Webhooks Public Access
+                        .requestMatchers("/api/v1/payments/vnpay/callback", "/api/v1/payments/momo/callback").permitAll()
+                        
+                        // ADMIN restricted endpoints
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/fi-agent/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**", "/api/v1/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/products/**", "/api/v1/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**", "/api/v1/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/ai/reindex").hasRole("ADMIN")
+                        
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo

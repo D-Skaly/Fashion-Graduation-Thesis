@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.saga;
 
-import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.OrderEntity;
 import com.skaly.fashion_backend.order.OrderRepository;
 import com.skaly.fashion_backend.order.OrderStatus;
 
@@ -24,11 +24,11 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
     public void execute(OrderSagaContext context) {
         log.info("Creating order with orderNumber: {}", context.getOrderNumber());
         
-        Order order = orderRepository.findById(context.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderEntity order = orderRepository.findById(context.getOrderId())
+                .orElseThrow(() -> new RuntimeException("OrderEntity not found"));
         
         context.setOrderStatus(order.getStatus().name());
-        log.info("Order created successfully with status: {}", order.getStatus());
+        log.info("OrderEntity created successfully with status: {}", order.getStatus());
     }
 
     @Override
@@ -36,13 +36,13 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
         log.info("Compensating CreateOrder: cancelling order {}", context.getOrderId());
         
         try {
-            Order order = orderRepository.findById(context.getOrderId())
+            OrderEntity order = orderRepository.findById(context.getOrderId())
                     .orElse(null);
             
             if (order != null) {
                 order.setStatus(OrderStatus.CANCELLED);
                 orderRepository.save(order);
-                log.info("Order cancelled successfully");
+                log.info("OrderEntity cancelled successfully");
             }
         } catch (Exception e) {
             log.error("Failed to compensate CreateOrder", e);
@@ -54,3 +54,4 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
         return context.getOrderId() != null;
     }
 }
+

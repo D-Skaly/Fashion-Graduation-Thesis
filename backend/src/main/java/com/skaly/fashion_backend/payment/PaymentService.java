@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment;
 
-import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.OrderEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public Payment createPayment(Order order, PaymentMethod method, BigDecimal amount) {
+    public Payment createPayment(OrderEntity order, PaymentMethod method, BigDecimal amount) {
         Payment payment = Payment.builder()
                 .order(order)
                 .method(method)
@@ -92,3 +92,4 @@ public class PaymentService {
         }
     }
 }
+
