@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.order;
 
-import com.skaly.fashion_backend.product.ProductInventoryService;
-import com.skaly.fashion_backend.product.ProductVariantInternalResponse;
+import com.skaly.fashion_backend.product.application.ProductInventoryService;
+import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

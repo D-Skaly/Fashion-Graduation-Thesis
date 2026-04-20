@@ -13,7 +13,7 @@ import com.skaly.fashion_backend.order.PlaceOrderRequest;
 import com.skaly.fashion_backend.order.Order;
 import com.skaly.fashion_backend.order.OrderItem;
 import com.skaly.fashion_backend.order.OrderRepository;
-import com.skaly.fashion_backend.product.ProductVariantInternalResponse;
+import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
 import com.skaly.fashion_backend.user.api.dto.UserInternalResponse;
 import com.skaly.fashion_backend.user.application.UserInternalService;
 import lombok.RequiredArgsConstructor;

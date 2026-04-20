@@ -1,5 +1,4 @@
 package com.skaly.fashion_backend.product.infrastructure.persistence.jpa;
-import com.skaly.fashion_backend.product.ProductEntity;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

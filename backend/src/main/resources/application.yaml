@@ -59,6 +59,13 @@ logging:
     org.springframework.ai: DEBUG
 
 application:
+  gemini:
+    rest:
+      # Bật true để dùng REST Generative Language API trực tiếp (GeminiAIAdapter) thay vì Spring AI ChatModel.
+      enabled: ${GEMINI_REST_ENABLED:false}
+      api-key: ${GEMINI_API_KEY:}
+      model: ${AI_MODEL:gemini-1.5-flash}
+      read-timeout: 30s
   ai:
     assistant:
       enabled: ${AI_ASSISTANT_ENABLED:false}

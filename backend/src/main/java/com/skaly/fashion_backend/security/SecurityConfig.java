@@ -61,6 +61,9 @@ public class SecurityConfig {
                         
                         // AI Public Access (Chat)
                         .requestMatchers("/api/v1/ai/chat").permitAll()
+
+                        // WebSocket / SockJS handshake (STOMP endpoint)
+                        .requestMatchers("/ws/**").permitAll()
                         
                         // Payment Webhooks Public Access
                         .requestMatchers("/api/v1/payments/vnpay/callback", "/api/v1/payments/momo/callback").permitAll()

@@ -2,8 +2,8 @@ package com.skaly.fashion_backend.fiagent.api;
 
 import com.skaly.fashion_backend.fiagent.scoring.ScoredProduct;
 import com.skaly.fashion_backend.fiagent.scoring.ScoringService;
-import com.skaly.fashion_backend.product.Product;
-import com.skaly.fashion_backend.product.ProductRepository;
+import com.skaly.fashion_backend.product.domain.model.Product;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

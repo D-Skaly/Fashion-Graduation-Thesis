@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.saga;
 
-import com.skaly.fashion_backend.product.ProductVariantEntity;
-import com.skaly.fashion_backend.product.ProductVariantRepository;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.JpaProductVariantRepository;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
 
-    private final ProductVariantRepository productVariantRepository;
+    private final JpaProductVariantRepository jpaProductVariantRepository;
 
     @Override
     public String getName() {
@@ -32,8 +32,8 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
             UUID variantId = entry.getKey();
             Integer quantity = entry.getValue();
             
-            ProductVariantEntity variant = productVariantRepository.findById(variantId)
-                    .orElseThrow(() -> new RuntimeException("ProductEntity variant not found: " + variantId));
+            ProductVariantEntity variant = jpaProductVariantRepository.findById(variantId)
+                    .orElseThrow(() -> new RuntimeException("Product variant not found: " + variantId));
             
             // Store original stock for compensation
             originalStocks.put(variantId, variant.getStockQuantity());
@@ -44,7 +44,7 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
             }
             
             variant.setStockQuantity(variant.getStockQuantity() - quantity);
-            productVariantRepository.save(variant);
+            jpaProductVariantRepository.save(variant);
             
             log.info("Updated stock for variant {}: {} -> {}", variantId, originalStocks.get(variantId), variant.getStockQuantity());
         }
@@ -63,12 +63,12 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
                 UUID variantId = entry.getKey();
                 Integer originalStock = entry.getValue();
                 
-                ProductVariantEntity variant = productVariantRepository.findById(variantId)
+                ProductVariantEntity variant = jpaProductVariantRepository.findById(variantId)
                         .orElse(null);
                 
                 if (variant != null) {
                     variant.setStockQuantity(originalStock);
-                    productVariantRepository.save(variant);
+                    jpaProductVariantRepository.save(variant);
                     log.info("Restored stock for variant {}: {}", variantId, originalStock);
                 }
             }

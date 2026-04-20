@@ -10,18 +10,23 @@ This document is optimized for:
 Primary goal:
 Ensure consistent implementation aligned with **Clean Architecture + Spring Modulith + Business-first design**
 
+**Project-wide (Cursor / humans):** The repo root `.cursorrules` instructs agents to treat this file as mandatory for work across **backend**, **frontend**, **ai-orchestrator**, and **ai-service**.
+
 ---
 
 # 1. Project Overview
 
-## 1.1. Monorepo Structure
+## 1.1. Monorepo Structure (this repository)
 
 ```
-/backend        → Spring Boot (Java 21, Modulith)
-/frontend       → Next.js 16 (TypeScript)
-/orchestrator   → NestJS (AI orchestration)
-/ai-service     → FastAPI (heavy AI processing)
+/backend          → Spring Boot 3.x (Java 21, Spring Modulith). Base package: com.skaly.fashion_backend
+/frontend         → Next.js (TypeScript)
+/ai-orchestrator  → NestJS (AI orchestration, queues, gateway)
+/ai-service       → FastAPI (heavy AI processing)
+/docs             → Design notes, API docs
 ```
+
+Legacy or local-only folders may exist; treat the tree above as the **source-of-truth** for agent work.
 
 ---
 
@@ -84,13 +89,16 @@ npm run dev
 
 ## 3.1. Modulith Structure (Outer Boundary)
 
-Each module MUST be isolated:
+Each module MUST be isolated by package (no cross-module repository access):
 
 ```
-com.project.product
-com.project.order
-com.project.tryon
+com.skaly.fashion_backend.product
+com.skaly.fashion_backend.order
+com.skaly.fashion_backend.ai.tryon
+com.skaly.fashion_backend.recommendation
 ```
+
+Existing packages may not yet use the internal folder layout below; **all new features** MUST follow §3.2 inside their module/bounded context.
 
 ---
 
@@ -103,7 +111,7 @@ module/
  ├── domain/
  ├── application/
  ├── infrastructure/
- └── interface/
+ └── interfaces/     ← Java cannot use package name "interface" (reserved keyword); use "interfaces" for REST adapters
 ```
 
 ---

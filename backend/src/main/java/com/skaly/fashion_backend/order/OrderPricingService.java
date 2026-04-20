@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order;
 
-import com.skaly.fashion_backend.product.ProductVariantInternalResponse;
+import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

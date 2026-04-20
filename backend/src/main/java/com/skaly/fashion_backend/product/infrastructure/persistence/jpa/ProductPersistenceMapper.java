@@ -1,11 +1,9 @@
 package com.skaly.fashion_backend.product.infrastructure.persistence.jpa;
-import com.skaly.fashion_backend.product.CategoryEntity;
-import com.skaly.fashion_backend.product.ProductEntity;
 
-import com.skaly.fashion_backend.product.Category;
-import com.skaly.fashion_backend.product.Product;
-import com.skaly.fashion_backend.product.ProductImage;
-import com.skaly.fashion_backend.product.ProductVariant;
+import com.skaly.fashion_backend.product.domain.model.Category;
+import com.skaly.fashion_backend.product.domain.model.Product;
+import com.skaly.fashion_backend.product.domain.model.ProductImage;
+import com.skaly.fashion_backend.product.domain.model.ProductVariant;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
