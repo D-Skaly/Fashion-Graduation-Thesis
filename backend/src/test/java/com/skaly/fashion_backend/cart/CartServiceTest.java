@@ -1,12 +1,15 @@
 package com.skaly.fashion_backend.cart;
 
+import com.skaly.fashion_backend.cart.api.dto.AddToCartRequest;
+import com.skaly.fashion_backend.cart.api.dto.CartDto;
+import com.skaly.fashion_backend.cart.application.CartService;
+import com.skaly.fashion_backend.coupon.infrastructure.persistence.jpa.CouponEntity;
+import com.skaly.fashion_backend.coupon.infrastructure.persistence.jpa.CouponJpaRepository;
 import org.springframework.ai.vectorstore.VectorStore;
-import com.skaly.fashion_backend.coupon.Coupon;
-import com.skaly.fashion_backend.coupon.CouponRepository;
-import com.skaly.fashion_backend.product.ProductEntity;
-import com.skaly.fashion_backend.product.ProductRepository;
-import com.skaly.fashion_backend.product.ProductVariantEntity;
-import com.skaly.fashion_backend.product.ProductVariantRepository;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
 import com.skaly.fashion_backend.user.Role;
 import com.skaly.fashion_backend.user.User;
 import com.skaly.fashion_backend.user.UserRepository;
@@ -44,7 +47,7 @@ class CartServiceTest {
     private ProductVariantRepository productVariantRepository;
 
     @Autowired
-    private CouponRepository couponRepository;
+    private CouponJpaRepository couponJpaRepository;
 
     private User testUser;
     private ProductVariantEntity testVariant;
@@ -160,14 +163,14 @@ class CartServiceTest {
         cartService.addToCart(null, guestId, new AddToCartRequest(testVariant.getId(), 2));
         // Subtotal: 200
 
-        Coupon coupon = Coupon.builder()
+        CouponEntity coupon = CouponEntity.builder()
                 .code("MINUS50")
-                .discountType(Coupon.DiscountType.FIXED_AMOUNT)
+                .discountType(CouponEntity.DiscountType.FIXED_AMOUNT)
                 .discountValue(new BigDecimal("50.00"))
                 .minOrderValue(new BigDecimal("100.00"))
                 .isActive(true)
                 .build();
-        couponRepository.save(coupon);
+        couponJpaRepository.save(coupon);
 
         CartDto cart = cartService.applyCoupon(null, guestId, "MINUS50");
 

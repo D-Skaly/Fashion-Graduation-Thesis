@@ -1,7 +1,6 @@
 package com.skaly.fashion_backend.user;
 
-
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

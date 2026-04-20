@@ -1,6 +1,12 @@
 package com.skaly.fashion_backend.product.infrastructure.persistence.jpa;
 
-import com.skaly.fashion_backend.product.*;
+import com.skaly.fashion_backend.product.domain.model.Category;
+import com.skaly.fashion_backend.product.domain.model.Product;
+import com.skaly.fashion_backend.product.domain.model.ProductVariant;
+import com.skaly.fashion_backend.product.domain.port.CategoryRepository;
+import com.skaly.fashion_backend.product.domain.port.ProductImageRepository;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
+import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -82,7 +88,7 @@ public class ProductPersistenceAdapter implements ProductRepository, CategoryRep
     }
 
     @Override
-    public Optional<ProductImageEntity> findById(UUID id) {
+    public Optional<ProductImageEntity> findImageById(UUID id) {
         return jpaProductImageRepository.findById(id);
     }
 
@@ -132,6 +138,13 @@ public class ProductPersistenceAdapter implements ProductRepository, CategoryRep
     @Override
     public List<Product> findTopKByEmbeddingVectorClosestTo(float[] vector, int limit) {
         return jpaProductRepository.findTopKByEmbeddingVectorClosestTo(vector, limit).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Product> searchWithFilters(float[] vector, UUID categoryId, BigDecimal minPrice, BigDecimal maxPrice, int limit) {
+        return jpaProductRepository.searchWithFilters(vector, categoryId, minPrice, maxPrice, limit).stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
     }

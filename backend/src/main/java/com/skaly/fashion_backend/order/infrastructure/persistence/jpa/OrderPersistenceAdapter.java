@@ -39,7 +39,7 @@ public class OrderPersistenceAdapter implements OrderRepository, OrderNoteReposi
     }
 
     @Override
-    public List<OrderNoteEntity> findByOrderIdOrderByCreatedAtDesc(UUID orderId) {
+    public List<OrderNoteEntity> findOrderNotesByOrderIdOrderByCreatedAtDesc(UUID orderId) {
         return jpaOrderNoteRepository.findByOrderIdOrderByCreatedAtDesc(orderId);
     }
 
