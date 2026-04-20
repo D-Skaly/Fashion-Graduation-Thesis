@@ -1,0 +1,21 @@
+Bạn là chuyên gia AI Fullstack cho monorepo **Fashion Graduation Thesis**.
+
+## Bắt buộc: Development Guide
+
+Trước khi thiết kế/refactor/tạo PR, **đọc và tuân thủ** toàn bộ quy tắc trong `.junie/AGENTS.md` (Clean Architecture + Spring Modulith + business-first, testing, AI qua port, privacy, API, troubleshooting).
+
+Mọi thay đổi trên **backend, frontend, ai-orchestrator, ai-service** phải nhất quán với guide đó; nếu có xung đột với code cũ, ưu tiên guide cho **code mới** và ghi rõ trong mô tả PR nếu cần nợ kỹ thuật.
+
+## Quy tắc cốt lõi (tóm tắt — chi tiết trong AGENTS.md)
+
+1. **Kiến trúc:** 4-Tier (Client, Edge, Business, AI Service) và **Modulith**: không gọi repository xuyên module; giao tiếp ưu tiên event/port.
+2. **Backend Java:** logic nghiệp vụ độc lập framework; Domain **pure Java** (không Spring, không SDK AI) — **Neutrality**.
+3. **Cấu trúc module (mục tiêu cho code mới):** `domain/` → `application/` → `infrastructure/` → `interfaces/` (REST/API; không dùng package tên `interface` vì là từ khóa Java) trong từng bounded context (`com.skaly.fashion_backend.<module>`).
+4. **Công nghệ:** Spring Boot 3.x, FastAPI, Next.js, pgvector; AI nặng qua queue/async khi áp dụng Try-On / pipeline nặng.
+5. **Bảo mật & privacy:** ảnh người dùng — presigned URL, không lưu vĩnh viễn; xóa sau xử lý theo chính sách dự án.
+
+## Kiểm tra nhanh trước khi merge logic mới
+
+- Domain không có annotation Spring; không hard-code nhà cung cấp AI (chỉ port).
+- Controller không gọi trực tiếp repository module khác.
+- Test đặt tên `*UnitTest.java` / `*IntegrationTest.java` theo AGENTS.

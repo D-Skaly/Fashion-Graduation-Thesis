@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.ai.domain.AIModelPort;
+import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -25,16 +25,16 @@ public class FashionAssistantService {
     private final Counter successCounter;
     private final Counter failureCounter;
     private final Counter unavailableCounter;
-    private final com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService;
-    private final com.skaly.fashion_backend.product.ProductRepository productRepository;
+    private final com.skaly.fashion_backend.product.application.ProductEmbeddingService productEmbeddingService;
+    private final com.skaly.fashion_backend.product.domain.port.ProductRepository productRepository;
     private final ChatSessionService chatSessionService;
 
     public FashionAssistantService(
             AIModelPort aiModelPort,
             AiAssistantProperties properties,
             MeterRegistry meterRegistry,
-            com.skaly.fashion_backend.product.ProductEmbeddingService productEmbeddingService,
-            com.skaly.fashion_backend.product.ProductRepository productRepository,
+            com.skaly.fashion_backend.product.application.ProductEmbeddingService productEmbeddingService,
+            com.skaly.fashion_backend.product.domain.port.ProductRepository productRepository,
             ChatSessionService chatSessionService) {
         this.aiModelPort = aiModelPort;
         this.properties = properties;
@@ -117,7 +117,7 @@ public class FashionAssistantService {
     @Retry(name = "aiAssistant")
     @TimeLimiter(name = "aiAssistant")
     public CompletableFuture<String> executeChat(String prompt) {
-        return CompletableFuture.supplyAsync(() -> aiModelPort.generateResponse(prompt));
+        return CompletableFuture.supplyAsync(() -> aiModelPort.completeChatPrompt(prompt));
     }
 
     public CompletableFuture<String> chatFallback(String prompt, Throwable t) {

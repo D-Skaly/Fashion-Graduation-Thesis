@@ -1,11 +1,12 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.ai.domain.AIModelPort;
-import com.skaly.fashion_backend.ai.infrastructure.SpringAIChatAdapter;
+import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
+import com.skaly.fashion_backend.recommendation.infrastructure.springai.SpringAiAIModelAdapter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skaly.fashion_backend.common.GlobalExceptionHandler;
-import com.skaly.fashion_backend.product.ProductEmbeddingService;
-import com.skaly.fashion_backend.product.ProductEntity;
-import com.skaly.fashion_backend.product.ProductRepository;
+import com.skaly.fashion_backend.product.application.ProductEmbeddingService;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.model.ChatModel;
@@ -29,7 +30,7 @@ class AiAssistantIntegrationTest {
         ChatModel chatModel = mock(ChatModel.class);
         when(chatModel.call(anyString())).thenReturn("Gợi ý: Áo blazer + quần tây đen");
 
-        AIModelPort port = new SpringAIChatAdapter(chatModel);
+        AIModelPort port = new SpringAiAIModelAdapter(chatModel, new ObjectMapper());
         AiAssistantProperties properties = new AiAssistantProperties(
                 true,
                 1000,
@@ -62,7 +63,7 @@ class AiAssistantIntegrationTest {
         ChatModel chatModel = mock(ChatModel.class);
         when(chatModel.call(anyString())).thenReturn("Answer");
 
-        AIModelPort port = new SpringAIChatAdapter(chatModel);
+        AIModelPort port = new SpringAiAIModelAdapter(chatModel, new ObjectMapper());
         AiAssistantProperties properties = new AiAssistantProperties(true, 1000, new AiAssistantProperties.Retry(1, 1), new AiAssistantProperties.Timeout(1000), new AiAssistantProperties.RateLimit(false, 0, 0));
         
         ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);

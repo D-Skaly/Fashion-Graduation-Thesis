@@ -1,10 +1,10 @@
 package com.skaly.fashion_backend.cart;
 
 import com.skaly.fashion_backend.cart.event.CartMergedEvent;
-import com.skaly.fashion_backend.product.ProductEntity;
-import com.skaly.fashion_backend.product.ProductRepository;
-import com.skaly.fashion_backend.product.ProductVariantEntity;
-import com.skaly.fashion_backend.product.ProductVariantRepository;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
 import com.skaly.fashion_backend.user.Role;
 import com.skaly.fashion_backend.user.User;
 import com.skaly.fashion_backend.user.UserRepository;

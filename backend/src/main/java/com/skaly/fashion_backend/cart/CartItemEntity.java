@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.cart;
 import com.skaly.fashion_backend.cart.CartEntity;
 
-import com.skaly.fashion_backend.product.ProductVariantEntity;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

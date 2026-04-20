@@ -1,9 +1,9 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.ai.domain.AIModelPort;
-import com.skaly.fashion_backend.product.ProductEmbeddingService;
-import com.skaly.fashion_backend.product.ProductEntity;
-import com.skaly.fashion_backend.product.ProductRepository;
+import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
+import com.skaly.fashion_backend.product.application.ProductEmbeddingService;
+import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ class FashionAssistantServiceUnitTest {
         float[] dummyVector = new float[]{0.1f, 0.2f};
         when(productEmbeddingService.embedQuery(anyString())).thenReturn(dummyVector);
         when(productRepository.findTopKByEmbeddingVectorClosestTo(any(), anyInt())).thenReturn(Collections.emptyList());
-        when(aiModelPort.generateResponse(anyString())).thenReturn("Đây là gợi ý váy hoa của tôi.");
+        when(aiModelPort.completeChatPrompt(anyString())).thenReturn("Đây là gợi ý váy hoa của tôi.");
 
         // Act
         String result = fashionAssistantService.chat(userMessage);
@@ -64,7 +64,7 @@ class FashionAssistantServiceUnitTest {
         // Assert
         assertEquals("Đây là gợi ý váy hoa của tôi.", result);
         verify(productEmbeddingService).embedQuery(contains("váy hoa"));
-        verify(aiModelPort).generateResponse(contains("Yêu cầu hiện tại: Gợi ý cho tôi váy hoa"));
+        verify(aiModelPort).completeChatPrompt(contains("Yêu cầu hiện tại: Gợi ý cho tôi váy hoa"));
     }
 
     @Test
@@ -80,7 +80,7 @@ class FashionAssistantServiceUnitTest {
         when(productEmbeddingService.embedQuery(anyString())).thenReturn(dummyVector);
         when(productRepository.findTopKByEmbeddingVectorClosestTo(eq(dummyVector), anyInt()))
                 .thenReturn(Collections.singletonList(product));
-        when(aiModelPort.generateResponse(anyString())).thenAnswer(invocation -> {
+        when(aiModelPort.completeChatPrompt(anyString())).thenAnswer(invocation -> {
             String prompt = invocation.getArgument(0);
             assertTrue(prompt.contains("Thông tin sản phẩm có sẵn:"));
             assertTrue(prompt.contains("Áo thun basic"));
@@ -91,6 +91,6 @@ class FashionAssistantServiceUnitTest {
         fashionAssistantService.chat(userMessage);
 
         // Assert
-        verify(aiModelPort).generateResponse(anyString());
+        verify(aiModelPort).completeChatPrompt(anyString());
     }
 }
