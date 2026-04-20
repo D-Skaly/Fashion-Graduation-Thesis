@@ -1,10 +1,10 @@
 package com.skaly.fashion_backend.cart;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import com.skaly.fashion_backend.cart.CartItem;
+import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
+public interface CartItemRepository {
+    Optional<CartItem> findItemById(UUID id);
 }
+

@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { LlmClient } from '../common/llm/llm.client';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { LLM_PROVIDER, LlmProvider } from '../common/llm/llm-provider.interface';
 import {
   StrategistDraftInsightDto,
   StrategistFinalInsightDto,
@@ -8,29 +9,18 @@ import {
   StrategistReviewDto,
 } from './dto/strategist.dto';
 import { SpringFiAgentGateway } from './spring-fiagent.gateway';
-
-interface DraftStoreItem {
-  draftedAt: string;
-  requiresHumanApproval: boolean;
-  confidence: number;
-  draftInsights: string;
-}
+import { AdminPlan } from './entities/admin-plan.entity';
 
 @Injectable()
 export class StrategistService {
-  private readonly draftStore = new Map<string, DraftStoreItem>();
-
   constructor(
     private readonly springGateway: SpringFiAgentGateway,
-    private readonly llmClient: LlmClient,
+    @Inject(LLM_PROVIDER)
+    private readonly llmProvider: LlmProvider,
+    @InjectRepository(AdminPlan)
+    private readonly adminPlanRepository: Repository<AdminPlan>,
   ) {}
 
-  /**
-   * Generates a draft business strategy plan.
-   *
-   * Human-in-the-loop rule:
-   * - If confidence < 0.7, require explicit reviewer approval before usage.
-   */
   async generateDraftInsights(
     input: StrategistInsightRequestDto,
   ): Promise<StrategistDraftInsightDto> {
@@ -72,18 +62,18 @@ ${JSON.stringify(topScoredProducts, null, 2)}
 If confidence is lower, explicitly label recommendations as "experimental".
 `;
 
-    const draftInsights = await this.llmClient.complete(prompt);
+    const draftInsights = await this.llmProvider.complete(prompt);
 
-    const draftId = randomUUID();
-    this.draftStore.set(draftId, {
-      draftedAt: new Date().toISOString(),
-      requiresHumanApproval,
-      confidence,
+    const draft = this.adminPlanRepository.create({
       draftInsights,
+      confidence,
+      requiresHumanApproval,
+      status: 'DRAFT',
     });
+    const savedDraft = await this.adminPlanRepository.save(draft);
 
     return {
-      draftId,
+      draftId: savedDraft.id,
       requiresHumanApproval,
       confidence,
       scoredProducts: topScoredProducts,
@@ -91,8 +81,38 @@ If confidence is lower, explicitly label recommendations as "experimental".
     };
   }
 
+  async createPlanFromGoal(goal: string): Promise<AdminPlan> {
+    const prompt = `
+You are FI-Agent Strategist.
+An admin has provided a goal for the business.
+Goal: "${goal}"
+
+Please provide a detailed strategic plan including:
+1. Target products (categories/styles)
+2. Pricing strategy (discounts/markups)
+3. Inventory actions
+4. Marketing emphasis
+
+Response should be structured and professional.
+`;
+
+    const draftInsights = await this.llmProvider.complete(prompt);
+    
+    const confidence = 0.85;
+    const requiresHumanApproval = true;
+
+    const plan = this.adminPlanRepository.create({
+      draftInsights,
+      confidence,
+      requiresHumanApproval,
+      status: 'DRAFT',
+    });
+    
+    return await this.adminPlanRepository.save(plan);
+  }
+
   async reviewDraft(input: StrategistReviewDto): Promise<StrategistFinalInsightDto> {
-    const draft = this.draftStore.get(input.draftId);
+    const draft = await this.adminPlanRepository.findOneBy({ id: input.draftId });
     if (!draft) {
       throw new NotFoundException('Draft insight not found.');
     }
@@ -102,11 +122,19 @@ If confidence is lower, explicitly label recommendations as "experimental".
     }
 
     if (input.decision === 'REJECT') {
+      draft.status = 'REJECTED';
+      draft.reviewerComment = input.reviewerComment;
+      await this.adminPlanRepository.save(draft);
+
       return {
         approved: false,
         finalInsights: `Rejected by reviewer. Note: ${input.reviewerComment ?? 'No comment provided.'}`,
       };
     }
+
+    draft.status = 'APPROVED';
+    draft.reviewerComment = input.reviewerComment;
+    await this.adminPlanRepository.save(draft);
 
     const finalInsights = input.reviewerComment
       ? `${draft.draftInsights}\n\nReviewer note: ${input.reviewerComment}`

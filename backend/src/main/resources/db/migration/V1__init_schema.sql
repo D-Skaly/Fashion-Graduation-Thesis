@@ -1,405 +1,421 @@
---
--- PostgreSQL database dump
---
--- Dumped from database version 16.11 (Debian 16.11-1.pgdg12+1)
--- Dumped by pg_dump version 16.11 (Debian 16.11-1.pgdg12+1)
+-- ============================================
+-- Fashion E-Commerce - Complete Database Schema (Consolidated V1)
+-- ============================================
+-- This migration consolidates all previous migrations (V1-V14)
+-- into a single comprehensive schema.
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
+-- ============================================
+-- Extensions
+-- ============================================
+CREATE EXTENSION IF NOT EXISTS vector;
 
-SET default_tablespace = '';
+-- ============================================
+-- Core Tables with All Columns
+-- ============================================
 
-SET default_table_access_method = heap;
-
---
--- Name: cart_items; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.cart_items (
-    id uuid NOT NULL,
-    added_at timestamp(6) without time zone,
-    quantity integer NOT NULL,
-    cart_id uuid NOT NULL,
-    product_variant_id uuid NOT NULL,
-    snapshot_price numeric(38,2) NOT NULL
+-- Users Table
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255),
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    avatar_url VARCHAR(255),
+    phone VARCHAR(255),
+    provider VARCHAR(255) CHECK (provider IN ('LOCAL', 'GOOGLE')),
+    role VARCHAR(255) NOT NULL CHECK (role IN ('USER', 'ADMIN')),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    last_login_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    deleted_at TIMESTAMP,
+    deleted_by UUID
 );
 
-
-ALTER TABLE public.cart_items OWNER TO postgres;
-
---
--- Name: carts; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.carts (
-    id uuid NOT NULL,
-    created_at timestamp(6) without time zone,
-    updated_at timestamp(6) without time zone,
-    user_id uuid,
-    coupon_code character varying(255),
-    discount_amount numeric(38,2),
-    guest_id character varying(255)
+-- Categories Table
+CREATE TABLE categories (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    parent_id UUID REFERENCES categories(id),
+    deleted_at TIMESTAMP,
+    deleted_by UUID
 );
 
-
-ALTER TABLE public.carts OWNER TO postgres;
-
---
--- Name: categories; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.categories (
-    id uuid NOT NULL,
-    name character varying(255) NOT NULL,
-    slug character varying(255) NOT NULL,
-    parent_id uuid,
-    description text
+-- Products Table
+CREATE TABLE products (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    base_price NUMERIC(38,2) NOT NULL CHECK (base_price >= 0),
+    discount_price NUMERIC(38,2) CHECK (discount_price >= 0 AND (discount_price <= base_price OR discount_price IS NULL)),
+    sku VARCHAR(255) NOT NULL UNIQUE,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    brand VARCHAR(255),
+    tags VARCHAR(255)[],
+    category_id UUID REFERENCES categories(id),
+    stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+    view_count INTEGER DEFAULT 0,
+    sold_count INTEGER DEFAULT 0,
+    rating_avg NUMERIC(3,2) DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    is_featured BOOLEAN DEFAULT false,
+    care_instructions TEXT,
+    material VARCHAR(255),
+    weight DOUBLE PRECISION,
+    dimensions VARCHAR(255),
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    deleted_at TIMESTAMP,
+    deleted_by UUID,
+    embedding_vector vector(384),
+    style_vector vector(384)
 );
 
-
-ALTER TABLE public.categories OWNER TO postgres;
-
---
--- Name: coupons; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.coupons (
-    id uuid NOT NULL,
-    code character varying(255) NOT NULL,
-    created_at timestamp(6) without time zone,
-    discount_type character varying(255) NOT NULL,
-    discount_value numeric(38,2) NOT NULL,
-    is_active boolean NOT NULL,
-    max_discount_value numeric(38,2),
-    min_order_value numeric(38,2),
-    updated_at timestamp(6) without time zone,
-    usage_limit integer,
-    used_count integer NOT NULL,
-    valid_from timestamp(6) without time zone,
-    valid_until timestamp(6) without time zone,
-    CONSTRAINT coupons_discount_type_check CHECK (((discount_type)::text = ANY ((ARRAY['PERCENTAGE'::character varying, 'FIXED_AMOUNT'::character varying])::text[])))
+-- ProductEntity Images Table
+CREATE TABLE product_images (
+    id UUID PRIMARY KEY,
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    url VARCHAR(255) NOT NULL,
+    alt VARCHAR(255),
+    is_primary BOOLEAN DEFAULT false,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE
 );
 
-
-ALTER TABLE public.coupons OWNER TO postgres;
-
---
--- Name: event_publication; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.event_publication (
-    id uuid NOT NULL,
-    completion_attempts integer NOT NULL,
-    completion_date timestamp(6) with time zone,
-    event_type character varying(255),
-    last_resubmission_date timestamp(6) with time zone,
-    listener_id character varying(255),
-    publication_date timestamp(6) with time zone,
-    serialized_event character varying(255),
-    status character varying(255),
-    CONSTRAINT event_publication_status_check CHECK (((status)::text = ANY ((ARRAY['PUBLISHED'::character varying, 'PROCESSING'::character varying, 'COMPLETED'::character varying, 'FAILED'::character varying, 'RESUBMITTED'::character varying])::text[])))
+-- ProductEntity Tags Table
+CREATE TABLE product_tags (
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    tag VARCHAR(255) NOT NULL,
+    PRIMARY KEY (product_id, tag)
 );
 
-
-ALTER TABLE public.event_publication OWNER TO postgres;
-
---
--- Name: order_items; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.order_items (
-    id uuid NOT NULL,
-    quantity integer NOT NULL,
-    snapshot_price numeric(38,2) NOT NULL,
-    order_id uuid NOT NULL,
-    product_variant_id uuid NOT NULL
+-- Orders Table
+CREATE TABLE orders (
+    id UUID PRIMARY KEY,
+    order_number VARCHAR(255) NOT NULL UNIQUE,
+    user_id UUID NOT NULL REFERENCES users(id),
+    sub_total NUMERIC(38,2) NOT NULL DEFAULT 0,
+    tax_amount NUMERIC(38,2) DEFAULT 0,
+    shipping_cost NUMERIC(38,2) DEFAULT 0,
+    discount_amount NUMERIC(38,2) DEFAULT 0,
+    discount_code VARCHAR(50),
+    total_amount NUMERIC(38,2) NOT NULL DEFAULT 0,
+    shipping_address TEXT,
+    notes TEXT,
+    cancelled_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    cancelled_reason VARCHAR(500),
+    status VARCHAR(255) NOT NULL CHECK (status IN ('PENDING', 'CONFIRMED', 'SHIPPED', 'COMPLETED', 'CANCELLED', 'REFUNDED')),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    deleted_at TIMESTAMP,
+    deleted_by UUID
 );
 
-
-ALTER TABLE public.order_items OWNER TO postgres;
-
---
--- Name: orders; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.orders (
-    id uuid NOT NULL,
-    created_at timestamp(6) without time zone,
-    shipping_address character varying(255),
-    status character varying(255) NOT NULL,
-    total_amount numeric(38,2) NOT NULL,
-    updated_at timestamp(6) without time zone,
-    user_id uuid NOT NULL,
-    CONSTRAINT orders_status_check CHECK (((status)::text = ANY ((ARRAY['PENDING'::character varying, 'CONFIRMED'::character varying, 'SHIPPED'::character varying, 'COMPLETED'::character varying, 'CANCELLED'::character varying])::text[])))
+-- ShippingEntity Table
+CREATE TABLE shipping (
+    id UUID PRIMARY KEY,
+    order_id UUID NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+    carrier VARCHAR(100),
+    tracking_number VARCHAR(100),
+    shipping_method VARCHAR(50),
+    shipping_cost NUMERIC(38,2) DEFAULT 0,
+    estimated_delivery TIMESTAMP(6) WITHOUT TIME ZONE,
+    shipped_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    delivered_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    shipping_address TEXT NOT NULL,
+    recipient_name VARCHAR(100),
+    recipient_phone VARCHAR(20),
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE
 );
 
-
-ALTER TABLE public.orders OWNER TO postgres;
-
---
--- Name: product_variants; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.product_variants (
-    id uuid NOT NULL,
-    color character varying(255) NOT NULL,
-    price_adjustment numeric(38,2),
-    size character varying(255) NOT NULL,
-    sku_code character varying(255),
-    stock_quantity integer NOT NULL,
-    product_id uuid NOT NULL
+-- OrderEntity Notes Table
+CREATE TABLE order_notes (
+    id UUID PRIMARY KEY,
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id),
+    content TEXT NOT NULL,
+    is_internal BOOLEAN DEFAULT true,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE
 );
 
-
-ALTER TABLE public.product_variants OWNER TO postgres;
-
---
--- Name: products; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.products (
-    id uuid NOT NULL,
-    base_price numeric(38,2) NOT NULL,
-    created_at timestamp(6) without time zone,
-    description text,
-    name character varying(255) NOT NULL,
-    updated_at timestamp(6) without time zone,
-    category_id uuid
+-- OrderEntity Status History Table
+CREATE TABLE order_status_history (
+    id UUID PRIMARY KEY,
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    status VARCHAR(255) NOT NULL,
+    note VARCHAR(500),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE
 );
 
-
-ALTER TABLE public.products OWNER TO postgres;
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.users (
-    id uuid NOT NULL,
-    created_at timestamp(6) without time zone,
-    email character varying(255) NOT NULL,
-    first_name character varying(255),
-    last_name character varying(255),
-    password_hash character varying(255),
-    provider character varying(255),
-    role character varying(255) NOT NULL,
-    updated_at timestamp(6) without time zone,
-    CONSTRAINT users_provider_check CHECK (((provider)::text = ANY ((ARRAY['LOCAL'::character varying, 'GOOGLE'::character varying])::text[]))),
-    CONSTRAINT users_role_check CHECK (((role)::text = ANY ((ARRAY['USER'::character varying, 'ADMIN'::character varying])::text[])))
+-- Payments Table (Base)
+CREATE TABLE payments (
+    id UUID PRIMARY KEY,
+    order_id UUID NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+    transaction_id VARCHAR(255) UNIQUE,
+    payment_method VARCHAR(255) NOT NULL,
+    payment_status VARCHAR(255) NOT NULL,
+    amount NUMERIC(38,2) NOT NULL,
+    currency VARCHAR(255) NOT NULL DEFAULT 'VND',
+    paid_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    failure_reason VARCHAR(255),
+    gateway_response TEXT,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE
 );
 
-
-ALTER TABLE public.users OWNER TO postgres;
-
---
--- Name: cart_items cart_items_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cart_items
-    ADD CONSTRAINT cart_items_pkey PRIMARY KEY (id);
-
-
---
--- Name: carts carts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.carts
-    ADD CONSTRAINT carts_pkey PRIMARY KEY (id);
-
-
---
--- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.categories
-    ADD CONSTRAINT categories_pkey PRIMARY KEY (id);
-
-
---
--- Name: coupons coupons_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.coupons
-    ADD CONSTRAINT coupons_pkey PRIMARY KEY (id);
-
-
---
--- Name: event_publication event_publication_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.event_publication
-    ADD CONSTRAINT event_publication_pkey PRIMARY KEY (id);
-
-
---
--- Name: order_items order_items_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.order_items
-    ADD CONSTRAINT order_items_pkey PRIMARY KEY (id);
-
-
---
--- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.orders
-    ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
-
-
---
--- Name: product_variants product_variants_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.product_variants
-    ADD CONSTRAINT product_variants_pkey PRIMARY KEY (id);
-
-
---
--- Name: products products_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.products
-    ADD CONSTRAINT products_pkey PRIMARY KEY (id);
-
-
---
--- Name: carts uk64t7ox312pqal3p7fg9o503c2; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.carts
-    ADD CONSTRAINT uk64t7ox312pqal3p7fg9o503c2 UNIQUE (user_id);
-
-
---
--- Name: product_variants uk689dpvm8q6yb476ron1ums0xd; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.product_variants
-    ADD CONSTRAINT uk689dpvm8q6yb476ron1ums0xd UNIQUE (sku_code);
-
-
---
--- Name: users uk6dotkott2kjsp8vw4d0m25fb7; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT uk6dotkott2kjsp8vw4d0m25fb7 UNIQUE (email);
-
-
---
--- Name: coupons ukeplt0kkm9yf2of2lnx6c1oy9b; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.coupons
-    ADD CONSTRAINT ukeplt0kkm9yf2of2lnx6c1oy9b UNIQUE (code);
-
-
---
--- Name: carts uko91mfhkn56hd7978a7jlmo9t3; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.carts
-    ADD CONSTRAINT uko91mfhkn56hd7978a7jlmo9t3 UNIQUE (guest_id);
-
-
---
--- Name: categories ukoul14ho7bctbefv8jywp5v3i2; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.categories
-    ADD CONSTRAINT ukoul14ho7bctbefv8jywp5v3i2 UNIQUE (slug);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: orders fk32ql8ubntj5uh44ph9659tiih; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.orders
-    ADD CONSTRAINT fk32ql8ubntj5uh44ph9659tiih FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
--- Name: carts fkb5o626f86h46m4s7ms6ginnop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.carts
-    ADD CONSTRAINT fkb5o626f86h46m4s7ms6ginnop FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
--- Name: order_items fkbioxgbv59vetrxe0ejfubep1w; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.order_items
-    ADD CONSTRAINT fkbioxgbv59vetrxe0ejfubep1w FOREIGN KEY (order_id) REFERENCES public.orders(id);
-
-
---
--- Name: order_items fkltmtlue0wixrg1cf0xo7x0l4d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.order_items
-    ADD CONSTRAINT fkltmtlue0wixrg1cf0xo7x0l4d FOREIGN KEY (product_variant_id) REFERENCES public.product_variants(id);
-
-
---
--- Name: cart_items fkn1s4l7h0vm4o259wpu7ft0y2y; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cart_items
-    ADD CONSTRAINT fkn1s4l7h0vm4o259wpu7ft0y2y FOREIGN KEY (product_variant_id) REFERENCES public.product_variants(id);
-
-
---
--- Name: products fkog2rp4qthbtt2lfyhfo32lsw9; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.products
-    ADD CONSTRAINT fkog2rp4qthbtt2lfyhfo32lsw9 FOREIGN KEY (category_id) REFERENCES public.categories(id);
-
-
---
--- Name: product_variants fkosqitn4s405cynmhb87lkvuau; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.product_variants
-    ADD CONSTRAINT fkosqitn4s405cynmhb87lkvuau FOREIGN KEY (product_id) REFERENCES public.products(id);
-
-
---
--- Name: cart_items fkpcttvuq4mxppo8sxggjtn5i2c; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cart_items
-    ADD CONSTRAINT fkpcttvuq4mxppo8sxggjtn5i2c FOREIGN KEY (cart_id) REFERENCES public.carts(id);
-
-
---
--- Name: categories fksaok720gsu4u2wrgbk10b5n8d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.categories
-    ADD CONSTRAINT fksaok720gsu4u2wrgbk10b5n8d FOREIGN KEY (parent_id) REFERENCES public.categories(id);
-
-
---
--- PostgreSQL database dump complete
---
-
+-- VNPay Payments Table
+CREATE TABLE vnpay_payments (
+    id UUID PRIMARY KEY REFERENCES payments(id) ON DELETE CASCADE,
+    vnp_txn_ref VARCHAR(255),
+    vnp_transaction_no VARCHAR(255),
+    vnp_response_code VARCHAR(255),
+    vnp_bank_code VARCHAR(255),
+    vnp_pay_date VARCHAR(255)
+);
+
+-- MoMo Payments Table
+CREATE TABLE momo_payments (
+    id UUID PRIMARY KEY REFERENCES payments(id) ON DELETE CASCADE,
+    momo_order_id VARCHAR(255),
+    momo_request_id VARCHAR(255),
+    momo_transaction_id VARCHAR(255),
+    momo_result_code INTEGER,
+    momo_message VARCHAR(255)
+);
+
+-- ProductEntity Variants Table
+CREATE TABLE product_variants (
+    id UUID PRIMARY KEY,
+    product_id UUID NOT NULL REFERENCES products(id),
+    size VARCHAR(255) NOT NULL,
+    color VARCHAR(255) NOT NULL,
+    stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
+    price_adjustment NUMERIC(38,2) DEFAULT 0,
+    sku_code VARCHAR(255) UNIQUE
+);
+
+-- Carts Table
+CREATE TABLE carts (
+    id UUID PRIMARY KEY,
+    user_id UUID UNIQUE REFERENCES users(id),
+    guest_id VARCHAR(255) UNIQUE,
+    coupon_code VARCHAR(255),
+    discount_amount NUMERIC(38,2),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE
+);
+
+-- Cart Items Table
+CREATE TABLE cart_items (
+    id UUID PRIMARY KEY,
+    cart_id UUID NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+    product_variant_id UUID NOT NULL REFERENCES product_variants(id),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    snapshot_price NUMERIC(38,2) NOT NULL,
+    added_at TIMESTAMP(6) WITHOUT TIME ZONE
+);
+
+-- OrderEntity Items Table
+CREATE TABLE order_items (
+    id UUID PRIMARY KEY,
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_variant_id UUID NOT NULL REFERENCES product_variants(id),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    snapshot_price NUMERIC(38,2) NOT NULL
+);
+
+-- Coupons Table
+CREATE TABLE coupons (
+    id UUID PRIMARY KEY,
+    code VARCHAR(255) NOT NULL UNIQUE,
+    discount_type VARCHAR(255) NOT NULL CHECK (discount_type IN ('PERCENTAGE', 'FIXED_AMOUNT')),
+    discount_value NUMERIC(38,2) NOT NULL CHECK (discount_value > 0),
+    min_order_value NUMERIC(38,2),
+    max_discount_value NUMERIC(38,2),
+    valid_from TIMESTAMP(6) WITHOUT TIME ZONE,
+    valid_until TIMESTAMP(6) WITHOUT TIME ZONE,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    usage_limit INTEGER,
+    used_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    deleted_at TIMESTAMP,
+    deleted_by UUID
+);
+
+-- Outbox Events Table
+CREATE TABLE outbox_events (
+    id UUID PRIMARY KEY,
+    aggregate_type VARCHAR(255) NOT NULL,
+    aggregate_id UUID NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    payload TEXT NOT NULL,
+    status VARCHAR(255) NOT NULL CHECK (status IN ('PENDING', 'SENT', 'FAILED')),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL
+);
+
+-- Event Publication Table (Spring Modulith)
+CREATE TABLE event_publication (
+    id UUID PRIMARY KEY,
+    listener_id VARCHAR(255),
+    event_type VARCHAR(255),
+    serialized_event VARCHAR(255),
+    publication_date TIMESTAMP(6) WITH TIME ZONE,
+    completion_date TIMESTAMP(6) WITH TIME ZONE,
+    completion_attempts INTEGER,
+    status VARCHAR(255) CHECK (status IN ('PUBLISHED', 'PROCESSING', 'COMPLETED', 'FAILED', 'RESUBMITTED')),
+    last_resubmission_date TIMESTAMP(6) WITH TIME ZONE
+);
+
+-- Reviews Table
+CREATE TABLE reviews (
+    id UUID PRIMARY KEY,
+    product_id UUID NOT NULL REFERENCES products(id),
+    user_id UUID NOT NULL REFERENCES users(id),
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    is_verified_purchase BOOLEAN DEFAULT false,
+    helpful_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    deleted_at TIMESTAMP,
+    deleted_by UUID
+);
+
+-- Wishlists Table
+CREATE TABLE wishlists (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id),
+    product_id UUID NOT NULL REFERENCES products(id),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, product_id)
+);
+
+-- FI-Agent Module Tables
+
+-- Customer Profiles Table
+CREATE TABLE customer_profiles (
+    id UUID PRIMARY KEY,
+    customer_id UUID NOT NULL UNIQUE REFERENCES users(id),
+    preferred_style VARCHAR(100),
+    budget_min DOUBLE PRECISION,
+    budget_max DOUBLE PRECISION,
+    w_fit DOUBLE PRECISION NOT NULL DEFAULT 1.0,
+    style_preference_vector vector(384),
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+-- Analytics Table
+CREATE TABLE analytics (
+    id UUID PRIMARY KEY,
+    product_id UUID NOT NULL REFERENCES products(id),
+    analytics_date DATE NOT NULL,
+    conversion_rate DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    gap_analysis_score DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    finance_multiplier DOUBLE PRECISION NOT NULL DEFAULT 1.0,
+    business_score DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    market_score DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    CONSTRAINT uk_analytics_product_date UNIQUE (product_id, analytics_date)
+);
+
+-- ============================================
+-- Indexes
+-- ============================================
+
+-- User indexes
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_orders_user_status_created ON orders(user_id, status, created_at DESC);
+CREATE INDEX idx_orders_status_created_total ON orders(status, created_at DESC, total_amount);
+
+-- ProductEntity indexes
+CREATE INDEX idx_products_category ON products(category_id);
+CREATE INDEX idx_products_category_active_featured_created 
+    ON products(category_id, is_active, is_featured, created_at DESC);
+CREATE INDEX idx_products_brand_active ON products(brand, is_active) WHERE is_active = true;
+CREATE INDEX idx_products_tags ON products USING GIN(tags) WHERE is_active = true;
+CREATE INDEX idx_products_embedding ON products USING hnsw (embedding_vector vector_cosine_ops);
+CREATE INDEX idx_products_style_vector ON products USING hnsw (style_vector vector_cosine_ops);
+CREATE INDEX idx_products_deleted_at ON products(deleted_at) WHERE deleted_at IS NOT NULL;
+CREATE INDEX idx_products_featured_only ON products(created_at DESC) 
+    WHERE is_featured = true AND is_active = true;
+CREATE INDEX idx_products_new_arrivals ON products(created_at DESC) 
+    WHERE is_active = true;
+
+-- ProductEntity variants indexes
+CREATE INDEX idx_product_variants_product ON product_variants(product_id);
+CREATE INDEX idx_product_variants_sku ON product_variants(sku_code);
+
+-- Cart indexes
+CREATE INDEX idx_carts_user ON carts(user_id);
+CREATE INDEX idx_carts_guest ON carts(guest_id);
+CREATE INDEX idx_cart_items_cart ON cart_items(cart_id);
+CREATE INDEX idx_cart_items_variant ON cart_items(product_variant_id);
+
+-- OrderEntity items indexes
+CREATE INDEX idx_order_items_order ON order_items(order_id);
+CREATE INDEX idx_order_items_variant ON order_items(product_variant_id);
+
+-- Reviews indexes
+CREATE INDEX idx_reviews_product ON reviews(product_id);
+CREATE INDEX idx_reviews_user ON reviews(user_id);
+CREATE INDEX idx_reviews_product_rating ON reviews(product_id, rating, created_at DESC);
+
+-- Wishlist indexes
+CREATE INDEX idx_wishlists_user ON wishlists(user_id);
+CREATE INDEX idx_wishlists_product ON wishlists(product_id);
+
+-- FI-Agent indexes
+CREATE INDEX idx_customer_profiles_style_vector ON customer_profiles 
+    USING hnsw (style_preference_vector vector_cosine_ops);
+CREATE INDEX idx_analytics_product_date ON analytics (product_id, analytics_date DESC);
+
+-- Soft delete indexes
+CREATE INDEX idx_orders_deleted_at ON orders(deleted_at) WHERE deleted_at IS NOT NULL;
+CREATE INDEX idx_users_deleted_at ON users(deleted_at) WHERE deleted_at IS NOT NULL;
+CREATE INDEX idx_categories_deleted_at ON categories(deleted_at) WHERE deleted_at IS NOT NULL;
+CREATE INDEX idx_reviews_deleted_at ON reviews(deleted_at) WHERE deleted_at IS NOT NULL;
+CREATE INDEX idx_coupons_deleted_at ON coupons(deleted_at) WHERE deleted_at IS NOT NULL;
+
+-- ============================================
+-- Sample Data
+-- ============================================
+
+-- Seed Categories
+INSERT INTO categories (id, name, slug, description) VALUES
+('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Men', 'men', 'Premium collection for men'),
+('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Women', 'women', 'Elegant collection for women'),
+('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 'Accessories', 'accessories', 'Luxury fashion accessories')
+ON CONFLICT (slug) DO NOTHING;
+
+-- Analyze all tables
+ANALYZE product_images;
+ANALYZE product_tags;
+ANALYZE shipping;
+ANALYZE order_notes;
+ANALYZE order_status_history;
+ANALYZE payments;
+ANALYZE vnpay_payments;
+ANALYZE momo_payments;
+ANALYZE users;
+ANALYZE categories;
+ANALYZE products;
+ANALYZE product_variants;
+ANALYZE carts;
+ANALYZE cart_items;
+ANALYZE orders;
+ANALYZE order_items;
+ANALYZE coupons;
+ANALYZE reviews;
+ANALYZE wishlists;
+ANALYZE outbox_events;
+ANALYZE event_publication;
+ANALYZE customer_profiles;
+ANALYZE analytics;

@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.product;
 
+import com.skaly.fashion_backend.product.ProductVariantEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +45,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductVariant getProductVariantById(UUID id) {
+    public ProductVariantEntity getProductVariantById(UUID id) {
         return productInventoryService.getProductVariantById(id);
     }
 
@@ -108,3 +109,5 @@ public class ProductService {
         productInventoryService.incrementProductViewCount(productId);
     }
 }
+
+

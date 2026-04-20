@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.product.review;
 
-import com.skaly.fashion_backend.product.Product;
+import com.skaly.fashion_backend.product.ProductEntity;
 import com.skaly.fashion_backend.product.ProductRepository;
 import com.skaly.fashion_backend.user.User;
 import lombok.RequiredArgsConstructor;
@@ -65,8 +65,8 @@ public class ReviewService {
             throw new IllegalArgumentException("User has already reviewed this product");
         }
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("ProductEntity not found: " + productId));
 
         Review review = Review.builder()
                 .user(user)
@@ -125,7 +125,7 @@ public class ReviewService {
             throw new IllegalArgumentException("Not authorized to delete this review");
         }
 
-        Product product = review.getProduct();
+        ProductEntity product = review.getProduct();
         reviewRepository.delete(review);
 
         // Update product rating average
@@ -198,7 +198,7 @@ public class ReviewService {
         return stats;
     }
 
-    private void updateProductRating(Product product) {
+    private void updateProductRating(ProductEntity product) {
         Double avgRating = reviewRepository.calculateAverageRating(product.getId());
         long totalReviews = reviewRepository.countByProductId(product.getId());
 
@@ -211,3 +211,4 @@ public class ReviewService {
         log.info("Updated product {} rating to {} ({} reviews)", product.getId(), newRating, totalReviews);
     }
 }
+

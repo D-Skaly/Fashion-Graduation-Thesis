@@ -27,7 +27,7 @@ public class CouponService {
         }
 
         if (!coupon.isApplicable(orderTotal)) {
-            throw new InvalidCouponException("Order total does not meet the minimum requirement for this coupon");
+            throw new InvalidCouponException("OrderEntity total does not meet the minimum requirement for this coupon");
         }
 
         return coupon.calculateDiscount(orderTotal);

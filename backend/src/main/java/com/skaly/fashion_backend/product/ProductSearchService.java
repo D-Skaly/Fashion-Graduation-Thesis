@@ -24,7 +24,16 @@ public class ProductSearchService {
     @Transactional(readOnly = true)
     public List<ProductResponse> searchProductsSemantically(String query, int limit) {
         float[] queryEmbedding = productEmbeddingService.embedQuery(query);
-        List<Product> products = productRepository.findTopKByEmbeddingVectorClosestTo(queryEmbedding, limit);
+        List<ProductEntity> products = productRepository.findTopKByEmbeddingVectorClosestTo(queryEmbedding, limit);
+        return products.stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchProductsSemanticallyWithFilters(String query, UUID categoryId, BigDecimal minPrice, BigDecimal maxPrice, int limit) {
+        float[] queryEmbedding = productEmbeddingService.embedQuery(query);
+        List<ProductEntity> products = productRepository.searchWithFilters(queryEmbedding, categoryId, minPrice, maxPrice, limit);
         return products.stream()
                 .map(productMapper::toProductResponse)
                 .collect(Collectors.toList());
@@ -50,3 +59,4 @@ public class ProductSearchService {
                 .map(productMapper::toProductResponse);
     }
 }
+

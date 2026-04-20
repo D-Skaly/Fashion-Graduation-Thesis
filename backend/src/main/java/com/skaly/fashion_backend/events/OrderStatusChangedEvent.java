@@ -1,5 +1,7 @@
 package com.skaly.fashion_backend.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
 public class OrderStatusChangedEvent extends DomainEvent {
@@ -9,7 +11,13 @@ public class OrderStatusChangedEvent extends DomainEvent {
     private final String oldStatus;
     private final String newStatus;
 
-    public OrderStatusChangedEvent(UUID orderId, UUID userId, String orderNumber, String oldStatus, String newStatus) {
+    @JsonCreator
+    public OrderStatusChangedEvent(
+            @JsonProperty("orderId") UUID orderId,
+            @JsonProperty("userId") UUID userId,
+            @JsonProperty("orderNumber") String orderNumber,
+            @JsonProperty("oldStatus") String oldStatus,
+            @JsonProperty("newStatus") String newStatus) {
         super("OrderStatusChanged");
         this.orderId = orderId;
         this.userId = userId;

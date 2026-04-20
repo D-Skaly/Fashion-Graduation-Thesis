@@ -1,13 +1,7 @@
 package com.skaly.fashion_backend.order;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.UUID;
-
-@Repository
-public interface OrderStatusHistoryRepository extends JpaRepository<OrderStatusHistory, UUID> {
-
-    List<OrderStatusHistory> findByOrderIdOrderByCreatedAtDesc(UUID orderId);
+public interface OrderStatusHistoryRepository {
+    List<OrderStatusHistoryEntity> findByOrderIdOrderByCreatedAtDesc(UUID orderId);
+    OrderStatusHistoryEntity save(OrderStatusHistoryEntity history);
 }

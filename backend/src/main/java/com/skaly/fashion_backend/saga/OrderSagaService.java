@@ -42,11 +42,11 @@ public class OrderSagaService {
         boolean success = sagaOrchestrator.execute(context);
         
         if (!success) {
-            context.setErrorMessage("Order processing failed");
+            context.setErrorMessage("OrderEntity processing failed");
             context.setCompensationRequired(true);
-            log.error("Order saga failed for order: {}", orderId);
+            log.error("OrderEntity saga failed for order: {}", orderId);
         } else {
-            log.info("Order saga completed successfully for order: {}", orderId);
+            log.info("OrderEntity saga completed successfully for order: {}", orderId);
         }
         
         return success;
@@ -72,6 +72,6 @@ public class OrderSagaService {
         // Compensate
         sagaOrchestrator.compensate(context);
         
-        log.info("Order saga compensation completed for order: {}", orderId);
+        log.info("OrderEntity saga compensation completed for order: {}", orderId);
     }
 }

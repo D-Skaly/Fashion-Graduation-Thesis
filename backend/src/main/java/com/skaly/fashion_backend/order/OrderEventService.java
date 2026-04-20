@@ -2,31 +2,37 @@ package com.skaly.fashion_backend.order;
 
 import com.skaly.fashion_backend.events.OrderCreatedEvent;
 import com.skaly.fashion_backend.events.OrderStatusChangedEvent;
+import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.outbox.OutboxService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class OrderEventService {
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final OutboxService outboxService;
 
     public void publishOrderCreated(Order order) {
-        eventPublisher.publishEvent(new OrderCreatedEvent(
+        OrderCreatedEvent event = new OrderCreatedEvent(
                 order.getId(),
-                order.getUser().getId(),
+                order.getUserId(),
                 order.getOrderNumber(),
                 order.getTotalAmount(),
-                order.getStatus().name()));
+                order.getStatus().name());
+
+        outboxService.saveEvent("ORDER", order.getId(), event.getEventType(), event);
     }
 
     public void publishOrderStatusChanged(Order order, OrderStatus oldStatus) {
-        eventPublisher.publishEvent(new OrderStatusChangedEvent(
+        OrderStatusChangedEvent event = new OrderStatusChangedEvent(
                 order.getId(),
-                order.getUser().getId(),
+                order.getUserId(),
                 order.getOrderNumber(),
                 oldStatus.name(),
-                order.getStatus().name()));
+                order.getStatus().name());
+
+        outboxService.saveEvent("ORDER", order.getId(), event.getEventType(), event);
     }
 }
+

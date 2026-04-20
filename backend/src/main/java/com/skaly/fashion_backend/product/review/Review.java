@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.product.review;
 
-import com.skaly.fashion_backend.product.Product;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.product.ProductEntity;
+import com.skaly.fashion_backend.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,11 +30,11 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private ProductEntity product;
 
     @Column(nullable = false)
     @Builder.Default
@@ -84,3 +84,5 @@ public class Review {
         }
     }
 }
+
+

@@ -1,52 +1,175 @@
-# Fashion E-Commerce (Monorepo)
+# Fashion E-Commerce System (Monorepo)
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-95%25-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Dự án Hệ thống Thương mại Điện tử Thời trang cao cấp (Fashion E-Commerce).
-Được thiết kế dựa trên kiến trúc **Spring Modulith** theo chuẩn Enterprise-grade, phục vụ cho Đồ án Tốt nghiệp.
+A high-end Fashion E-Commerce system designed with **Spring Modulith** architecture and **Next.js**. This project serves as a Graduation Thesis, implementing enterprise-grade patterns and AI-driven features.
 
-## Cấu trúc Dự án
+---
 
-- `backend/`: Mã nguồn Spring Boot 3 + Java 21 (RESTful API, Spring AI, PostgreSQL).
-- `frontend/`: Mã nguồn Next.js 14 (App Router, Shadcn/ui, Tailwind).
-- `docs/`: Hệ thống tài liệu kỹ thuật chuẩn doanh nghiệp.
+## 🚀 Tech Stack
 
-## Bắt đầu cấu hình
+### Backend
+- **Framework:** Spring Boot 3.5.x
+- **Architecture:** Spring Modulith (Modular Monolith)
+- **AI Integration:** Spring AI (Google Gemini, PGVector)
+- **Database:** PostgreSQL 15+ with `pgvector`
+- **Caching:** Redis 7
+- **Security:** Spring Security, OAuth2, JWT
+- **Migration:** Flyway
+- **Build Tool:** Maven
 
-Cài đặt rất đơn giản với Docker Compose.
+### Frontend
+- **Framework:** Next.js 16 (App Router)
+- **UI Components:** Shadcn UI, Tailwind CSS, Lucide React
+- **State Management:** TanStack Query (React Query)
+- **Language:** TypeScript
 
-1. Khởi động các dịch vụ phụ thuộc (PostgreSQL, Redis):
+### AI Orchestrator
+- **Framework:** NestJS
+- **Language:** TypeScript
+
+### Infrastructure
+- **Containerization:** Docker, Docker Compose
+- **Web Server:** Nginx
+- **Object Storage:** MinIO
+
+---
+
+## 📁 Project Structure
+
+```text
+.
+├── backend/            # Spring Boot 3 application (Core API)
+├── frontend/           # Next.js 16 web application
+├── ai-orchestrator/    # NestJS AI orchestration layer
+├── nginx/              # Nginx configuration for reverse proxy
+├── docs/               # Enterprise-grade technical documentation
+├── docker-compose.yml  # Development infrastructure (DB, Redis)
+└── docker-compose.prod.yml # Production deployment configuration
+```
+
+---
+
+## 🛠️ Requirements
+
+- **Java 21** (LTS)
+- **Node.js 20+**
+- **Docker Desktop**
+- **Maven 3.9+** (or use included `mvnw`)
+
+---
+
+## ⚙️ Setup & Installation
+
+### 1. Infrastructure (Database & Redis)
+The easiest way to start is using Docker Compose to spin up the required services:
+
+```bash
+docker-compose up -d
+```
+This starts:
+- PostgreSQL (Port 5432)
+- Redis (Port 6379)
+
+### 2. Backend Setup
+1. Navigate to the backend directory:
    ```bash
    cd backend
-   docker-compose up -d
    ```
-2. Đọc hướng dẫn chi tiết tại `docs/development/getting_started.md`.
+2. Copy `.env.dev` to `.env` (if not already present) and update your credentials:
+   ```bash
+   # Windows
+   copy .env.dev .env
+   # Linux/Mac
+   cp .env.dev .env
+   ```
+3. Run the application:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-## Hệ Thống Tài Liệu Kỹ Thuật (Enterprise Docs)
+### 3. Frontend Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Toàn bộ tài liệu Architecture, Development, API, v.v được lưu trữ tập trung tại thư mục `docs/`. Tham khảo mục lục chi tiết dưới đây:
+---
 
-### 0. Quản trị Tài liệu (Governance)
+## 📜 Available Scripts
 
-- [Documentation Policy (Vòng đời MD)](docs/governance/docs_policy.md)
+### Backend (`/backend`)
+- `./mvnw clean install`: Build the project and run tests.
+- `./mvnw spring-boot:run`: Run the application.
+- `./mvnw test`: Run unit and integration tests.
 
-### 1. Kiến trúc Hệ thống (Architecture)
+### Frontend (`/frontend`)
+- `npm run dev`: Start development server.
+- `npm run build`: Build production application.
+- `npm run start`: Start production server.
+- `npm run lint`: Run ESLint.
 
-- [Kiến trúc Tổng quan (System Arch)](docs/architecture/01_system_architecture.md)
-- [Cơ sở dữ liệu Schema (ERD)](docs/architecture/02_database_schema.md)
-- [Nhật ký Quyết định (ADRs Index)](docs/architecture/adrs_index.md)
+### AI Orchestrator (`/ai-orchestrator`)
+- `npm run start:dev`: Start NestJS in watch mode.
 
-### 2. Đặc tả Nghiệp vụ (Domain-Driven Design)
+---
 
-- [Cart Bounded Context](docs/domains/cart-domain.md)
+## 🔑 Environment Variables
 
-### 3. Tiêu chuẩn Lập trình (Development)
+### Backend Key Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | `jdbc:postgresql://localhost:5432/fashion_db_dev` |
+| `SPRING_PROFILES_ACTIVE` | Active Spring profile | `dev` |
+| `JWT_SECRET_KEY` | Secret key for JWT signing | (Generated) |
+| `GEMINI_API_KEY` | Google Gemini API Key | TODO: Add Key |
+| `AI_ENABLED` | Toggle AI features | `true` |
 
-- [Hướng dẫn Khởi chạy (Getting Started)](docs/development/getting_started.md)
-- [Quy tắc Lập trình (Coding Standards)](docs/development/coding_standards.md)
+### Frontend Key Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_BASE_URL` | Backend API URL | `http://localhost:8080/api/v1` |
 
-### 4. Chiến lược Kiểm thử (Testing Strategy)
+---
 
-- [Performance & Load Testing](docs/testing/performance-testing.md)
+## 🧪 Testing
+
+### Backend
+We use JUnit 5 and Spring Boot Test for verification:
+```bash
+cd backend
+./mvnw test
+```
+*Note: Some tests require the Docker containers to be running (PostgreSQL).*
+
+### Frontend
+```bash
+cd frontend
+npm run lint
+```
+*(TODO: Add Playwright/Jest testing instructions)*
+
+---
+
+## 📖 Documentation
+Detailed technical documentation is available in the `docs/` folder:
+- [System Architecture](docs/architecture/01_system_architecture.md)
+- [Database Schema](docs/architecture/02_database_schema.md)
+- [Coding Standards](docs/development/coding_standards.md)
+- [Getting Started Guide](docs/development/getting_started.md)
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (TODO: Verify license file existence).

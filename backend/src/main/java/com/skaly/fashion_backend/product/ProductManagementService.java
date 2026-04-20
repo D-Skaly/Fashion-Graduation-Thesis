@@ -20,11 +20,11 @@ public class ProductManagementService {
 
     @Transactional
     public ProductResponse createProduct(CreateProductRequest request) {
-        Category category = categoryRepository.findById(request.categoryId())
+        CategoryEntity category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Category not found with id: " + request.categoryId()));
+                        () -> new ResourceNotFoundException("CategoryEntity not found with id: " + request.categoryId()));
 
-        Product product = Product.builder()
+        ProductEntity product = ProductEntity.builder()
                 .name(request.name())
                 .description(request.description())
                 .basePrice(request.basePrice())
@@ -33,12 +33,12 @@ public class ProductManagementService {
 
         if (request.variants() != null) {
             for (ProductVariantDto variantDto : request.variants()) {
-                ProductVariant variant = productMapper.toProductVariant(variantDto);
+                ProductVariantEntity variant = productMapper.toProductVariant(variantDto);
                 product.addVariant(variant);
             }
         }
 
-        Product savedProduct = productRepository.save(product);
+        ProductEntity savedProduct = productRepository.save(product);
         eventPublisher.publishEvent(new ProductCreatedEvent(this, savedProduct.getId()));
 
         // Evict cache
@@ -66,3 +66,4 @@ public class ProductManagementService {
                 .map(productMapper::toProductResponse);
     }
 }
+

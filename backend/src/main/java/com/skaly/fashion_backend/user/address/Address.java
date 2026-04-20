@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.user.address;
 
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,7 +22,7 @@ public class Address {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
@@ -80,3 +80,5 @@ public class Address {
         BOTH
     }
 }
+
+

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 @Component
 public class ProductMapper {
 
-    public ProductResponse toProductResponse(Product product) {
+    public ProductResponse toProductResponse(ProductEntity product) {
         String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
 
         List<ProductVariantDto> variantDtos = product.getVariants().stream()
@@ -33,7 +33,7 @@ public class ProductMapper {
                 product.getUpdatedAt());
     }
 
-    public ProductVariantDto toProductVariantDto(ProductVariant variant) {
+    public ProductVariantDto toProductVariantDto(ProductVariantEntity variant) {
         return new ProductVariantDto(
                 variant.getId(),
                 variant.getSize(),
@@ -43,8 +43,8 @@ public class ProductMapper {
                 variant.getSkuCode());
     }
 
-    public ProductVariant toProductVariant(ProductVariantDto dto) {
-        return ProductVariant.builder()
+    public ProductVariantEntity toProductVariant(ProductVariantDto dto) {
+        return ProductVariantEntity.builder()
                 .size(dto.size())
                 .color(dto.color())
                 .stockQuantity(dto.stockQuantity())
@@ -53,7 +53,7 @@ public class ProductMapper {
                 .build();
     }
 
-    public ProductImageDto toProductImageDto(ProductImage image) {
+    public ProductImageDto toProductImageDto(ProductImageEntity image) {
         return new ProductImageDto(
                 image.getId(),
                 image.getUrl(),
@@ -63,3 +63,4 @@ public class ProductMapper {
                 image.getCreatedAt());
     }
 }
+

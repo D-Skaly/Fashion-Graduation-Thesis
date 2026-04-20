@@ -14,7 +14,7 @@ public class CacheControlInterceptor implements HandlerInterceptor {
 
         // Set cache headers based on endpoint
         if (path.startsWith("/api/v1/products")) {
-            // Product data - cache for 1 hour
+            // ProductEntity data - cache for 1 hour
             response.setHeader("Cache-Control", "public, max-age=3600");
         } else if (path.startsWith("/api/v1/categories")) {
             // Categories - cache for 24 hours

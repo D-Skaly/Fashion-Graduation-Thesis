@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.saga;
 
-import com.skaly.fashion_backend.product.ProductVariant;
+import com.skaly.fashion_backend.product.ProductVariantEntity;
 import com.skaly.fashion_backend.product.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +32,8 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
             UUID variantId = entry.getKey();
             Integer quantity = entry.getValue();
             
-            ProductVariant variant = productVariantRepository.findById(variantId)
-                    .orElseThrow(() -> new RuntimeException("Product variant not found: " + variantId));
+            ProductVariantEntity variant = productVariantRepository.findById(variantId)
+                    .orElseThrow(() -> new RuntimeException("ProductEntity variant not found: " + variantId));
             
             // Store original stock for compensation
             originalStocks.put(variantId, variant.getStockQuantity());
@@ -63,7 +63,7 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
                 UUID variantId = entry.getKey();
                 Integer originalStock = entry.getValue();
                 
-                ProductVariant variant = productVariantRepository.findById(variantId)
+                ProductVariantEntity variant = productVariantRepository.findById(variantId)
                         .orElse(null);
                 
                 if (variant != null) {
@@ -82,3 +82,4 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
         return context.getOriginalStockQuantities() != null && !context.getOriginalStockQuantities().isEmpty();
     }
 }
+

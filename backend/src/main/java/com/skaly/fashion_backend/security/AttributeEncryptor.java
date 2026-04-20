@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 public class AttributeEncryptor implements AttributeConverter<String, String> {
 
-    @Value("${app.security.encryption.key}")
+    @Value("${application.security.encryption.key}")
     private String encryptionKey;
 
     @Override

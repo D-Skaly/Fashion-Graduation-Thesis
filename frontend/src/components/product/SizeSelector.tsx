@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Ruler } from "lucide-react";
+import { Ruler, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { BodyMeasurement } from "@/components/ai/body/BodyMeasurement";
 
 interface SizeSelectorProps {
     sizes: string[];
@@ -15,6 +16,7 @@ interface SizeSelectorProps {
 
 export function SizeSelector({ sizes, selectedSize, onSelectSize, stockMap }: SizeSelectorProps) {
     const [showSizeGuide, setShowSizeGuide] = useState(false);
+    const [showAiMeasure, setShowAiMeasure] = useState(false);
 
     const getStockStatus = (size: string) => {
         if (!stockMap) return "available";
@@ -34,71 +36,88 @@ export function SizeSelector({ sizes, selectedSize, onSelectSize, stockMap }: Si
                 <span className="text-sm font-medium">
                     Size: <span className="text-muted-foreground">{selectedSize || "Select a size"}</span>
                 </span>
-                <Dialog open={showSizeGuide} onOpenChange={setShowSizeGuide}>
-                    <DialogTrigger asChild>
-                        <button className="text-xs underline text-muted-foreground hover:text-primary flex items-center gap-1">
-                            <Ruler className="h-3 w-3" />
-                            Size Guide
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                            <DialogTitle>Size Guide</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                            <p className="text-sm text-muted-foreground">
-                                Use the chart below to find your perfect fit.
-                            </p>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr className="border-b">
-                                            <th className="text-left py-2 px-3">Size</th>
-                                            <th className="text-left py-2 px-3">Chest (in)</th>
-                                            <th className="text-left py-2 px-3">Waist (in)</th>
-                                            <th className="text-left py-2 px-3">Hip (in)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr className="border-b">
-                                            <td className="py-2 px-3 font-medium">XS</td>
-                                            <td className="py-2 px-3">34-36</td>
-                                            <td className="py-2 px-3">28-30</td>
-                                            <td className="py-2 px-3">34-36</td>
-                                        </tr>
-                                        <tr className="border-b">
-                                            <td className="py-2 px-3 font-medium">S</td>
-                                            <td className="py-2 px-3">36-38</td>
-                                            <td className="py-2 px-3">30-32</td>
-                                            <td className="py-2 px-3">36-38</td>
-                                        </tr>
-                                        <tr className="border-b">
-                                            <td className="py-2 px-3 font-medium">M</td>
-                                            <td className="py-2 px-3">38-40</td>
-                                            <td className="py-2 px-3">32-34</td>
-                                            <td className="py-2 px-3">38-40</td>
-                                        </tr>
-                                        <tr className="border-b">
-                                            <td className="py-2 px-3 font-medium">L</td>
-                                            <td className="py-2 px-3">40-42</td>
-                                            <td className="py-2 px-3">34-36</td>
-                                            <td className="py-2 px-3">40-42</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="py-2 px-3 font-medium">XL</td>
-                                            <td className="py-2 px-3">42-44</td>
-                                            <td className="py-2 px-3">36-38</td>
-                                            <td className="py-2 px-3">42-44</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                <div className="flex items-center gap-3">
+                    <Dialog open={showAiMeasure} onOpenChange={setShowAiMeasure}>
+                        <DialogTrigger asChild>
+                            <button className="text-xs underline text-primary hover:text-primary/80 flex items-center gap-1 font-medium">
+                                <Sparkles className="h-3 w-3" />
+                                AI Fit Guide
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                            <DialogHeader>
+                                <DialogTitle>AI Sizing Assistant</DialogTitle>
+                            </DialogHeader>
+                            <BodyMeasurement />
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog open={showSizeGuide} onOpenChange={setShowSizeGuide}>
+                        <DialogTrigger asChild>
+                            <button className="text-xs underline text-muted-foreground hover:text-primary flex items-center gap-1">
+                                <Ruler className="h-3 w-3" />
+                                Size Guide
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle>Size Guide</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                                <p className="text-sm text-muted-foreground">
+                                    Use the chart below to find your perfect fit.
+                                </p>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b">
+                                                <th className="text-left py-2 px-3">Size</th>
+                                                <th className="text-left py-2 px-3">Chest (in)</th>
+                                                <th className="text-left py-2 px-3">Waist (in)</th>
+                                                <th className="text-left py-2 px-3">Hip (in)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr className="border-b">
+                                                <td className="py-2 px-3 font-medium">XS</td>
+                                                <td className="py-2 px-3">34-36</td>
+                                                <td className="py-2 px-3">28-30</td>
+                                                <td className="py-2 px-3">34-36</td>
+                                            </tr>
+                                            <tr className="border-b">
+                                                <td className="py-2 px-3 font-medium">S</td>
+                                                <td className="py-2 px-3">36-38</td>
+                                                <td className="py-2 px-3">30-32</td>
+                                                <td className="py-2 px-3">36-38</td>
+                                            </tr>
+                                            <tr className="border-b">
+                                                <td className="py-2 px-3 font-medium">M</td>
+                                                <td className="py-2 px-3">38-40</td>
+                                                <td className="py-2 px-3">32-34</td>
+                                                <td className="py-2 px-3">38-40</td>
+                                            </tr>
+                                            <tr className="border-b">
+                                                <td className="py-2 px-3 font-medium">L</td>
+                                                <td className="py-2 px-3">40-42</td>
+                                                <td className="py-2 px-3">34-36</td>
+                                                <td className="py-2 px-3">40-42</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="py-2 px-3 font-medium">XL</td>
+                                                <td className="py-2 px-3">42-44</td>
+                                                <td className="py-2 px-3">36-38</td>
+                                                <td className="py-2 px-3">42-44</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    * Measurements are in inches. For accurate results, measure yourself directly on skin.
+                                </p>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                * Measurements are in inches. For accurate results, measure yourself directly on skin.
-                            </p>
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
             
             <div className="flex flex-wrap gap-3">

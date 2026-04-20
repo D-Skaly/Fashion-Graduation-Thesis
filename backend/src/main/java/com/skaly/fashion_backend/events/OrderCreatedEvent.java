@@ -1,5 +1,7 @@
 package com.skaly.fashion_backend.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -10,7 +12,13 @@ public class OrderCreatedEvent extends DomainEvent {
     private final BigDecimal totalAmount;
     private final String status;
 
-    public OrderCreatedEvent(UUID orderId, UUID userId, String orderNumber, BigDecimal totalAmount, String status) {
+    @JsonCreator
+    public OrderCreatedEvent(
+            @JsonProperty("orderId") UUID orderId,
+            @JsonProperty("userId") UUID userId,
+            @JsonProperty("orderNumber") String orderNumber,
+            @JsonProperty("totalAmount") BigDecimal totalAmount,
+            @JsonProperty("status") String status) {
         super("OrderCreated");
         this.orderId = orderId;
         this.userId = userId;
