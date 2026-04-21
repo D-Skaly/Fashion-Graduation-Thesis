@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment;
 
-import com.skaly.fashion_backend.order.OrderEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

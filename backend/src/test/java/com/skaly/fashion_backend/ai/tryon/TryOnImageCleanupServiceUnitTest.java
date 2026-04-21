@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.ai.tryon;
 
+import com.skaly.fashion_backend.ai.tryon.application.TryOnImageCleanupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

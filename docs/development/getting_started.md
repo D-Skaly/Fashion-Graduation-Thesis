@@ -1,5 +1,7 @@
 # Cài đặt & Khởi chạy (Getting Started)
 
+> Mục lục tài liệu: [docs/README.md](../README.md) · Cấu hình chi tiết thêm: [dev_setup.md](dev_setup.md).
+
 **Tác giả (Owner):** DSkaly | **Ngày cập nhật:** 2026-02-20
 **Reviewer:** Principal Architect | **Trạng thái:** Active | **Version:** v1.1
 

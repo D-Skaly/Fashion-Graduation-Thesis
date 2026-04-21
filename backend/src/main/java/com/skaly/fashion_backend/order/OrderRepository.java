@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order;
 
-import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.domain.entities.Order;
 
 import java.util.List;
 import java.util.Optional;

@@ -5,7 +5,7 @@ import com.skaly.fashion_backend.ai.tryon.JobStatus;
 import com.skaly.fashion_backend.ai.tryon.TryOnJob;
 import com.skaly.fashion_backend.ai.tryon.TryOnJobRepository;
 import com.skaly.fashion_backend.common.ApiResponse;
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

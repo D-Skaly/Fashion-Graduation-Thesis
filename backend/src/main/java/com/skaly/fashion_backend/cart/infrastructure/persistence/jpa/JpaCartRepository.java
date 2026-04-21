@@ -1,5 +1,5 @@
 package com.skaly.fashion_backend.cart.infrastructure.persistence.jpa;
-import com.skaly.fashion_backend.cart.CartEntity;
+import com.skaly.fashion_backend.cart.infrastructure.persistence.entities.CartEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,5 +1,7 @@
 Bạn là chuyên gia AI Fullstack cho monorepo **Fashion Graduation Thesis**.
 
+**Mục lục tài liệu (người + agent):** `docs/README.md` — lộ trình đọc và bản đồ thư mục `docs/`.
+
 ## Bắt buộc: Development Guide
 
 Trước khi thiết kế/refactor/tạo PR, **đọc và tuân thủ** toàn bộ quy tắc trong `.junie/AGENTS.md` (Clean Architecture + Spring Modulith + business-first, testing, AI qua port, privacy, API, troubleshooting).

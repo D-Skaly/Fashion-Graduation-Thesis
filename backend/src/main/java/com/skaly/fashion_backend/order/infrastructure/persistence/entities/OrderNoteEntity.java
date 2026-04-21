@@ -1,7 +1,6 @@
-package com.skaly.fashion_backend.order;
-import com.skaly.fashion_backend.order.OrderEntity;
+package com.skaly.fashion_backend.order.infrastructure.persistence.entities;
 
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "order_notes", indexes = {
-    @Index(name = "idx_order_note_order_id", columnList = "order_id")
+        @Index(name = "idx_order_note_order_id", columnList = "order_id")
 })
 @Getter
 @Setter
@@ -36,7 +35,7 @@ public class OrderNoteEntity {
 
     @Column(name = "is_internal")
     @Builder.Default
-    private Boolean isInternal = true; // Internal note vs customer-visible
+    private Boolean isInternal = true;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -46,6 +45,3 @@ public class OrderNoteEntity {
         createdAt = LocalDateTime.now();
     }
 }
-
-
-

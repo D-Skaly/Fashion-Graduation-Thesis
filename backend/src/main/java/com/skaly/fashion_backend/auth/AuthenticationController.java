@@ -1,7 +1,9 @@
 package com.skaly.fashion_backend.auth;
 
 import com.skaly.fashion_backend.common.ApiResponse;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService service;
+    private final UserMapper userMapper;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthenticationResponse>> register(
@@ -47,22 +50,22 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
             @RequestBody LogoutRequest request,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         service.logout(request.accessToken(), request.refreshToken());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
     @PostMapping("/logout-all")
     public ResponseEntity<ApiResponse<Void>> logoutAllDevices(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         service.logoutAllDevices(user.getId().toString());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<User>> getCurrentUser(
-            @AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(ApiResponse.success(user));
+            @AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(ApiResponse.success(userMapper.toDomain(user)));
     }
 
     private String extractDeviceInfo(HttpServletRequest request) {

@@ -3,7 +3,7 @@ package com.skaly.fashion_backend.user.application;
 import com.skaly.fashion_backend.user.api.dto.BodyProfileDto;
 import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.BodyProfile;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.BodyProfileRepository;
 import com.skaly.fashion_backend.user.UserRepository;
 

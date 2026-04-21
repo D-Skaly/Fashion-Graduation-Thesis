@@ -4,7 +4,7 @@ import com.skaly.fashion_backend.common.ApiResponse;
 import com.skaly.fashion_backend.payment.gateway.MomoService;
 import com.skaly.fashion_backend.payment.gateway.PaymentGateway;
 import com.skaly.fashion_backend.payment.gateway.VNPayService;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class PaymentController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PaymentResponse>> getPayment(
             @PathVariable UUID id,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         Payment payment = paymentService.getPaymentById(id);
         // Check if user owns this payment
         if (!payment.getOrder().getUserId().equals(user.getId())) {
@@ -45,7 +45,7 @@ public class PaymentController {
     @GetMapping("/order/{orderId}")
     public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentByOrder(
             @PathVariable UUID orderId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         Payment payment = paymentService.getPaymentByOrderId(orderId);
         // Check if user owns this order
         if (!payment.getOrder().getUserId().equals(user.getId())) {
@@ -56,7 +56,7 @@ public class PaymentController {
 
     @GetMapping("/my-payments")
     public ResponseEntity<ApiResponse<List<PaymentResponse>>> getMyPayments(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         List<Payment> payments = paymentRepository.findByUserId(user.getId());
         List<PaymentResponse> response = payments.stream()
                 .map(this::mapToResponse)

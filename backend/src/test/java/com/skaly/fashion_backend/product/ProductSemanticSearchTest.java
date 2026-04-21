@@ -1,5 +1,13 @@
 package com.skaly.fashion_backend.product;
 
+import com.skaly.fashion_backend.product.application.ProductService;
+import com.skaly.fashion_backend.product.domain.model.Category;
+import com.skaly.fashion_backend.product.domain.model.Product;
+import com.skaly.fashion_backend.product.domain.port.CategoryRepository;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
+import com.skaly.fashion_backend.product.interfaces.dto.CreateProductRequest;
+import com.skaly.fashion_backend.product.interfaces.dto.ProductResponse;
+import com.skaly.fashion_backend.testsupport.PostgresIntegrationSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class ProductSemanticSearchTest {
+public class ProductSemanticSearchTest extends PostgresIntegrationSupport {
 
     @Autowired
     private ProductService productService;
@@ -35,47 +43,45 @@ public class ProductSemanticSearchTest {
 
     @Test
     void testSemanticSearchFlow() throws Exception {
-        // Mock the Gemini embedding model to return dummy vectors
-        float[] fakeEmbedding1 = new float[768];
+        float[] fakeEmbedding1 = new float[384];
         fakeEmbedding1[0] = 0.9f;
 
-        float[] fakeEmbedding2 = new float[768];
+        float[] fakeEmbedding2 = new float[384];
         fakeEmbedding2[0] = 0.1f;
 
-        // When embedding is requested for "black dress", return vector 1
         when(embeddingModel.embed(anyString())).thenAnswer(invocation -> {
             String q = invocation.getArgument(0).toString().toLowerCase();
-            if (q.contains("dress") || q.contains("đầm"))
+            if (q.contains("dress") || q.contains("đầm")) {
                 return fakeEmbedding1;
+            }
             return fakeEmbedding2;
         });
 
-        CategoryEntity cat = new CategoryEntity();
-        cat.setName("Women " + UUID.randomUUID().toString().substring(0, 8));
-        cat.setDescription("Women Clothing");
-        cat.setSlug("women-" + UUID.randomUUID().toString().substring(0, 8));
-        CategoryEntity savedCat = categoryRepository.save(cat);
+        Category savedCat = categoryRepository.save(Category.builder()
+                .name("Women " + UUID.randomUUID().toString().substring(0, 8))
+                .description("Women Clothing")
+                .slug("women-" + UUID.randomUUID().toString().substring(0, 8))
+                .build());
 
-        // Create product (this will fire ProductCreatedEvent and trigger Embedding)
-        CreateProductRequest req = new CreateProductRequest("Đầm dạ hội màu đen", "100% lụa", BigDecimal.valueOf(100),
-                savedCat.getId(), List.of());
+        CreateProductRequest req = new CreateProductRequest(
+                "Đầm dạ hội màu đen",
+                "100% lụa",
+                BigDecimal.valueOf(100),
+                savedCat.getId(),
+                List.of());
         ProductResponse res = productService.createProduct(req);
 
-        // Wait up to 5s for the @Async event listener to save the embedding vector
         await().atMost(5, TimeUnit.SECONDS)
                 .until(() -> productRepository.findById(res.id())
                         .map(p -> p.getEmbeddingVector() != null)
                         .orElse(false));
 
-        // Verify vector is saved
-        ProductEntity savedProduct = productRepository.findById(res.id()).orElseThrow();
+        Product savedProduct = productRepository.findById(res.id()).orElseThrow();
         assertThat(savedProduct.getEmbeddingVector()).isNotNull();
         assertThat(savedProduct.getEmbeddingVector()[0]).isEqualTo(0.9f);
 
-        // Search
         List<ProductResponse> searchRes = productService.searchProductsSemantically("dress", 5);
 
-        // Validate search results
         assertThat(searchRes).isNotEmpty();
         assertThat(searchRes.get(0).name()).isEqualTo("Đầm dạ hội màu đen");
     }

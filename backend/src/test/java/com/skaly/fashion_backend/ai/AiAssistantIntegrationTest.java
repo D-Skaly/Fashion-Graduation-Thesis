@@ -5,7 +5,7 @@ import com.skaly.fashion_backend.recommendation.infrastructure.springai.SpringAi
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skaly.fashion_backend.common.GlobalExceptionHandler;
 import com.skaly.fashion_backend.product.application.ProductEmbeddingService;
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.product.domain.model.Product;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -68,11 +70,13 @@ class AiAssistantIntegrationTest {
         
         ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
         ProductRepository productRepository = mock(ProductRepository.class);
-        var product = mock(ProductEntity.class);
-        when(product.getName()).thenReturn("Test Shirt");
-        when(product.getBasePrice()).thenReturn(new java.math.BigDecimal("100"));
-        when(product.getDescription()).thenReturn("Desc");
-        
+        Product product = Product.builder()
+                .id(UUID.randomUUID())
+                .name("Test Shirt")
+                .basePrice(new BigDecimal("100"))
+                .description("Desc")
+                .build();
+
         when(productEmbeddingService.embedQuery(anyString())).thenReturn(new float[]{0.1f});
         when(productRepository.findTopKByEmbeddingVectorClosestTo(any(), anyInt())).thenReturn(Collections.singletonList(product));
 

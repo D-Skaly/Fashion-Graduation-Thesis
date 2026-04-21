@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.user.address;
 
 import com.skaly.fashion_backend.common.ApiResponse;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class AddressController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AddressResponse>>> getUserAddresses(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         List<Address> addresses = addressRepository.findByUserId(user.getId());
         List<AddressResponse> response = addresses.stream()
                 .map(this::mapToResponse)
@@ -33,7 +33,7 @@ public class AddressController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AddressResponse>> getAddressById(
             @PathVariable UUID id,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         Address address = addressRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new AddressNotFoundException("Address not found"));
         return ResponseEntity.ok(ApiResponse.success(mapToResponse(address)));
@@ -41,7 +41,7 @@ public class AddressController {
 
     @GetMapping("/default")
     public ResponseEntity<ApiResponse<AddressResponse>> getDefaultAddress(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         Address address = addressRepository.findByUserIdAndIsDefaultTrue(user.getId())
                 .orElseThrow(() -> new AddressNotFoundException("No default address found"));
         return ResponseEntity.ok(ApiResponse.success(mapToResponse(address)));
@@ -50,7 +50,7 @@ public class AddressController {
     @PostMapping
     public ResponseEntity<ApiResponse<AddressResponse>> createAddress(
             @Valid @RequestBody AddressRequest request,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         // Check max addresses per user
         long addressCount = addressRepository.countByUserId(user.getId());
         if (addressCount >= 10) {
@@ -88,7 +88,7 @@ public class AddressController {
     public ResponseEntity<ApiResponse<AddressResponse>> updateAddress(
             @PathVariable UUID id,
             @Valid @RequestBody AddressRequest request,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         Address address = addressRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new AddressNotFoundException("Address not found"));
 
@@ -117,7 +117,7 @@ public class AddressController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAddress(
             @PathVariable UUID id,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         addressRepository.deleteByIdAndUserId(id, user.getId());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -125,7 +125,7 @@ public class AddressController {
     @PatchMapping("/{id}/default")
     public ResponseEntity<ApiResponse<AddressResponse>> setDefaultAddress(
             @PathVariable UUID id,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal UserEntity user) {
         Address address = addressRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new AddressNotFoundException("Address not found"));
 

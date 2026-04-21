@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -28,7 +29,9 @@ public class JpaConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("com.skaly.fashion_backend");
+        em.setPackagesToScan(
+                "com.skaly.fashion_backend",
+                "org.springframework.modulith.events.jpa");
         
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
@@ -37,6 +40,9 @@ public class JpaConfig {
         
         // Dialect configuration
         jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        jpaProperties.put(
+                "hibernate.physical_naming_strategy",
+                CamelCaseToUnderscoresNamingStrategy.class.getName());
         
         // Lazy loading configuration
         jpaProperties.put("hibernate.enable_lazy_load_no_trans", "true");

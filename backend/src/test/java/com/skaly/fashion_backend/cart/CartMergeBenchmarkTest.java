@@ -1,16 +1,22 @@
 package com.skaly.fashion_backend.cart;
 
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.cart.api.dto.AddToCartRequest;
+import com.skaly.fashion_backend.cart.api.dto.CartDto;
+import com.skaly.fashion_backend.cart.application.CartService;
+import com.skaly.fashion_backend.product.domain.model.Product;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
-import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
+import com.skaly.fashion_backend.testsupport.ProductCatalogTestData;
 import com.skaly.fashion_backend.user.Role;
-import com.skaly.fashion_backend.user.User;
 import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.testsupport.PostgresIntegrationSupport;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +28,11 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
 @SpringBootTest(properties = {
-        // Override datasource pool size to comfortably handle 1000 concurrent threads
-        // without excessive queueing timeouts
         "spring.datasource.hikari.maximum-pool-size=50",
-        // Disable Spring AI just like in application-test.properties to let context
-        // load
 })
 @Slf4j
-public class CartMergeBenchmarkTest {
+public class CartMergeBenchmarkTest extends PostgresIntegrationSupport {
 
     @MockitoBean
     private VectorStore vectorStore;
@@ -48,32 +47,21 @@ public class CartMergeBenchmarkTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private ProductVariantRepository productVariantRepository;
-
-    @Autowired
     private CartRepository cartRepository;
 
     @Test
     void benchmarkCartMergeUnder1000ConcurrentLogins() throws InterruptedException {
         int totalRequests = 1000;
 
-        // 1. Setup global product
-        ProductEntity product = productRepository.save(ProductEntity.builder()
-                .name("Benchmark Shirt")
-                .description("Perf test")
-                .basePrice(new BigDecimal("100"))
-                .build());
+        Product saved = ProductCatalogTestData.saveProductWithSingleVariant(
+                productRepository,
+                "Benchmark Shirt",
+                new BigDecimal("100"),
+                "L",
+                "Red",
+                10000);
+        UUID variantId = ProductCatalogTestData.firstVariantIdMatchingStock(saved, 10000);
 
-        ProductVariantEntity variant = productVariantRepository.save(ProductVariantEntity.builder()
-                .product(product)
-                .size("M")
-                .color("Black")
-                .skuCode("B-M-BLK-" + UUID.randomUUID())
-                .stockQuantity(10000) // Ensure enough stock
-                .priceAdjustment(BigDecimal.ZERO)
-                .build());
-
-        // 2. Prepare 1000 Users and Guest Carts
         log.info("Setting up {} users and guest carts for benchmark...", totalRequests);
         List<String> userEmails = new ArrayList<>();
         List<String> guestIds = new ArrayList<>();
@@ -92,15 +80,12 @@ public class CartMergeBenchmarkTest {
             String guestId = "guest-perf-" + batchId + "-" + i;
             guestIds.add(guestId);
 
-            // Add item to guest cart
-            cartService.addToCart(null, guestId, new AddToCartRequest(variant.getId(), 1));
-            // Ensure user cart is initialized too
-            cartService.addToCart(email, null, new AddToCartRequest(variant.getId(), 2));
+            cartService.addToCart(null, guestId, new AddToCartRequest(variantId, 1));
+            cartService.addToCart(email, null, new AddToCartRequest(variantId, 2));
         }
 
-        // 3. Setup Concurrency
         log.info("Starting merge benchmark...");
-        ExecutorService executorService = Executors.newFixedThreadPool(100); // 100 concurrent system threads
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
         CountDownLatch readyLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(totalRequests);
 
@@ -110,7 +95,7 @@ public class CartMergeBenchmarkTest {
             final int index = i;
             executorService.submit(() -> {
                 try {
-                    readyLatch.await(); // wait until all threads are queued
+                    readyLatch.await();
                     cartService.mergeCart(userEmails.get(index), guestIds.get(index));
                 } catch (Exception e) {
                     log.error("Merge failed", e);
@@ -120,11 +105,9 @@ public class CartMergeBenchmarkTest {
             });
         }
 
-        // 4. BLAST OFF
         long executionStartTime = System.currentTimeMillis();
         readyLatch.countDown();
 
-        // Wait for all to finish, wait up to 2 minutes
         boolean completed = doneLatch.await(120, TimeUnit.SECONDS);
         long endTime = System.currentTimeMillis();
         executorService.shutdown();
@@ -142,8 +125,7 @@ public class CartMergeBenchmarkTest {
         log.info("Throughput        : {} requests/second", (totalRequests * 1000.0) / totalExecutionTime);
         log.info("==========================================");
 
-        // Sanity check an arbitrary user
         CartDto userCart = cartService.getCart(userEmails.get(0), null);
-        assertThat(userCart.items().get(0).quantity()).isEqualTo(3); // 2 initially + 1 merged
+        assertThat(userCart.items().get(0).quantity()).isEqualTo(3);
     }
 }

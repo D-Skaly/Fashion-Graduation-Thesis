@@ -1,5 +1,7 @@
-package com.skaly.fashion_backend.cart;
+package com.skaly.fashion_backend.cart.application;
 
+import com.skaly.fashion_backend.cart.CartRepository;
+import com.skaly.fashion_backend.cart.domain.entities.Cart;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -17,17 +19,17 @@ public class CartCleanupService {
 
     private final CartRepository cartRepository;
 
-    // Run every day at 3 AM
     @Scheduled(cron = "0 0 3 * * ?")
     public void cleanupAbandonedGuestCarts() {
         log.info("Starting cleanup of abandoned guest carts...");
 
-        // Carts older than 7 days
         LocalDateTime expiryDate = LocalDateTime.now().minusDays(7);
-        List<Cart> abandonedCarts = cartRepository.findByGuestIdIsNotNullAndUpdatedAtBefore(expiryDate);
+        List<Cart> abandonedCarts = cartRepository.findAbandonedGuestCarts(expiryDate);
 
         if (!abandonedCarts.isEmpty()) {
-            cartRepository.deleteAll(abandonedCarts);
+            for (Cart cart : abandonedCarts) {
+                cartRepository.delete(cart);
+            }
             log.info("Cleaned up {} abandoned guest carts.", abandonedCarts.size());
         } else {
             log.info("No abandoned guest carts found to clean up.");

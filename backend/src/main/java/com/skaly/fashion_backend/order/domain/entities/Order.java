@@ -1,7 +1,11 @@
-package com.skaly.fashion_backend.order;
+package com.skaly.fashion_backend.order.domain.entities;
 
 import com.skaly.fashion_backend.order.OrderStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,35 +22,35 @@ public class Order {
     private UUID id;
     private String orderNumber;
     private UUID userId;
-    
+
     @Builder.Default
     private BigDecimal subTotal = BigDecimal.ZERO;
-    
+
     @Builder.Default
     private BigDecimal taxAmount = BigDecimal.ZERO;
-    
+
     @Builder.Default
     private BigDecimal shippingCost = BigDecimal.ZERO;
-    
+
     @Builder.Default
     private BigDecimal discountAmount = BigDecimal.ZERO;
-    
+
     private String discountCode;
-    
+
     @Builder.Default
     private BigDecimal totalAmount = BigDecimal.ZERO;
-    
+
     private String shippingAddress;
     private String notes;
     private LocalDateTime cancelledAt;
     private String cancelledReason;
-    
+
     @Builder.Default
     private OrderStatus status = OrderStatus.PENDING;
-    
+
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
-    
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -71,4 +75,3 @@ public class Order {
                 .subtract(discountAmount);
     }
 }
-

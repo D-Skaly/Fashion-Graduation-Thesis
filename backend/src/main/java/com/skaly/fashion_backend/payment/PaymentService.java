@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment;
 
-import com.skaly.fashion_backend.order.OrderEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

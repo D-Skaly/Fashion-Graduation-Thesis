@@ -1,9 +1,9 @@
 package com.skaly.fashion_backend.order.infrastructure.persistence.jpa;
-import com.skaly.fashion_backend.order.OrderItemEntity;
-import com.skaly.fashion_backend.order.OrderEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderItemEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
 
-import com.skaly.fashion_backend.order.Order;
-import com.skaly.fashion_backend.order.OrderItem;
+import com.skaly.fashion_backend.order.domain.entities.Order;
+import com.skaly.fashion_backend.order.domain.entities.OrderItem;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

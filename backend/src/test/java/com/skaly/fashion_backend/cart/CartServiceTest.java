@@ -5,28 +5,31 @@ import com.skaly.fashion_backend.cart.api.dto.CartDto;
 import com.skaly.fashion_backend.cart.application.CartService;
 import com.skaly.fashion_backend.coupon.infrastructure.persistence.jpa.CouponEntity;
 import com.skaly.fashion_backend.coupon.infrastructure.persistence.jpa.CouponJpaRepository;
-import org.springframework.ai.vectorstore.VectorStore;
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.product.domain.model.Product;
+import com.skaly.fashion_backend.product.domain.model.ProductVariant;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
 import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
+import com.skaly.fashion_backend.testsupport.ProductCatalogTestData;
 import com.skaly.fashion_backend.user.Role;
-import com.skaly.fashion_backend.user.User;
 import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.testsupport.PostgresIntegrationSupport;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class CartServiceTest {
+class CartServiceTest extends PostgresIntegrationSupport {
 
     @MockitoBean
     private VectorStore vectorStore;
@@ -41,17 +44,17 @@ class CartServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductVariantRepository productVariantRepository;
 
     @Autowired
-    private ProductVariantRepository productVariantRepository;
+    private ProductRepository productRepository;
 
     @Autowired
     private CouponJpaRepository couponJpaRepository;
 
     private User testUser;
-    private ProductVariantEntity testVariant;
-    private ProductVariantEntity outOfStockVariant;
+    private UUID testVariantId;
+    private UUID outOfStockVariantId;
 
     @BeforeEach
     void setUp() {
@@ -62,40 +65,15 @@ class CartServiceTest {
                 .build();
         userRepository.save(testUser);
 
-        ProductEntity product = ProductEntity.builder()
-                .name("Test Shirt")
-                .sku("TS-SHIRT-001")
-                .slug("test-shirt-001")
-                .description("A high quality test shirt")
-                .basePrice(new BigDecimal("100.00"))
-                .build();
-        productRepository.save(product);
-
-        testVariant = ProductVariantEntity.builder()
-                .product(product)
-                .size("M")
-                .color("Red")
-                .skuCode("TS-M-R")
-                .stockQuantity(10)
-                .priceAdjustment(BigDecimal.ZERO)
-                .build();
-
-        outOfStockVariant = ProductVariantEntity.builder()
-                .product(product)
-                .size("S")
-                .color("Blue")
-                .skuCode("TS-S-B")
-                .stockQuantity(0)
-                .priceAdjustment(BigDecimal.ZERO)
-                .build();
-
-        productVariantRepository.save(testVariant);
-        productVariantRepository.save(outOfStockVariant);
+        Product saved = ProductCatalogTestData.saveProductWithTwoVariants(
+                productRepository, "Test Shirt", new BigDecimal("100.00"), 10, 0);
+        testVariantId = ProductCatalogTestData.firstVariantIdMatchingStock(saved, 10);
+        outOfStockVariantId = ProductCatalogTestData.firstVariantIdMatchingStock(saved, 0);
     }
 
     @Test
     void shouldCreateGuestCartAndAddItems() {
-        AddToCartRequest request = new AddToCartRequest(testVariant.getId(), 2);
+        AddToCartRequest request = new AddToCartRequest(testVariantId, 2);
         String guestId = "guest-123";
 
         CartDto cartDto = cartService.addToCart(null, guestId, request);
@@ -108,22 +86,17 @@ class CartServiceTest {
 
     @Test
     void shouldMergeGuestCartIntoUserCartAndApplyNewestPrice() {
-        // Setup Guest Cart
         String guestId = "merge-guest";
-        cartService.addToCart(null, guestId, new AddToCartRequest(testVariant.getId(), 1));
+        cartService.addToCart(null, guestId, new AddToCartRequest(testVariantId, 1));
 
-        // Setup User Cart
-        cartService.addToCart(testUser.getEmail(), null, new AddToCartRequest(testVariant.getId(), 2));
+        cartService.addToCart(testUser.getEmail(), null, new AddToCartRequest(testVariantId, 2));
 
-        // Perform Merge
         CartDto mergedCart = cartService.mergeCart(testUser.getEmail(), guestId);
 
-        // Verify
         assertThat(mergedCart.guestId()).isNull();
         assertThat(mergedCart.items()).hasSize(1);
         assertThat(mergedCart.items().get(0).quantity()).isEqualTo(3);
 
-        // Assert guest cart deleted
         assertThat(cartRepository.findByGuestId(guestId)).isEmpty();
     }
 
@@ -131,28 +104,22 @@ class CartServiceTest {
     void shouldAutoRemoveOutOfStockAndAdjustExceedingQuantity() {
         String guestId = "inventory-guest";
 
-        // Add 5 items (stock is 10)
-        cartService.addToCart(null, guestId, new AddToCartRequest(testVariant.getId(), 5));
+        cartService.addToCart(null, guestId, new AddToCartRequest(testVariantId, 5));
 
-        // Add 1 out of stock item
-        cartService.addToCart(null, guestId, new AddToCartRequest(outOfStockVariant.getId(), 1));
+        cartService.addToCart(null, guestId, new AddToCartRequest(outOfStockVariantId, 1));
 
-        // Act: get cart triggers validation
         CartDto cart = cartService.getCart(null, guestId);
 
-        // Out of stock should be removed
         assertThat(cart.items()).hasSize(1);
-        assertThat(cart.items().get(0).productVariantId()).isEqualTo(testVariant.getId());
+        assertThat(cart.items().get(0).productVariantId()).isEqualTo(testVariantId);
         assertThat(cart.items().get(0).quantity()).isEqualTo(5);
 
-        // Now simulate stock drops to 2
-        testVariant.setStockQuantity(2);
-        productVariantRepository.save(testVariant);
+        ProductVariant v = productVariantRepository.findVariantById(testVariantId).orElseThrow();
+        v.setStockQuantity(2);
+        productVariantRepository.save(v);
 
-        // Act again
         CartDto adjustedCart = cartService.getCart(null, guestId);
 
-        // Should cap at 2 and set flag
         assertThat(adjustedCart.items().get(0).quantity()).isEqualTo(2);
         assertThat(adjustedCart.items().get(0).quantityAdjusted()).isTrue();
     }
@@ -160,8 +127,7 @@ class CartServiceTest {
     @Test
     void shouldApplyCouponSuccessfully() {
         String guestId = "coupon-guest";
-        cartService.addToCart(null, guestId, new AddToCartRequest(testVariant.getId(), 2));
-        // Subtotal: 200
+        cartService.addToCart(null, guestId, new AddToCartRequest(testVariantId, 2));
 
         CouponEntity coupon = CouponEntity.builder()
                 .code("MINUS50")

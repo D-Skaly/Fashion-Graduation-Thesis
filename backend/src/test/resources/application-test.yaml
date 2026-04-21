@@ -1,0 +1,66 @@
+# Profile "test": dùng cùng Flyway/schema PostgreSQL (vector) qua Testcontainers — xem PostgresIntegrationSupport.
+spring:
+  docker:
+    compose:
+      enabled: false
+  mail:
+    host: localhost
+    port: 1025
+    username: test@localhost
+    password: test
+    from: noreply@test.local
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  jpa:
+    hibernate:
+      # Flyway giữ schema cốt lõi; các bảng/entity mới (vd. try-on) có thể chưa có migration.
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+# Giống dev nhưng cố định cho CI/local không cần file .env
+app:
+  frontend:
+    url: http://localhost:3000
+
+application:
+  security:
+    jwt:
+      secret-key: fashion-secret-key-change-in-production-test-only-32b
+      expiration: 86400000
+    refresh-token:
+      expiration: 604800000
+      max-tokens-per-user: 5
+    encryption:
+      key: fashion-encryption-key-change-in-production-test
+
+storage:
+  minio:
+    endpoint: http://127.0.0.1:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket-name: fashion-images-test
+    url-expiry: 3600
+
+payment:
+  momo:
+    partner-code: MOMOIUAS20200317
+    access-key: F8B645L6J14D
+    secret-key: K951B6PE9OD8
+    endpoint: https://test-payment.momo.vn/v2/gateway/api/create
+  vnpay:
+    tmn-code: 2QX1X1Z2
+    hash-secret: GET8B6PE9OD8K951B6PE9OD8K951B6PE
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    api-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction

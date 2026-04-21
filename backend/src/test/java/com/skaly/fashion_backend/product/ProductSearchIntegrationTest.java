@@ -1,9 +1,12 @@
 package com.skaly.fashion_backend.product;
 
+import com.skaly.fashion_backend.product.application.ProductSearchService;
+import com.skaly.fashion_backend.product.domain.port.ProductRepository;
+import com.skaly.fashion_backend.product.interfaces.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import com.skaly.fashion_backend.testsupport.PostgresIntegrationSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -13,9 +16,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles("test")
 @Transactional
-class ProductSearchIntegrationTest {
+class ProductSearchIntegrationTest extends PostgresIntegrationSupport {
 
     @Autowired
     private ProductRepository productRepository;

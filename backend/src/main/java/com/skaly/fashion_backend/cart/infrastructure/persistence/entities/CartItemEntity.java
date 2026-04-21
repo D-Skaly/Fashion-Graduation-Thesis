@@ -1,5 +1,4 @@
-package com.skaly.fashion_backend.cart;
-import com.skaly.fashion_backend.cart.CartEntity;
+package com.skaly.fashion_backend.cart.infrastructure.persistence.entities;
 
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
 import jakarta.persistence.*;
@@ -11,9 +10,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "cart_items", indexes = {
-    @Index(name = "idx_cart_item_cart_id", columnList = "cart_id"),
-    @Index(name = "idx_cart_item_product_variant_id", columnList = "product_variant_id"),
-    @Index(name = "idx_cart_item_added_at", columnList = "addedAt")
+        @Index(name = "idx_cart_item_cart_id", columnList = "cart_id"),
+        @Index(name = "idx_cart_item_product_variant_id", columnList = "product_variant_id"),
+        @Index(name = "idx_cart_item_added_at", columnList = "addedAt")
 })
 @Getter
 @Setter
@@ -51,5 +50,3 @@ public class CartItemEntity {
         addedAt = LocalDateTime.now();
     }
 }
-
-

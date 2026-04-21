@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.cart;
 
+import com.skaly.fashion_backend.testsupport.PostgresIntegrationSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
         "spring.flyway.enabled=true"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class FlywayRollbackTest {
+public class FlywayRollbackTest extends PostgresIntegrationSupport {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

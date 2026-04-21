@@ -2,7 +2,7 @@ package com.skaly.fashion_backend.order;
 
 import com.skaly.fashion_backend.events.OrderCreatedEvent;
 import com.skaly.fashion_backend.events.OrderStatusChangedEvent;
-import com.skaly.fashion_backend.order.Order;
+import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.outbox.OutboxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

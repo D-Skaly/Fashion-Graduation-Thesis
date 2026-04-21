@@ -24,4 +24,7 @@ tmp/
 .agents/
 .gemini/
 
+# Dependencies (root tooling / experiments)
+node_modules/
+
 # Subdirectories have their own .gitignore files

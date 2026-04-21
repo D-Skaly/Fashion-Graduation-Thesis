@@ -1,16 +1,19 @@
 package com.skaly.fashion_backend.cart;
 
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductEntity;
+import com.skaly.fashion_backend.cart.api.dto.AddToCartRequest;
+import com.skaly.fashion_backend.cart.application.CartService;
+import com.skaly.fashion_backend.product.domain.model.Product;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
-import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
+import com.skaly.fashion_backend.testsupport.ProductCatalogTestData;
 import com.skaly.fashion_backend.user.Role;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
+import com.skaly.fashion_backend.testsupport.PostgresIntegrationSupport;
 import com.skaly.fashion_backend.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -33,7 +36,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
         "spring.flyway.enabled=true"
 })
 @Slf4j
-public class CartMergeIsolationBenchmarkTest {
+public class CartMergeIsolationBenchmarkTest extends PostgresIntegrationSupport {
 
     @MockitoBean
     private VectorStore vectorStore;
@@ -46,9 +49,6 @@ public class CartMergeIsolationBenchmarkTest {
 
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private ProductVariantRepository productVariantRepository;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -86,17 +86,14 @@ public class CartMergeIsolationBenchmarkTest {
         int totalRequests = 100;
         String batchId = UUID.randomUUID().toString().substring(0, 5);
 
-        ProductEntity product = productRepository.save(ProductEntity.builder()
-                .name("Iso-ProductEntity-" + batchId)
-                .basePrice(new BigDecimal("100"))
-                .build());
-
-        ProductVariantEntity variant = productVariantRepository.save(ProductVariantEntity.builder()
-                .product(product)
-                .size("M").color("Red")
-                .skuCode("ISO-" + batchId)
-                .stockQuantity(5000)
-                .build());
+        Product saved = ProductCatalogTestData.saveProductWithSingleVariant(
+                productRepository,
+                "Iso-Product-" + batchId,
+                new BigDecimal("100"),
+                "L",
+                "Red",
+                5000);
+        UUID variantId = ProductCatalogTestData.firstVariantIdMatchingStock(saved, 5000);
 
         List<String> userEmails = new ArrayList<>();
         List<String> guestIds = new ArrayList<>();
@@ -109,8 +106,8 @@ public class CartMergeIsolationBenchmarkTest {
             String guestId = "guest-iso-" + batchId + "-" + i;
             guestIds.add(guestId);
 
-            cartService.addToCart(null, guestId, new AddToCartRequest(variant.getId(), 1));
-            cartService.addToCart(email, null, new AddToCartRequest(variant.getId(), 2));
+            cartService.addToCart(null, guestId, new AddToCartRequest(variantId, 1));
+            cartService.addToCart(email, null, new AddToCartRequest(variantId, 2));
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(20);

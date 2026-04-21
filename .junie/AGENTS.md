@@ -23,10 +23,10 @@ Ensure consistent implementation aligned with **Clean Architecture + Spring Modu
 /frontend         → Next.js (TypeScript)
 /ai-orchestrator  → NestJS (AI orchestration, queues, gateway)
 /ai-service       → FastAPI (heavy AI processing)
-/docs             → Design notes, API docs
+/docs             → Design notes, API docs (start at docs/README.md)
 ```
 
-Legacy or local-only folders may exist; treat the tree above as the **source-of-truth** for agent work.
+Legacy or local-only folders may exist; treat the tree above as the **source-of-truth** for agent work. **Documentation index:** [`docs/README.md`](../docs/README.md) (reading order, folder map, agent notes).
 
 ---
 
