@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.security;
 
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

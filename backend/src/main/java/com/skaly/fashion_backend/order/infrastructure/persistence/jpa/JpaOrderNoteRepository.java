@@ -1,5 +1,5 @@
 package com.skaly.fashion_backend.order.infrastructure.persistence.jpa;
-import com.skaly.fashion_backend.order.OrderNoteEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderNoteEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

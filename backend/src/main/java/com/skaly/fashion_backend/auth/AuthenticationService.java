@@ -5,7 +5,7 @@ import com.skaly.fashion_backend.security.token.RefreshTokenService;
 import com.skaly.fashion_backend.security.token.TokenBlacklistService;
 import com.skaly.fashion_backend.user.Provider;
 import com.skaly.fashion_backend.user.Role;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

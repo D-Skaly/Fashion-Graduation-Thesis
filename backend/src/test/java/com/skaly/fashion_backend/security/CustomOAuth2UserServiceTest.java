@@ -1,6 +1,7 @@
 package com.skaly.fashion_backend.security;
 
-import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.user.CustomOAuth2UserService;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CustomOAuth2UserServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    private JpaUserRepository userRepository;
 
     @InjectMocks
     private CustomOAuth2UserService customOAuth2UserService;

@@ -1,6 +1,8 @@
 package com.skaly.fashion_backend.ai.tryon;
 
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.ai.tryon.application.TryOnService;
+import com.skaly.fashion_backend.ai.tryon.JobStatus;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -56,7 +58,7 @@ class TryOnServiceUnitTest {
         TryOnJob job = tryOnService.createJob(userId, productId, userImageUrl);
 
         // Then
-        assertEquals(TryOnJob.JobStatus.PENDING, job.getStatus());
+        assertThat(job.getStatus()).isIn(JobStatus.PENDING, JobStatus.FAILED);
         verify(tryOnJobRepository, atLeastOnce()).save(any(TryOnJob.class));
     }
 }

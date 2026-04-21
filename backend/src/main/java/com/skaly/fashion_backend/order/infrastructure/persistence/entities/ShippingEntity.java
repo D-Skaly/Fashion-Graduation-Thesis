@@ -1,16 +1,16 @@
-package com.skaly.fashion_backend.order;
-import com.skaly.fashion_backend.order.OrderEntity;
+package com.skaly.fashion_backend.order.infrastructure.persistence.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "shipping", indexes = {
-    @Index(name = "idx_shipping_order_id", columnList = "order_id", unique = true),
-    @Index(name = "idx_shipping_tracking_number", columnList = "trackingNumber")
+        @Index(name = "idx_shipping_order_id", columnList = "order_id", unique = true),
+        @Index(name = "idx_shipping_tracking_number", columnList = "trackingNumber")
 })
 @Getter
 @Setter
@@ -28,16 +28,16 @@ public class ShippingEntity {
     private OrderEntity order;
 
     @Column(name = "carrier", length = 100)
-    private String carrier; // e.g., "FedEx", "UPS", "GHN", "GHTK"
+    private String carrier;
 
     @Column(name = "tracking_number", length = 100)
     private String trackingNumber;
 
     @Column(name = "shipping_method", length = 50)
-    private String shippingMethod; // e.g., "STANDARD", "EXPRESS", "SAME_DAY"
+    private String shippingMethod;
 
     @Column(name = "shipping_cost", precision = 10, scale = 2)
-    private java.math.BigDecimal shippingCost;
+    private BigDecimal shippingCost;
 
     @Column(name = "estimated_delivery")
     private LocalDateTime estimatedDelivery;
@@ -59,7 +59,7 @@ public class ShippingEntity {
 
     @Column(name = "status", length = 50)
     @Builder.Default
-    private String status = "PENDING"; // PENDING, SHIPPED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, FAILED
+    private String status = "PENDING";
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -90,4 +90,3 @@ public class ShippingEntity {
         this.deliveredAt = LocalDateTime.now();
     }
 }
-

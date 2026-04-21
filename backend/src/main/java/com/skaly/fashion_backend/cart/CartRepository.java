@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.cart;
 
-import com.skaly.fashion_backend.cart.Cart;
+import com.skaly.fashion_backend.cart.domain.entities.Cart;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

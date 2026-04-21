@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
+import java.util.Locale;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +38,17 @@ public class ProductManagementService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Category not found with id: " + request.categoryId()));
 
+        String unique = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        String slug = slugify(request.name()) + "-" + unique;
+        String sku = "SKU-" + unique.toUpperCase(Locale.ROOT);
+
         Product product = Product.builder()
                 .name(request.name())
                 .description(request.description())
                 .basePrice(request.basePrice())
                 .category(category)
+                .sku(sku)
+                .slug(slug)
                 .build();
 
         if (request.variants() != null) {
@@ -65,6 +74,20 @@ public class ProductManagementService {
         productCacheService.evictTags();
 
         return productMapper.toProductResponseFromDomain(savedProduct);
+    }
+
+    private static String slugify(String name) {
+        if (name == null || name.isBlank()) {
+            return "product";
+        }
+        String normalized = Normalizer.normalize(name.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "");
+        String slug = normalized.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("-{2,}", "-")
+                .replaceAll("^-+", "")
+                .replaceAll("-+$", "");
+        return slug.isEmpty() ? "product" : slug;
     }
 
     @Transactional(readOnly = true)

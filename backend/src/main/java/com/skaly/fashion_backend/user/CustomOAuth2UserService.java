@@ -2,8 +2,9 @@ package com.skaly.fashion_backend.user;
 
 import com.skaly.fashion_backend.user.Provider;
 import com.skaly.fashion_backend.user.Role;
+import com.skaly.fashion_backend.user.domain.entities.User;
 
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

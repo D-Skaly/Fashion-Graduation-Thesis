@@ -1,5 +1,4 @@
-package com.skaly.fashion_backend.order;
-import com.skaly.fashion_backend.order.OrderEntity;
+package com.skaly.fashion_backend.order.infrastructure.persistence.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,4 +31,3 @@ public class OrderItemEntity {
     @Column(name = "snapshot_price", nullable = false)
     private BigDecimal snapshotPrice;
 }
-

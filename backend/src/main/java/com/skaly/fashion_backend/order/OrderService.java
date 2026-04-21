@@ -4,12 +4,12 @@ import com.skaly.fashion_backend.cart.api.dto.CartDto;
 import com.skaly.fashion_backend.cart.api.dto.CartItemDto;
 import com.skaly.fashion_backend.cart.application.CartService;
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
-import com.skaly.fashion_backend.order.Order;
-import com.skaly.fashion_backend.order.OrderItem;
+import com.skaly.fashion_backend.order.domain.entities.Order;
+import com.skaly.fashion_backend.order.domain.entities.OrderItem;
 import com.skaly.fashion_backend.order.OrderRepository;
-import com.skaly.fashion_backend.order.OrderStatusHistoryEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderStatusHistoryEntity;
 
-import com.skaly.fashion_backend.order.ShippingEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.ShippingEntity;
 
 import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
 import com.skaly.fashion_backend.user.api.dto.UserInternalResponse;

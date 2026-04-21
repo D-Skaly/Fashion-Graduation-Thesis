@@ -1,7 +1,10 @@
 package com.skaly.fashion_backend.security.token;
 
 import com.skaly.fashion_backend.security.JwtUtils;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;
+import com.skaly.fashion_backend.user.infrastructure.persistence.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +25,8 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtils jwtUtils;
+    private final JpaUserRepository jpaUserRepository;
+    private final UserMapper userMapper;
 
     @Value("${application.security.refresh-token.expiration:604800000}") // 7 days default
     private long refreshTokenExpirationMs;
@@ -36,9 +41,12 @@ public class RefreshTokenService {
         // Clean up old tokens if exceeding limit
         enforceMaxTokensLimit(user.getId());
 
+        UserEntity userEntity = jpaUserRepository.findById(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + user.getId()));
+
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(generateToken())
-                .user(user)
+                .user(userEntity)
                 .expiryDate(Instant.now().plusMillis(refreshTokenExpirationMs))
                 .deviceInfo(deviceInfo)
                 .ipAddress(ipAddress)
@@ -62,7 +70,7 @@ public class RefreshTokenService {
             throw new InvalidRefreshTokenException("Refresh token is expired or revoked");
         }
 
-        User user = oldRefreshToken.getUser();
+        User user = userMapper.toDomain(oldRefreshToken.getUser());
 
         // Revoke old token
         revokeToken(oldToken);

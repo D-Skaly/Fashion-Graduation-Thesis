@@ -1,5 +1,4 @@
-package com.skaly.fashion_backend.order;
-import com.skaly.fashion_backend.order.OrderEntity;
+package com.skaly.fashion_backend.order.infrastructure.persistence.entities;
 
 import com.skaly.fashion_backend.order.OrderStatus;
 import jakarta.persistence.*;
@@ -10,8 +9,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "order_status_history", indexes = {
-    @Index(name = "idx_order_status_history_order_id", columnList = "order_id"),
-    @Index(name = "idx_order_status_history_created", columnList = "createdAt")
+        @Index(name = "idx_order_status_history_order_id", columnList = "order_id"),
+        @Index(name = "idx_order_status_history_created", columnList = "createdAt")
 })
 @Getter
 @Setter
@@ -43,4 +42,3 @@ public class OrderStatusHistoryEntity {
         createdAt = LocalDateTime.now();
     }
 }
-

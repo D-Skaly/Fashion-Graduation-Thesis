@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.order.application;
 
 import com.skaly.fashion_backend.email.application.EmailService;
-import com.skaly.fashion_backend.order.OrderEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

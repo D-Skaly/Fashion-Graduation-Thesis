@@ -1,4 +1,4 @@
-package com.skaly.fashion_backend.order;
+package com.skaly.fashion_backend.order.infrastructure.persistence.entities;
 
 import com.skaly.fashion_backend.order.OrderStatus;
 import jakarta.persistence.*;
@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "orders", indexes = {
-    @Index(name = "idx_order_user_id", columnList = "user_id"),
-    @Index(name = "idx_order_status", columnList = "status"),
-    @Index(name = "idx_order_created_at", columnList = "createdAt"),
-    @Index(name = "idx_order_order_number", columnList = "orderNumber", unique = true)
+        @Index(name = "idx_order_user_id", columnList = "user_id"),
+        @Index(name = "idx_order_status", columnList = "status"),
+        @Index(name = "idx_order_created_at", columnList = "createdAt"),
+        @Index(name = "idx_order_order_number", columnList = "orderNumber", unique = true)
 })
 @Getter
 @Setter
@@ -144,5 +144,3 @@ public class OrderEntity {
         return "ORD-" + java.time.Year.now().getValue() + "-" + System.currentTimeMillis() % 10000;
     }
 }
-
-

@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.product.infrastructure.persistence.jpa.review;
 
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,7 @@
 package com.skaly.fashion_backend.order;
+
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.ShippingEntity;
+
 import java.util.Optional;
 import java.util.UUID;
 public interface ShippingRepository {

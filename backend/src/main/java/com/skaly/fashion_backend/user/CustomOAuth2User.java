@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.user;
 
+import com.skaly.fashion_backend.user.domain.entities.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

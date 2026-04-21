@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.cart.application;
 
 import com.skaly.fashion_backend.cart.api.dto.*;
-import com.skaly.fashion_backend.cart.Cart;
-import com.skaly.fashion_backend.cart.CartItem;
+import com.skaly.fashion_backend.cart.domain.entities.Cart;
+import com.skaly.fashion_backend.cart.domain.entities.CartItem;
 import com.skaly.fashion_backend.cart.CartItemRepository;
 import com.skaly.fashion_backend.cart.CartRepository;
 import com.skaly.fashion_backend.cart.event.CartMergedEvent;
@@ -10,7 +10,7 @@ import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import com.skaly.fashion_backend.coupon.application.CouponService;
 import com.skaly.fashion_backend.product.application.ProductService;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -150,9 +150,15 @@ public class CartService {
 
         Cart guestCart = guestCartOpt.get();
         if (userCartOpt.isEmpty()) {
+            String guestIdForEvent = guestCart.getGuestId();
+            int guestLineItems = guestCart.getItems().size();
             guestCart.setUserId(user.getId());
             guestCart.setGuestId(null);
             Cart saved = cartRepository.save(guestCart);
+            eventPublisher.publishEvent(new CartMergedEvent(
+                    user.getId(),
+                    guestIdForEvent != null ? guestIdForEvent : "",
+                    guestLineItems));
             return mapToDto(saved);
         }
 
@@ -178,10 +184,14 @@ public class CartService {
             }
         }
 
+        String guestIdForEvent = guestCart.getGuestId();
         cartRepository.delete(guestCart);
         Cart savedUserCart = cartRepository.save(userCart);
 
-        eventPublisher.publishEvent(new CartMergedEvent(user.getId(), mergedItemIds));
+        eventPublisher.publishEvent(new CartMergedEvent(
+                user.getId(),
+                guestIdForEvent != null ? guestIdForEvent : "",
+                mergedItemIds.size()));
 
         return mapToDto(savedUserCart);
     }
@@ -258,14 +268,26 @@ public class CartService {
         List<CartItemDto> itemDtos = cart.getItems().stream()
                 .map(item -> {
                     ProductVariantEntity variant = productService.getProductVariantById(item.getProductVariantId());
+                    BigDecimal currentUnit = variant.getProduct().getBasePrice();
+                    if (variant.getPriceAdjustment() != null) {
+                        currentUnit = currentUnit.add(variant.getPriceAdjustment());
+                    }
+                    BigDecimal lineSubtotal = item.getSnapshotPrice()
+                            .multiply(BigDecimal.valueOf(item.getQuantity()));
+                    boolean outOfStock = variant.getStockQuantity() == null
+                            || variant.getStockQuantity() <= 0
+                            || variant.getStockQuantity() < item.getQuantity();
                     return new CartItemDto(
                             item.getId(),
                             item.getProductVariantId(),
                             variant.getProduct().getName(),
-                            variant.getSize() + " / " + variant.getColor(),
-                            item.getQuantity(),
+                            variant.getSize(),
+                            variant.getColor(),
+                            currentUnit,
                             item.getSnapshotPrice(),
-                            variant.getStockQuantity(),
+                            item.getQuantity(),
+                            lineSubtotal,
+                            outOfStock,
                             item.isQuantityAdjusted()
                     );
                 })
@@ -276,6 +298,7 @@ public class CartService {
 
         return new CartDto(
                 cart.getId(),
+                cart.getGuestId(),
                 itemDtos,
                 cart.getCouponCode(),
                 cart.getDiscountAmount(),

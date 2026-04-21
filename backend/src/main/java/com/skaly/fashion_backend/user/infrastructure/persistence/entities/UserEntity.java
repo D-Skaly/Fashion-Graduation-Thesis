@@ -1,8 +1,7 @@
-package com.skaly.fashion_backend.user;
+package com.skaly.fashion_backend.user.infrastructure.persistence.entities;
 
 import com.skaly.fashion_backend.user.Provider;
 import com.skaly.fashion_backend.user.Role;
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,10 +15,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users", indexes = {
-    @Index(name = "idx_user_email", columnList = "email", unique = true),
-    @Index(name = "idx_user_role", columnList = "role"),
-    @Index(name = "idx_user_created_at", columnList = "createdAt"),
-    @Index(name = "idx_user_last_login_at", columnList = "lastLoginAt")
+        @Index(name = "idx_user_email", columnList = "email", unique = true),
+        @Index(name = "idx_user_role", columnList = "role"),
+        @Index(name = "idx_user_created_at", columnList = "createdAt"),
+        @Index(name = "idx_user_last_login_at", columnList = "lastLoginAt")
 })
 @Getter
 @Setter
@@ -112,5 +111,3 @@ public class UserEntity implements UserDetails {
         return true;
     }
 }
-
-

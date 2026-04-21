@@ -2,7 +2,7 @@ package com.skaly.fashion_backend.user.application;
 
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import com.skaly.fashion_backend.user.api.dto.UserInternalResponse;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@ package com.skaly.fashion_backend.ai.tryon.application;
 import com.skaly.fashion_backend.ai.tryon.JobStatus;
 import com.skaly.fashion_backend.ai.tryon.TryOnJob;
 import com.skaly.fashion_backend.ai.tryon.TryOnJobRepository;
-import com.skaly.fashion_backend.user.User;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

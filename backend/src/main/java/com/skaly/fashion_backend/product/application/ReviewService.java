@@ -6,8 +6,8 @@ import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.review.R
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.review.ReviewHelpfulVote;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.review.ReviewHelpfulVoteRepository;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.review.ReviewRepository;
-import com.skaly.fashion_backend.user.User;
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.domain.entities.User;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

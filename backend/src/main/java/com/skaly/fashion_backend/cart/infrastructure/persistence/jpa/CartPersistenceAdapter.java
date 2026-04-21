@@ -1,14 +1,14 @@
 package com.skaly.fashion_backend.cart.infrastructure.persistence.jpa;
 
-import com.skaly.fashion_backend.cart.Cart;
-import com.skaly.fashion_backend.cart.CartItem;
+import com.skaly.fashion_backend.cart.domain.entities.Cart;
+import com.skaly.fashion_backend.cart.domain.entities.CartItem;
 import com.skaly.fashion_backend.cart.CartItemRepository;
 import com.skaly.fashion_backend.cart.CartRepository;
 import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
-import com.skaly.fashion_backend.user.UserEntity;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
-import com.skaly.fashion_backend.cart.CartEntity;
-import com.skaly.fashion_backend.cart.CartItemEntity;
+import com.skaly.fashion_backend.cart.infrastructure.persistence.entities.CartEntity;
+import com.skaly.fashion_backend.cart.infrastructure.persistence.entities.CartItemEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;

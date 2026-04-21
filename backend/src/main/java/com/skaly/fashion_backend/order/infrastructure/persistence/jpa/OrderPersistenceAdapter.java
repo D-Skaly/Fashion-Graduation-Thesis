@@ -1,6 +1,14 @@
 package com.skaly.fashion_backend.order.infrastructure.persistence.jpa;
 
-import com.skaly.fashion_backend.order.*;
+import com.skaly.fashion_backend.order.OrderNoteRepository;
+import com.skaly.fashion_backend.order.OrderRepository;
+import com.skaly.fashion_backend.order.OrderStatusHistoryRepository;
+import com.skaly.fashion_backend.order.ShippingRepository;
+import com.skaly.fashion_backend.order.domain.entities.Order;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderNoteEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderStatusHistoryEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
+import com.skaly.fashion_backend.order.infrastructure.persistence.entities.ShippingEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -2,8 +2,8 @@ package com.skaly.fashion_backend.order;
 
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import com.skaly.fashion_backend.events.OrderCreatedEvent;
-import com.skaly.fashion_backend.order.Order;
-import com.skaly.fashion_backend.order.OrderItem;
+import com.skaly.fashion_backend.order.domain.entities.Order;
+import com.skaly.fashion_backend.order.domain.entities.OrderItem;
 import com.skaly.fashion_backend.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
