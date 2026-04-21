@@ -1,5 +1,7 @@
 # Development Setup Guide
 
+> Mục lục: [docs/README.md](../README.md) · Hướng dẫn cài JDK/Docker từng bước: [getting_started.md](getting_started.md).
+
 ## Khởi động Development Environment
 
 ### 1. Chuẩn bị Database

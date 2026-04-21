@@ -1,10 +1,6 @@
 # Fashion E-Commerce System (Monorepo)
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-95%25-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
-
-A high-end Fashion E-Commerce system designed with **Spring Modulith** architecture and **Next.js**. This project serves as a Graduation Thesis, implementing enterprise-grade patterns and AI-driven features.
+Graduation thesis: e-commerce thời trang với **Spring Modulith**, **Next.js**, tích hợp AI (RAG, assistant, try-on). Tài liệu tập trung tại **[`docs/README.md`](docs/README.md)**; hướng dẫn cho agent và dev: **[`.junie/AGENTS.md`](.junie/AGENTS.md)** (được [`.cursorrules`](.cursorrules) tham chiếu).
 
 ---
 
@@ -42,10 +38,11 @@ A high-end Fashion E-Commerce system designed with **Spring Modulith** architect
 ```text
 .
 ├── backend/            # Spring Boot 3 application (Core API)
-├── frontend/           # Next.js 16 web application
+├── frontend/           # Next.js web application (App Router)
 ├── ai-orchestrator/    # NestJS AI orchestration layer
+├── ai-service/         # FastAPI — tác vụ AI nặng (vd. try-on pipeline)
 ├── nginx/              # Nginx configuration for reverse proxy
-├── docs/               # Enterprise-grade technical documentation
+├── docs/               # Mục lục: docs/README.md + architecture, API, testing
 ├── docker-compose.yml  # Development infrastructure (DB, Redis)
 └── docker-compose.prod.yml # Production deployment configuration
 ```
@@ -163,7 +160,9 @@ npm run lint
 ---
 
 ## 📖 Documentation
-Detailed technical documentation is available in the `docs/` folder:
+
+- **Mục lục & lộ trình đọc:** [docs/README.md](docs/README.md)
+- **Quy tắc kiến trúc / agent:** [.junie/AGENTS.md](.junie/AGENTS.md)
 - [System Architecture](docs/architecture/01_system_architecture.md)
 - [Database Schema](docs/architecture/02_database_schema.md)
 - [Coding Standards](docs/development/coding_standards.md)
@@ -172,4 +171,5 @@ Detailed technical documentation is available in the `docs/` folder:
 ---
 
 ## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (TODO: Verify license file existence).
+
+Xem file [LICENSE](LICENSE) trong repo (nếu có).

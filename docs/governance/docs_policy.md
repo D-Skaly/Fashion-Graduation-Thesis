@@ -7,6 +7,8 @@
 
 Xác định quy trình vòng đời của tài liệu (Documentation Lifecycle) và trách nhiệm của thành viên trong việc bảo trì tài liệu tại Fashion E-Commerce.
 
+**Điểm vào tài liệu:** mọi thay đổi lớn nên phản ánh trong [docs/README.md](../README.md) (mục lục, bảng “đọc trước”, liên kết tới AGENTS.md).
+
 ## 2. Vòng Đời Tài Liệu (Lifecycle)
 
 Mọi tài liệu kỹ thuật trong thư mục `/docs` phải tuân theo 4 trạng thái:
