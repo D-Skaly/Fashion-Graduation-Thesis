@@ -2,8 +2,6 @@ package com.skaly.fashion_backend.product.interfaces.api;
 
 import com.skaly.fashion_backend.product.application.ReviewService;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.review.Review;
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
-import com.skaly.fashion_backend.user.infrastructure.persistence.mapper.UserMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -15,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.UUID;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final UserMapper userMapper;
 
     // Get product reviews with pagination
     @GetMapping("/product/{productId}")
@@ -61,8 +59,9 @@ public class ReviewController {
     // Get current user's reviews
     @GetMapping("/my-reviews")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Review>> getMyReviews(@AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(reviewService.getUserReviews(user.getId()));
+    public ResponseEntity<List<Review>> getMyReviews(@AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(reviewService.getUserReviews(userId));
     }
 
     // Check if user has reviewed a product
@@ -70,9 +69,9 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Boolean>> hasUserReviewed(
             @PathVariable UUID productId,
-            @AuthenticationPrincipal UserEntity user) {
-
-        boolean hasReviewed = reviewService.hasUserReviewed(user.getId(), productId);
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        boolean hasReviewed = reviewService.hasUserReviewed(userId, productId);
         return ResponseEntity.ok(Map.of("hasReviewed", hasReviewed));
     }
 
@@ -81,11 +80,11 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Review> createReview(
             @PathVariable UUID productId,
-            @AuthenticationPrincipal UserEntity user,
+            @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody CreateReviewRequest request) {
-
-        Review review = reviewService.createReview(
-                userMapper.toDomain(user),
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        Review review = reviewService.createReviewByUserId(
+                userId,
                 productId,
                 request.rating(),
                 request.comment(),
@@ -100,12 +99,12 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Review> updateReview(
             @PathVariable UUID reviewId,
-            @AuthenticationPrincipal UserEntity user,
+            @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody UpdateReviewRequest request) {
-
-        Review review = reviewService.updateReview(
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        Review review = reviewService.updateReviewByUserId(
                 reviewId,
-                userMapper.toDomain(user),
+                userId,
                 request.rating(),
                 request.comment(),
                 request.images()
@@ -118,9 +117,9 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteReview(
             @PathVariable UUID reviewId,
-            @AuthenticationPrincipal UserEntity user) {
-
-        reviewService.deleteReview(reviewId, userMapper.toDomain(user));
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        reviewService.deleteReviewByUserId(reviewId, userId);
         return ResponseEntity.ok().build();
     }
 
@@ -129,8 +128,9 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> markHelpful(
             @PathVariable UUID reviewId,
-            @AuthenticationPrincipal UserEntity user) {
-        reviewService.voteHelpful(reviewId, user.getId());
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        reviewService.voteHelpful(reviewId, userId);
         return ResponseEntity.ok().build();
     }
 
@@ -139,8 +139,9 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> removeHelpful(
             @PathVariable UUID reviewId,
-            @AuthenticationPrincipal UserEntity user) {
-        reviewService.removeHelpfulVote(reviewId, user.getId());
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        reviewService.removeHelpfulVote(reviewId, userId);
         return ResponseEntity.ok().build();
     }
 
@@ -149,9 +150,9 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Boolean>> hasUserVotedHelpful(
             @PathVariable UUID reviewId,
-            @AuthenticationPrincipal UserEntity user) {
-
-        boolean hasVoted = reviewService.hasUserVotedHelpful(reviewId, user.getId());
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        boolean hasVoted = reviewService.hasUserVotedHelpful(reviewId, userId);
         return ResponseEntity.ok(Map.of("hasVoted", hasVoted));
     }
 

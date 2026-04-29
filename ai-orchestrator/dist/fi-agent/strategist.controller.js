@@ -27,6 +27,9 @@ let StrategistController = class StrategistController {
     async reviewDraft(body) {
         return this.strategistService.reviewDraft(body);
     }
+    async createPlan(body) {
+        return this.strategistService.createPlanFromGoal(body.goal);
+    }
 };
 exports.StrategistController = StrategistController;
 __decorate([
@@ -43,6 +46,13 @@ __decorate([
     __metadata("design:paramtypes", [strategist_dto_1.StrategistReviewDto]),
     __metadata("design:returntype", Promise)
 ], StrategistController.prototype, "reviewDraft", null);
+__decorate([
+    (0, common_1.Post)('plan'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StrategistController.prototype, "createPlan", null);
 exports.StrategistController = StrategistController = __decorate([
     (0, common_1.Controller)('strategist'),
     __metadata("design:paramtypes", [strategist_service_1.StrategistService])

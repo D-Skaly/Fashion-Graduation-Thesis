@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS payment_callback_ledger (
+    id UUID PRIMARY KEY,
+    payment_method VARCHAR(255) NOT NULL,
+    lookup_transaction_id VARCHAR(255) NOT NULL,
+    settled_transaction_id VARCHAR(255),
+    callback_success BOOLEAN NOT NULL,
+    idempotency_key VARCHAR(400) NOT NULL UNIQUE,
+    raw_payload TEXT,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_payment_callback_created_at
+    ON payment_callback_ledger(created_at);

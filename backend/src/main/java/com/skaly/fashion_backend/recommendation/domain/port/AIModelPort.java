@@ -32,4 +32,9 @@ public interface AIModelPort {
      * Giữ logic marketing trong Adapter; Domain chỉ thấy dữ liệu sản phẩm đã được chuẩn hóa.
      */
     String composeFashionAdvice(String userMessage, List<RecommendedProduct> candidates);
+
+    /**
+     * Stream text completion for real-time responsiveness.
+     */
+    reactor.core.publisher.Flux<String> streamChatPrompt(String composedPrompt);
 }

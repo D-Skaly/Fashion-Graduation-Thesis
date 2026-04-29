@@ -1,14 +1,15 @@
 package com.skaly.fashion_backend.ai.tryon.api;
 
 import com.skaly.fashion_backend.ai.tryon.application.TryOnService;
-import com.skaly.fashion_backend.ai.tryon.JobStatus;
-import com.skaly.fashion_backend.ai.tryon.TryOnJob;
-import com.skaly.fashion_backend.ai.tryon.TryOnJobRepository;
+import com.skaly.fashion_backend.ai.tryon.application.TryOnNotificationService;
+import com.skaly.fashion_backend.ai.tryon.domain.JobStatus;
+import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJob;
+import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJobRepository;
 import com.skaly.fashion_backend.common.ApiResponse;
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,21 +21,29 @@ import java.util.UUID;
 public class TryOnController {
 
     private final TryOnService tryOnService;
-    private final TryOnJobRepository tryOnJobRepository;
+    private final TryOnNotificationService notificationService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<TryOnJob>> createJob(
-            @AuthenticationPrincipal UserEntity user,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam UUID productId,
             @RequestParam(required = false) String userImageUrl) {
-        return ResponseEntity.ok(ApiResponse.success(tryOnService.createJob(user.getId(), productId, userImageUrl)));
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(tryOnService.createJob(userId, productId, userImageUrl)));
     }
 
     @GetMapping("/{jobId}")
     public ResponseEntity<ApiResponse<TryOnJob>> getJob(@PathVariable UUID jobId) {
-        return tryOnJobRepository.findById(jobId)
+        return tryOnService.findById(jobId)
                 .map(job -> ResponseEntity.ok(ApiResponse.success(job)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter subscribe(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return notificationService.subscribe(userId);
     }
 
     // Callback for orchestrator
@@ -46,9 +55,11 @@ public class TryOnController {
         String error = (String) payload.get("error");
 
         JobStatus status = JobStatus.valueOf(statusStr);
-        tryOnService.updateJobStatus(jobId, status, resultImageUrl, error);
-        
+        TryOnJob updatedJob = tryOnService.updateJobStatus(jobId, status, resultImageUrl, error);
+
+        // Push notification to user
+        notificationService.notifyJobUpdate(updatedJob.getUserId(), updatedJob);
+
         return ResponseEntity.ok().build();
     }
 }
-

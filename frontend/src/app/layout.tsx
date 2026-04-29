@@ -3,6 +3,9 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { AiStylistFAB } from "@/components/ui/AiStylistFAB";
+import QueryProvider from "@/providers/QueryProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -14,8 +17,6 @@ export const metadata: Metadata = {
   title: "Fashion Graduation Thesis",
   description: "A premium fashion e-commerce experience",
 };
-
-import QueryProvider from "@/providers/QueryProvider";
 
 export default function RootLayout({
   children,
@@ -30,10 +31,18 @@ export default function RootLayout({
           outfit.variable
         )}
       >
-        <QueryProvider>
-          {children}
-          <Toaster />
-        </QueryProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <QueryProvider>
+            {children}
+            <AiStylistFAB />
+            <Toaster />
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

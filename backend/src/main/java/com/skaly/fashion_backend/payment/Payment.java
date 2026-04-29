@@ -1,6 +1,5 @@
 package com.skaly.fashion_backend.payment;
 
-import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,9 +26,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private OrderEntity order;
+    @Column(name = "order_id", nullable = false, unique = true)
+    private UUID orderId;
+
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
 
     @Column(name = "transaction_id", unique = true)
     private String transactionId;

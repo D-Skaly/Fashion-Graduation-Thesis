@@ -32,16 +32,19 @@ export function FeaturedProducts() {
 
     return (
         <section className="container mx-auto px-4 py-16 md:py-24">
-            <div className="flex flex-col md:flex-row items-end justify-between gap-4 mb-10">
-                <div className="space-y-2">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Featured Collection</h2>
-                    <p className="text-muted-foreground text-lg max-w-[600px]">
-                        Handpicked essentials for your seasonal wardrobe.
+            <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
+                <div className="space-y-4 max-w-2xl">
+                    <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground">
+                        Season Highlights
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase">Featured Collection</h2>
+                    <p className="text-muted-foreground text-lg leading-relaxed font-light">
+                        Handpicked essentials for your seasonal wardrobe, curated just for you.
                     </p>
                 </div>
-                <Button variant="ghost" className="gap-2 group" asChild>
+                <Button variant="outline" className="gap-2 group rounded-full px-6 h-12" asChild>
                     <Link href="/shop">
-                        View All Products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        View All <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
             </div>

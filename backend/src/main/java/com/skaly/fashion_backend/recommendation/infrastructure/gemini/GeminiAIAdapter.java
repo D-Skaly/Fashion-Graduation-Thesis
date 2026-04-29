@@ -58,6 +58,11 @@ public class GeminiAIAdapter implements AIModelPort {
     }
 
     @Override
+    public reactor.core.publisher.Flux<String> streamChatPrompt(String composedPrompt) {
+        return reactor.core.publisher.Flux.just(completeChatPrompt(composedPrompt));
+    }
+
+    @Override
     public String composeFashionAdvice(String userMessage, List<RecommendedProduct> candidates) {
         StringBuilder catalog = new StringBuilder();
         for (int i = 0; i < candidates.size(); i++) {

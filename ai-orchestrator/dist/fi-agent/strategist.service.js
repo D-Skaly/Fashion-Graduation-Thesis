@@ -8,26 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StrategistService = void 0;
 const common_1 = require("@nestjs/common");
-const crypto_1 = require("crypto");
-const llm_client_1 = require("../common/llm/llm.client");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const llm_provider_interface_1 = require("../common/llm/llm-provider.interface");
 const spring_fiagent_gateway_1 = require("./spring-fiagent.gateway");
+const admin_plan_entity_1 = require("./entities/admin-plan.entity");
 let StrategistService = class StrategistService {
     springGateway;
-    llmClient;
-    draftStore = new Map();
-    constructor(springGateway, llmClient) {
+    llmProvider;
+    adminPlanRepository;
+    constructor(springGateway, llmProvider, adminPlanRepository) {
         this.springGateway = springGateway;
-        this.llmClient = llmClient;
+        this.llmProvider = llmProvider;
+        this.adminPlanRepository = adminPlanRepository;
     }
-    /**
-     * Generates a draft business strategy plan.
-     *
-     * Human-in-the-loop rule:
-     * - If confidence < 0.7, require explicit reviewer approval before usage.
-     */
     async generateDraftInsights(input) {
         const scores = await this.springGateway.calculateBatchScores({
             weights: {
@@ -63,24 +63,49 @@ ${JSON.stringify(topScoredProducts, null, 2)}
 
 If confidence is lower, explicitly label recommendations as "experimental".
 `;
-        const draftInsights = await this.llmClient.complete(prompt);
-        const draftId = (0, crypto_1.randomUUID)();
-        this.draftStore.set(draftId, {
-            draftedAt: new Date().toISOString(),
-            requiresHumanApproval,
-            confidence,
+        const draftInsights = await this.llmProvider.complete(prompt);
+        const draft = this.adminPlanRepository.create({
             draftInsights,
+            confidence,
+            requiresHumanApproval,
+            status: 'DRAFT',
         });
+        const savedDraft = await this.adminPlanRepository.save(draft);
         return {
-            draftId,
+            draftId: savedDraft.id,
             requiresHumanApproval,
             confidence,
             scoredProducts: topScoredProducts,
             draftInsights,
         };
     }
+    async createPlanFromGoal(goal) {
+        const prompt = `
+You are FI-Agent Strategist.
+An admin has provided a goal for the business.
+Goal: "${goal}"
+
+Please provide a detailed strategic plan including:
+1. Target products (categories/styles)
+2. Pricing strategy (discounts/markups)
+3. Inventory actions
+4. Marketing emphasis
+
+Response should be structured and professional.
+`;
+        const draftInsights = await this.llmProvider.complete(prompt);
+        const confidence = 0.85;
+        const requiresHumanApproval = true;
+        const plan = this.adminPlanRepository.create({
+            draftInsights,
+            confidence,
+            requiresHumanApproval,
+            status: 'DRAFT',
+        });
+        return await this.adminPlanRepository.save(plan);
+    }
     async reviewDraft(input) {
-        const draft = this.draftStore.get(input.draftId);
+        const draft = await this.adminPlanRepository.findOneBy({ id: input.draftId });
         if (!draft) {
             throw new common_1.NotFoundException('Draft insight not found.');
         }
@@ -88,11 +113,17 @@ If confidence is lower, explicitly label recommendations as "experimental".
             throw new common_1.BadRequestException('Decision must be APPROVE or REJECT.');
         }
         if (input.decision === 'REJECT') {
+            draft.status = 'REJECTED';
+            draft.reviewerComment = input.reviewerComment;
+            await this.adminPlanRepository.save(draft);
             return {
                 approved: false,
                 finalInsights: `Rejected by reviewer. Note: ${input.reviewerComment ?? 'No comment provided.'}`,
             };
         }
+        draft.status = 'APPROVED';
+        draft.reviewerComment = input.reviewerComment;
+        await this.adminPlanRepository.save(draft);
         const finalInsights = input.reviewerComment
             ? `${draft.draftInsights}\n\nReviewer note: ${input.reviewerComment}`
             : draft.draftInsights;
@@ -105,7 +136,8 @@ If confidence is lower, explicitly label recommendations as "experimental".
 exports.StrategistService = StrategistService;
 exports.StrategistService = StrategistService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [spring_fiagent_gateway_1.SpringFiAgentGateway,
-        llm_client_1.LlmClient])
+    __param(1, (0, common_1.Inject)(llm_provider_interface_1.LLM_PROVIDER)),
+    __param(2, (0, typeorm_1.InjectRepository)(admin_plan_entity_1.AdminPlan)),
+    __metadata("design:paramtypes", [spring_fiagent_gateway_1.SpringFiAgentGateway, Object, typeorm_2.Repository])
 ], StrategistService);
 //# sourceMappingURL=strategist.service.js.map

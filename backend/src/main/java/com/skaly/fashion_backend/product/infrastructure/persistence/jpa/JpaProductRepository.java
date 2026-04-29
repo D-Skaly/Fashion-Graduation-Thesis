@@ -19,11 +19,9 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, UUID>
     @EntityGraph(value = "ProductEntity.detail", type = EntityGraph.EntityGraphType.LOAD)
     Optional<ProductEntity> findById(UUID id);
 
-    @EntityGraph(value = "ProductEntity.detail", type = EntityGraph.EntityGraphType.LOAD)
     @Query(value = "SELECT * FROM products p WHERE p.embedding_vector IS NOT NULL ORDER BY p.embedding_vector <=> cast(:vector as vector) LIMIT :limit", nativeQuery = true)
     List<ProductEntity> findTopKByEmbeddingVectorClosestTo(@Param("vector") float[] vector, @Param("limit") int limit);
 
-    @EntityGraph(value = "ProductEntity.detail", type = EntityGraph.EntityGraphType.LOAD)
     @Query(value = "SELECT * FROM products p WHERE p.is_active = true " +
            "AND (:categoryId IS NULL OR p.category_id = cast(:categoryId as uuid)) " +
            "AND (:minPrice IS NULL OR p.base_price >= :minPrice) " +
@@ -37,7 +35,6 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, UUID>
                                           @Param("maxPrice") BigDecimal maxPrice,
                                           @Param("limit") int limit);
 
-    @EntityGraph(value = "ProductEntity.detail", type = EntityGraph.EntityGraphType.LOAD)
     @Query(value = "SELECT * FROM products p WHERE p.style_vector IS NOT NULL ORDER BY p.style_vector <=> cast(:vector as vector) LIMIT :limit", nativeQuery = true)
     List<ProductEntity> findTopKByStyleVectorClosestTo(@Param("vector") float[] vector, @Param("limit") int limit);
 

@@ -68,11 +68,11 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> filterProducts(UUID categoryId,
-                                                BigDecimal minPrice,
-                                                BigDecimal maxPrice,
-                                                String sortBy,
-                                                String sortDirection,
-                                                Pageable pageable) {
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            String sortBy,
+            String sortDirection,
+            Pageable pageable) {
         return productSearchService.filterProducts(categoryId, minPrice, maxPrice, sortBy, sortDirection, pageable);
     }
 
@@ -111,5 +111,3 @@ public class ProductService {
         productInventoryService.incrementProductViewCount(productId);
     }
 }
-
-

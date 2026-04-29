@@ -26,11 +26,16 @@ public class ProductSearchService {
 
     @Transactional(readOnly = true)
     public List<ProductResponse> searchProductsSemantically(String query, int limit) {
-        float[] queryEmbedding = productEmbeddingService.embedQuery(query);
-        List<Product> products = productRepository.findTopKByEmbeddingVectorClosestTo(queryEmbedding, limit);
-        return products.stream()
-                .map(productMapper::toProductResponseFromDomain)
-                .collect(Collectors.toList());
+        try {
+            float[] queryEmbedding = productEmbeddingService.embedQuery(query);
+            List<Product> products = productRepository.findTopKByEmbeddingVectorClosestTo(queryEmbedding, limit);
+            return products.stream()
+                    .map(productMapper::toProductResponseFromDomain)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // Return empty list when AI service is unavailable
+            return List.of();
+        }
     }
 
     @Transactional(readOnly = true)

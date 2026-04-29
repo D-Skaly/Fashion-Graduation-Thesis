@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,6 +15,9 @@ public class ApiResponse<T> {
     private int status;
     private String message;
     private T data;
+
+    @Builder.Default
+    private Instant timestamp = Instant.now();
 
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
@@ -27,14 +32,6 @@ public class ApiResponse<T> {
                 .status(201)
                 .message("Created")
                 .data(data)
-                .build();
-    }
-
-    public static ApiResponse<Void> list(Object data) { // For pagination or list, usually data is the list/page object
-        // This signature is a bit weird with Void, but let's stick to generic T
-        return ApiResponse.<Void>builder() // This is wrong.
-                .status(200)
-                .message("Success")
                 .build();
     }
 

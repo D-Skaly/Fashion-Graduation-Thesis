@@ -8,8 +8,8 @@ import com.skaly.fashion_backend.cart.CartRepository;
 import com.skaly.fashion_backend.cart.event.CartMergedEvent;
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import com.skaly.fashion_backend.coupon.application.CouponService;
-import com.skaly.fashion_backend.product.application.ProductService;
-import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
+import com.skaly.fashion_backend.product.domain.port.ProductCartServicePort;
+import com.skaly.fashion_backend.product.domain.port.dto.ProductVariantInfo;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final ProductService productService;
+    private final ProductCartServicePort productCartServicePort;
     private final UserRepository userRepository;
     private final CouponService couponService;
     private final ApplicationEventPublisher eventPublisher;
@@ -47,15 +47,19 @@ public class CartService {
     @Transactional
     public CartDto addToCart(String userEmail, String guestId, AddToCartRequest request) {
         Cart cart = resolveCart(userEmail, guestId);
-        ProductVariantEntity variant = productService.getProductVariantById(request.productVariantId());
+        ProductVariantInfo variant = productCartServicePort.getProductVariantInfo(request.productVariantId());
 
-        BigDecimal currentPrice = variant.getProduct().getBasePrice();
-        if (variant.getPriceAdjustment() != null) {
-            currentPrice = currentPrice.add(variant.getPriceAdjustment());
+        if (variant == null) {
+            throw new ResourceNotFoundException("Product variant not found: " + request.productVariantId());
+        }
+
+        BigDecimal currentPrice = variant.basePrice();
+        if (variant.priceAdjustment() != null) {
+            currentPrice = currentPrice.add(variant.priceAdjustment());
         }
 
         Optional<CartItem> existingItem = cart.getItems().stream()
-                .filter(item -> item.getProductVariantId().equals(variant.getId()))
+                .filter(item -> item.getProductVariantId().equals(variant.id()))
                 .findFirst();
 
         if (existingItem.isPresent()) {
@@ -64,7 +68,7 @@ public class CartService {
             item.setSnapshotPrice(currentPrice);
         } else {
             CartItem newItem = CartItem.builder()
-                    .productVariantId(variant.getId())
+                    .productVariantId(variant.id())
                     .quantity(request.quantity())
                     .snapshotPrice(currentPrice)
                     .addedAt(LocalDateTime.now())
@@ -225,18 +229,22 @@ public class CartService {
 
     private void validateInventoryAndPrices(Cart cart) {
         for (CartItem item : cart.getItems()) {
-            ProductVariantEntity variant = productService.getProductVariantById(item.getProductVariantId());
-            BigDecimal currentPrice = variant.getProduct().getBasePrice();
-            if (variant.getPriceAdjustment() != null) {
-                currentPrice = currentPrice.add(variant.getPriceAdjustment());
+            ProductVariantInfo variant = productCartServicePort.getProductVariantInfo(item.getProductVariantId());
+            if (variant == null) {
+                continue; // Skip items with invalid variants
+            }
+
+            BigDecimal currentPrice = variant.basePrice();
+            if (variant.priceAdjustment() != null) {
+                currentPrice = currentPrice.add(variant.priceAdjustment());
             }
 
             if (!item.getSnapshotPrice().equals(currentPrice)) {
                 item.setSnapshotPrice(currentPrice);
             }
 
-            if (variant.getStockQuantity() < item.getQuantity()) {
-                item.setQuantity(variant.getStockQuantity());
+            if (variant.stockQuantity() != null && variant.stockQuantity() < item.getQuantity()) {
+                item.setQuantity(variant.stockQuantity());
                 item.setQuantityAdjusted(true);
             }
         }
@@ -267,22 +275,39 @@ public class CartService {
     private CartDto mapToDto(Cart cart) {
         List<CartItemDto> itemDtos = cart.getItems().stream()
                 .map(item -> {
-                    ProductVariantEntity variant = productService.getProductVariantById(item.getProductVariantId());
-                    BigDecimal currentUnit = variant.getProduct().getBasePrice();
-                    if (variant.getPriceAdjustment() != null) {
-                        currentUnit = currentUnit.add(variant.getPriceAdjustment());
+                    ProductVariantInfo variant = productCartServicePort.getProductVariantInfo(item.getProductVariantId());
+                    if (variant == null) {
+                        // Return DTO with default values for missing variant
+                        return new CartItemDto(
+                                item.getId(),
+                                item.getProductVariantId(),
+                                "Unknown Product",
+                                "-",
+                                "-",
+                                item.getSnapshotPrice(),
+                                item.getSnapshotPrice(),
+                                item.getQuantity(),
+                                item.getSnapshotPrice().multiply(BigDecimal.valueOf(item.getQuantity())),
+                                true,
+                                item.isQuantityAdjusted()
+                        );
+                    }
+
+                    BigDecimal currentUnit = variant.basePrice();
+                    if (variant.priceAdjustment() != null) {
+                        currentUnit = currentUnit.add(variant.priceAdjustment());
                     }
                     BigDecimal lineSubtotal = item.getSnapshotPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity()));
-                    boolean outOfStock = variant.getStockQuantity() == null
-                            || variant.getStockQuantity() <= 0
-                            || variant.getStockQuantity() < item.getQuantity();
+                    boolean outOfStock = variant.stockQuantity() == null
+                            || variant.stockQuantity() <= 0
+                            || variant.stockQuantity() < item.getQuantity();
                     return new CartItemDto(
                             item.getId(),
                             item.getProductVariantId(),
-                            variant.getProduct().getName(),
-                            variant.getSize(),
-                            variant.getColor(),
+                            variant.productName(),
+                            variant.size(),
+                            variant.color(),
                             currentUnit,
                             item.getSnapshotPrice(),
                             item.getQuantity(),

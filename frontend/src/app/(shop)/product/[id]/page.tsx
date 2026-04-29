@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { VirtualTryOnModal } from "@/components/product/VirtualTryOnModal";
 
 // Types
 type Variant = {
@@ -116,21 +117,24 @@ export default function ProductDetailPage() {
     const currentPrice = product.basePrice + (selectedVariant?.priceAdjustment || 0);
 
     return (
-        <div className="container mx-auto px-4 py-10 md:py-16">
-            <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <div className="flex flex-col md:flex-row gap-12 lg:gap-20">
                 
-                {/* Gallery (Placeholder for now) */}
-                <div className="space-y-4">
-                    <div className="aspect-[3/4] bg-secondary/20 rounded-xl overflow-hidden relative group">
-                         {/* We don't have real images yet so using a color block or Next Image if allowed */}
-                         <div className="w-full h-full bg-stone-100 flex items-center justify-center text-muted-foreground">
-                            Product Image
-                         </div>
-                    </div>
+                {/* Gallery (Scrollable Left Column) */}
+                <div className="w-full md:w-3/5 space-y-4">
+                    {/* Fake multiple images for Zara-like premium feel */}
+                    {[1, 2, 3].map((imgIndex) => (
+                        <div key={imgIndex} className="aspect-[3/4] w-full bg-secondary/20 overflow-hidden relative group">
+                            <div className="w-full h-full bg-stone-100 dark:bg-stone-900 flex items-center justify-center text-muted-foreground/30 font-light tracking-widest uppercase">
+                                View {imgIndex}
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Product Info */}
-                <div className="space-y-8">
+                {/* Product Info (Sticky Right Column) */}
+                <div className="w-full md:w-2/5">
+                    <div className="sticky top-28 space-y-8">
                     <div>
                         <Badge variant="secondary" className="mb-3">{product.categoryName}</Badge>
                         <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{product.name}</h1>
@@ -176,20 +180,20 @@ export default function ProductDetailPage() {
                         {/* Size */}
                         {uniqueSizes.length > 0 && (
                             <div className="space-y-3">
-                                <div className="flex justify-between">
-                                    <span className="text-sm font-medium">Size: <span className="text-muted-foreground">{selectedSize}</span></span>
-                                    <button className="text-xs underline text-muted-foreground hover:text-primary">Size Guide</button>
+                                <div className="flex justify-between items-end">
+                                    <span className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Select Size <span className="text-foreground ml-2">{selectedSize}</span></span>
+                                    <button className="text-xs underline decoration-muted-foreground underline-offset-4 text-muted-foreground hover:text-primary transition-colors">Size Guide</button>
                                 </div>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="grid grid-cols-4 gap-2">
                                     {uniqueSizes.map((size) => (
                                         <button
                                             key={size}
                                             onClick={() => setSelectedSize(size)}
                                             className={cn(
-                                                "h-10 w-12 rounded-md border text-sm font-medium transition-all flex items-center justify-center",
+                                                "h-12 border text-sm font-medium transition-all flex items-center justify-center uppercase tracking-wider",
                                                 selectedSize === size
-                                                ? "border-primary bg-black text-white" 
-                                                : "border-input hover:border-black"
+                                                ? "border-foreground bg-foreground text-background" 
+                                                : "border-border hover:border-foreground/50"
                                             )}
                                         >
                                             {size}
@@ -199,27 +203,22 @@ export default function ProductDetailPage() {
                             </div>
                         )}
                         
-                        {/* Quantity */}
-                         <div className="space-y-3">
-                            <span className="text-sm font-medium">Quantity</span>
-                            <div className="flex items-center gap-3 w-32">
-                                <Button 
-                                    variant="outline" 
-                                    size="icon" 
-                                    className="h-9 w-9"
+                        {/* Quantity (Minimal) */}
+                         <div className="space-y-3 pt-2">
+                            <div className="flex items-center border border-border w-max h-12">
+                                <button 
+                                    className="px-4 h-full hover:bg-secondary/50 transition-colors"
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                 >
                                     <Minus className="h-4 w-4" />
-                                </Button>
-                                <span className="flex-1 text-center font-medium">{quantity}</span>
-                                <Button 
-                                    variant="outline" 
-                                    size="icon" 
-                                    className="h-9 w-9"
+                                </button>
+                                <span className="w-12 text-center font-medium">{quantity}</span>
+                                <button 
+                                    className="px-4 h-full hover:bg-secondary/50 transition-colors"
                                     onClick={() => setQuantity(quantity + 1)}
                                 >
                                     <Plus className="h-4 w-4" />
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -227,10 +226,12 @@ export default function ProductDetailPage() {
                     <Separator />
 
                     {/* Actions */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-3">
+                        <VirtualTryOnModal productId={product.id} productName={product.name} />
+                        
                         <Button 
                             size="lg" 
-                            className="flex-1 text-base h-12"
+                            className="w-full text-sm font-semibold tracking-widest uppercase h-14 rounded-none bg-foreground text-background hover:bg-foreground/90 transition-all"
                             disabled={!selectedVariant || selectedVariant.stockQuantity < 1 || addToCartMutation.isPending}
                             onClick={() => addToCartMutation.mutate()}
                         >
@@ -241,23 +242,49 @@ export default function ProductDetailPage() {
                             )}
                             {selectedVariant?.stockQuantity === 0 ? "Out of Stock" : "Add to Cart"}
                         </Button>
-                        <Button variant="outline" size="icon" className="h-12 w-12">
-                            <Heart className="h-5 w-5" />
+                        <Button variant="outline" className="w-full text-sm font-semibold tracking-widest uppercase h-14 rounded-none border-border hover:bg-secondary/20">
+                            <Heart className="mr-2 h-4 w-4" /> Add to Wishlist
                         </Button>
                     </div>
 
                     {/* Features */}
-                    <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <Truck className="h-4 w-4" />
-                            <span>Free shipping over $100</span>
+                    <div className="space-y-3 text-sm mt-8 border border-border p-4 bg-secondary/10">
+                        <div className="flex items-center gap-3 text-foreground">
+                            <Truck className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-light tracking-wide">Free standard shipping on orders over $150</span>
                         </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <ShieldCheck className="h-4 w-4" />
-                            <span>Lifetime Warranty</span>
+                        <div className="flex items-center gap-3 text-foreground">
+                            <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-light tracking-wide">30-day free returns. Lifetime authenticity guarantee.</span>
                         </div>
                     </div>
+                </div>
+                </div>
+            </div>
 
+            {/* AI Complete The Look Section */}
+            <div className="mt-32 pt-16 border-t border-border">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                    <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-primary/5 border border-primary/10">
+                            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                            <span className="text-xs font-bold tracking-widest uppercase text-primary">AI Stylist</span>
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase">Complete The Look</h2>
+                    </div>
+                    <Button variant="ghost" className="tracking-widest uppercase text-xs font-bold">View All Recommendations</Button>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                    {[1, 2, 3, 4].map((item) => (
+                        <div key={item} className="group cursor-pointer">
+                            <div className="aspect-[3/4] bg-secondary/20 mb-4 overflow-hidden relative">
+                                <div className="absolute inset-0 bg-stone-100 dark:bg-stone-900 transition-transform duration-700 group-hover:scale-105" />
+                            </div>
+                            <h3 className="text-sm font-bold uppercase tracking-wider mb-1 line-clamp-1 group-hover:underline underline-offset-4">Suggested Item {item}</h3>
+                            <p className="text-sm text-muted-foreground">$89.00</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

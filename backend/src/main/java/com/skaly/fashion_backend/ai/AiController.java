@@ -1,16 +1,15 @@
 package com.skaly.fashion_backend.ai;
 
 import com.skaly.fashion_backend.common.ApiResponse;
+import com.skaly.fashion_backend.recommendation.application.RecommendProductInteractor;
+import com.skaly.fashion_backend.recommendation.domain.model.ProductRecommendationResponse;
+import com.skaly.fashion_backend.recommendation.domain.model.RecommendedProduct;
+import java.util.List;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/ai")
@@ -18,9 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class AiController {
 
     private final FashionAssistantService fashionAssistantService;
+    private final SizeRecommendationService sizeRecommendationService;
+    private final RecommendProductInteractor recommendProductInteractor;
 
-    public AiController(FashionAssistantService fashionAssistantService) {
+    public AiController(FashionAssistantService fashionAssistantService, 
+                        SizeRecommendationService sizeRecommendationService,
+                        RecommendProductInteractor recommendProductInteractor) {
         this.fashionAssistantService = fashionAssistantService;
+        this.sizeRecommendationService = sizeRecommendationService;
+        this.recommendProductInteractor = recommendProductInteractor;
+    }
+
+    @GetMapping("/recommend-size/{productId}")
+    public ResponseEntity<ApiResponse<SizeRecommendationService.SizeRecommendationResponse>> recommendSize(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails,
+            @org.springframework.web.bind.annotation.PathVariable java.util.UUID productId) {
+        java.util.UUID userId = java.util.UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(sizeRecommendationService.recommendSize(userId, productId)));
     }
 
     @GetMapping("/chat")
@@ -35,9 +48,21 @@ public class AiController {
         return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer)));
     }
 
+    @PostMapping(value = "/chat/stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
+    public reactor.core.publisher.Flux<String> streamChat(@Valid @RequestBody AiChatRequest request) {
+        return fashionAssistantService.chatStream(request.message(), null, 0);
+    }
+
     @PostMapping("/reindex")
     public ResponseEntity<ApiResponse<String>> reindex() {
         fashionAssistantService.reindex();
         return ResponseEntity.ok(ApiResponse.success("Re-indexing started"));
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<ApiResponse<List<RecommendedProduct>>> getRecommendations(
+            @RequestParam(defaultValue = "5") int limit) {
+        ProductRecommendationResponse response = recommendProductInteractor.execute("gợi ý sản phẩm cho tôi", limit);
+        return ResponseEntity.ok(ApiResponse.success(response.matchedProducts()));
     }
 }

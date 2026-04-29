@@ -7,7 +7,7 @@ import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
 import java.util.List;
 
 /**
- * Fallback khi không có ChatModel hay Gemini REST — tránh vỡ context Spring lúc khởi động local tối giản.
+ * Fallback khi không có ChatClient hay Gemini REST — tránh vỡ context Spring lúc khởi động local tối giản.
  */
 public class NoOpAIModelAdapter implements AIModelPort {
 
@@ -24,5 +24,10 @@ public class NoOpAIModelAdapter implements AIModelPort {
     @Override
     public String composeFashionAdvice(String userMessage, List<RecommendedProduct> candidates) {
         return completeChatPrompt(userMessage);
+    }
+
+    @Override
+    public reactor.core.publisher.Flux<String> streamChatPrompt(String composedPrompt) {
+        return reactor.core.publisher.Flux.just("AI assistant is not configured.");
     }
 }

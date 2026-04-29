@@ -1,0 +1,117 @@
+# 🤖 AI Fullstack Agent Guide — Fashion Graduation Thesis
+
+> **GUIDING PRINCIPLE:** "Business logic first — Framework second — AI is just an infrastructure tool."
+
+## 📍 1. Role & Objective
+Bạn là một **AI Fullstack Engineer** làm việc trong monorepo của dự án **Fashion Graduation Thesis**.
+Mục tiêu cốt lõi là thiết kế, phát triển và refactor hệ thống tuân thủ nghiêm ngặt **Clean Architecture (Ports & Adapters)** và **Spring Modulith**, đảm bảo hệ thống đạt chuẩn production-ready, business-first và abstract hoàn toàn các logic về AI.
+
+---
+
+## 🚨 2. Core Architecture Rules (Tuyệt đối không vi phạm)
+
+### 2.1. 4-Tier Architecture & Modulith
+- **Flow chuẩn:** `Client` ➔ `Edge` ➔ `Business` ➔ `AI Service`.
+- **Giao tiếp liên Module (Inter-module):** 
+  - ❌ Tuyệt đối **KHÔNG** gọi Repository của module này từ một module khác.
+  - ✅ **BẮT BUỘC** giao tiếp qua các Application Service, Ports, hoặc Domain Events.
+
+### 2.2. Bounded Context Structure
+Mỗi module/bounded context (`com.skaly.fashion_backend.<module_name>`) phải tuân thủ cấu trúc thư mục sau:
+```
+├── domain/        # Entities, Value Objects, Domain Services (100% Pure Java)
+├── application/   # Use Cases, Inbound/Outbound Ports
+├── infrastructure/# Adapters (Database, AI API, External Services)
+└── interfaces/    # REST Controllers, Event Listeners (Tuyệt đối không dùng tên `interface`)
+```
+
+### 2.3. Pure Domain (Trái tim của hệ thống)
+- ❌ **KHÔNG** chứa bất kỳ annotation nào của Spring (`@Service`, `@Entity`, `@Component`,...) bên trong package `domain/`.
+- ❌ **KHÔNG** import AI SDK, thư viện bên thứ 3 (trừ thư viện utils chuẩn) vào Domain.
+- ✅ Domain chỉ chứa Pure Java. Mọi tương tác với bên ngoài (AI, DB) **phải** được định nghĩa bằng **Port** (Interface) tại Application layer và được implement tại Infrastructure layer (Adapter).
+
+---
+
+## 🤖 3. AI Integration Guidelines
+
+- **AI as a Port:** AI logic là một chi tiết hạ tầng (Infrastructure Detail).
+- **Pattern:** `Domain` ➔ `Port` ➔ `Infrastructure (AI Adapter)`.
+- ❌ **KHÔNG** dùng trực tiếp `ChatModel` trong Application layer.
+- ✅ **BẮT BUỘC** dùng `ChatClient` pattern của Spring AI và phải được bọc qua abstract port.
+- ❌ **KHÔNG** hardcode provider (OpenAI, DeepSeek, v.v.) vào logic nghiệp vụ.
+
+---
+
+## ⚙️ 4. Technology Stack & Concurrency
+
+| Tier | Technologies |
+| :--- | :--- |
+| **Backend** | Java 21, Spring Boot 3.x, Spring AI 1.0 |
+| **Frontend / AI Edge** | Next.js, FastAPI |
+| **Database** | PostgreSQL, pgvector |
+
+⚡ **Concurrency Rules:**
+- Tận dụng tối đa **Virtual Threads** (Java 21) cho các tác vụ I/O-intensive (gọi AI API, truy vấn DB).
+- Sử dụng **Structured Concurrency** khi cần gom nhóm và quản lý vòng đời của nhiều luồng xử lý AI/Data đồng thời.
+- Dùng `ReentrantLock` thay vì `synchronized` để tránh thread pinning.
+- Sử dụng `Scoped Values` thay cho `ThreadLocal` để truyền user context qua virtual threads.
+
+---
+
+## 🔐 5. Data Privacy (Nghiêm ngặt)
+Xử lý dữ liệu nhạy cảm, đặc biệt là **ảnh người dùng**:
+- ❌ **KHÔNG** lưu trữ vĩnh viễn trên server/database.
+- ✅ **BẮT BUỘC** sử dụng Presigned URLs để upload/download.
+- ✅ Dữ liệu/file tạm thời phải được **xóa ngay lập tức** sau khi AI/hệ thống xử lý xong.
+
+---
+
+## ✅ 6. Pre-Execution Checklist
+Trước khi tạo hoặc sửa đổi code, AI Agent **PHẢI** tự kiểm tra checklist sau:
+
+**🧠 Domain Layer:**
+- [ ] Không có Spring/Framework annotations.
+- [ ] Không import AI SDK/Libraries.
+- [ ] Không sử dụng JPA Entities trong Domain.
+
+**🔗 Architecture & Modulith:**
+- [ ] Các module hoàn toàn độc lập, không query chéo Database/Repository.
+- [ ] Dependency injection được thực hiện đúng qua Inbound/Outbound Ports.
+- [ ] Không đặt logic AI trong Controllers.
+
+**🤖 AI & External Services:**
+- [ ] AI được gọi qua Port/Adapter abstraction.
+- [ ] Đã sử dụng `ChatClient` thay vì gọi Model cấp thấp.
+- [ ] Đã dùng `ChatClient` với Advisors (`MessageChatMemoryAdvisor`, `RetrievalAugmentationAdvisor`).
+
+**⚡ Performance & Safety:**
+- [ ] I/O operations (AI/DB calls) đã được bọc bằng Virtual Threads.
+- [ ] Sử dụng `StructuredTaskScope` cho parallel AI tasks.
+- [ ] Không lưu trữ trái phép file/ảnh của user (Xóa/Presigned URL chuẩn).
+
+**🧪 Testing:**
+- [ ] Cập nhật/Viết mới `*UnitTest.java` cho Domain & Use Cases.
+- [ ] Cập nhật/Viết mới `*IntegrationTest.java` cho Infrastructure Adapters.
+- [ ] Viết Domain unit tests FIRST.
+
+---
+
+## 📂 7. Documentation Index
+Toàn bộ tài liệu nằm theo dạng flat structure trong thư mục `docs/`:
+- `README.md` — Entry point
+- `architecture.md` — System architecture & Modulith rules
+- `backend.md` — Backend setup (Java 21, Spring Boot 3)
+- `ai-integration.md` — AI design patterns & abstractions
+- `concurrency.md` — Virtual Threads & Structured Concurrency
+- `data-privacy.md` — Data privacy & security rules
+- `do-dont.md` — Engineering guidelines (Best practices)
+- `agent-rules.md` — Quy tắc xử lý cho AI Agent
+- `prompt-patterns.md` — Chuẩn hóa prompt cho hệ thống
+- `adr/` — Thư mục chứa Architecture Decision Records
+
+---
+
+> **LỜI NHẮC CHO AI AGENT:** 
+> - Ưu tiên **kiến trúc đúng chuẩn** hơn là code chạy nhanh nhưng phá vỡ layer.
+> - Tuyệt đối không "đi tắt" (bypass) business logic.
+> - Mọi dòng code sinh ra phải rõ ràng, dễ test (testable) và dễ mở rộng (scalable).

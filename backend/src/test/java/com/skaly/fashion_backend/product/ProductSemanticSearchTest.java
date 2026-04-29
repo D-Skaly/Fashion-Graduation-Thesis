@@ -13,7 +13,7 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ProductSemanticSearchTest extends PostgresIntegrationSupport {
     @Autowired
     private ProductRepository productRepository;
 
-    @MockitoBean
+    @MockBean
     private EmbeddingModel embeddingModel;
 
     @Test

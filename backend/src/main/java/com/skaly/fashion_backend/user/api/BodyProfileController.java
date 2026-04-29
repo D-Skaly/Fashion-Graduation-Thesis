@@ -5,11 +5,11 @@ import com.skaly.fashion_backend.user.api.dto.BodyProfileDto;
 import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.application.BodyProfileService;
 import com.skaly.fashion_backend.user.BodyProfile;
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,22 +22,25 @@ public class BodyProfileController {
     private final BodyProfileService bodyProfileService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<BodyProfile>> getMyProfile(@AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(ApiResponse.success(bodyProfileService.getByUserId(user.getId())));
+    public ResponseEntity<ApiResponse<BodyProfile>> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(bodyProfileService.getByUserId(userId)));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<BodyProfile>> saveMyProfile(
-            @AuthenticationPrincipal UserEntity user,
+            @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody BodyProfileDto dto) {
-        return ResponseEntity.ok(ApiResponse.success(bodyProfileService.saveOrUpdate(user.getId(), dto)));
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(bodyProfileService.saveOrUpdate(userId, dto)));
     }
 
     @PostMapping("/recommend-size")
     public ResponseEntity<ApiResponse<SizeRecommendation>> recommendSize(
-            @AuthenticationPrincipal UserEntity user,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam UUID productId) {
-        return ResponseEntity.ok(ApiResponse.success(bodyProfileService.recommendSize(user.getId(), productId)));
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.success(bodyProfileService.recommendSize(userId, productId)));
     }
 }
 

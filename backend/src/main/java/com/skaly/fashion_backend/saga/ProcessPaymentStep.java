@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.saga;
 
 import com.skaly.fashion_backend.payment.Payment;
-import com.skaly.fashion_backend.payment.PaymentRepository;
 import com.skaly.fashion_backend.payment.PaymentStatus;
+import com.skaly.fashion_backend.saga.application.SagaPaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProcessPaymentStep implements SagaStep<OrderSagaContext> {
 
-    private final PaymentRepository paymentRepository;
+    private final SagaPaymentService sagaPaymentService;
 
     @Override
     public String getName() {
@@ -22,16 +22,9 @@ public class ProcessPaymentStep implements SagaStep<OrderSagaContext> {
     @Override
     public void execute(OrderSagaContext context) {
         log.info("Processing payment for order: {}", context.getOrderId());
-        
-        Payment payment = paymentRepository.findByOrderId(context.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
-        
-        // Simulate payment processing
-        if (payment.getStatus() == PaymentStatus.PENDING) {
-            payment.setStatus(PaymentStatus.COMPLETED);
-            paymentRepository.save(payment);
-        }
-        
+
+        Payment payment = sagaPaymentService.completeIfPending(context.getOrderId());
+
         context.setPayment(payment);
         log.info("Payment processed successfully with status: {}", payment.getStatus());
     }
@@ -39,16 +32,10 @@ public class ProcessPaymentStep implements SagaStep<OrderSagaContext> {
     @Override
     public void compensate(OrderSagaContext context) {
         log.info("Compensating ProcessPayment: refunding payment for order {}", context.getOrderId());
-        
+
         try {
-            Payment payment = paymentRepository.findByOrderId(context.getOrderId())
-                    .orElse(null);
-            
-            if (payment != null && payment.getStatus() == PaymentStatus.COMPLETED) {
-                payment.setStatus(PaymentStatus.REFUNDED);
-                paymentRepository.save(payment);
-                log.info("Payment refunded successfully");
-            }
+            sagaPaymentService.refundIfCompleted(context.getOrderId());
+            log.info("Payment refunded successfully");
         } catch (Exception e) {
             log.error("Failed to compensate ProcessPayment", e);
         }
@@ -56,7 +43,7 @@ public class ProcessPaymentStep implements SagaStep<OrderSagaContext> {
 
     @Override
     public boolean canCompensate(OrderSagaContext context) {
-        Payment payment = paymentRepository.findByOrderId(context.getOrderId()).orElse(null);
+        Payment payment = sagaPaymentService.findByOrderId(context.getOrderId()).orElse(null);
         return payment != null && payment.getStatus() == PaymentStatus.COMPLETED;
     }
 }

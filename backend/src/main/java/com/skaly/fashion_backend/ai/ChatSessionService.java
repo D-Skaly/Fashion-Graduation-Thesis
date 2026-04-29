@@ -1,8 +1,7 @@
 package com.skaly.fashion_backend.ai;
 
+import com.skaly.fashion_backend.ai.domain.port.UserLookupPort;
 import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
-import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Quản lý phiên chat và tin nhắn (JPA). Mọi gọi LLM cho nội dung hội thoại phải đi qua {@link AIModelPort}
- * — ví dụ luồng hoàn chỉnh: {@link FashionAssistantService} ghép context từ lịch sử rồi gọi {@code AIModelPort.completeChatPrompt}.
+ * Quản lý phiên chat và tin nhắn. Mọi gọi LLM cho nội dung hội thoại phải đi
+ * qua {@link AIModelPort}
+ * — ví dụ luồng hoàn chỉnh: {@link FashionAssistantService} ghép context từ
+ * lịch sử rồi gọi {@code AIModelPort.completeChatPrompt}.
+ * <p>
+ * Không phụ thuộc trực tiếp JPA entity hay repository của User module — toàn bộ
+ * giao tiếp qua {@link UserLookupPort}.
  */
 @Service
 @RequiredArgsConstructor
@@ -22,15 +26,16 @@ public class ChatSessionService {
 
     private final ChatSessionRepository sessionRepository;
     private final ChatMessageRepository messageRepository;
-    private final JpaUserRepository jpaUserRepository;
+    private final UserLookupPort userLookupPort;
     private final AIModelPort aiModelPort;
 
     @Transactional
     public ChatSession createSession(UUID userId, String title) {
-        UserEntity userEntity = jpaUserRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        if (!userLookupPort.existsById(userId)) {
+            throw new IllegalArgumentException("User not found: " + userId);
+        }
         ChatSession session = ChatSession.builder()
-                .user(userEntity)
+                .userId(userId)
                 .title(title)
                 .isActive(true)
                 .build();
@@ -38,7 +43,8 @@ public class ChatSessionService {
     }
 
     /**
-     * Gợi ý tiêu đề phiên (DRAFT) — chỉ dùng kết quả LLM làm đề xuất, không tự động ghi DB production nếu chưa có bước phê duyệt.
+     * Gợi ý tiêu đề phiên (DRAFT) — chỉ dùng kết quả LLM làm đề xuất, không tự động
+     * ghi DB production nếu chưa có bước phê duyệt.
      */
     @Transactional(readOnly = true)
     public String suggestSessionTitleDraft(String userMessageSnippet) {

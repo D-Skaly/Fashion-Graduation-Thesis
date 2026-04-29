@@ -1,16 +1,16 @@
 package com.skaly.fashion_backend.payment;
 
 import com.skaly.fashion_backend.common.ApiResponse;
-import com.skaly.fashion_backend.payment.gateway.MomoService;
+import com.skaly.fashion_backend.payment.application.usecase.HandlePaymentCallbackUseCase;
+import com.skaly.fashion_backend.payment.application.usecase.InitiatePaymentUseCase;
 import com.skaly.fashion_backend.payment.gateway.PaymentGateway;
-import com.skaly.fashion_backend.payment.gateway.VNPayService;
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,40 +26,42 @@ import java.util.stream.Collectors;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final PaymentRepository paymentRepository;
-    private final VNPayService vnPayService;
-    private final MomoService momoService;
+    private final InitiatePaymentUseCase initiatePaymentUseCase;
+    private final HandlePaymentCallbackUseCase handlePaymentCallbackUseCase;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PaymentResponse>> getPayment(
+    public ResponseEntity<ApiResponse<PaymentDto>> getPayment(
             @PathVariable UUID id,
-            @AuthenticationPrincipal UserEntity user) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
         Payment payment = paymentService.getPaymentById(id);
         // Check if user owns this payment
-        if (!payment.getOrder().getUserId().equals(user.getId())) {
-            throw new SecurityException("Not authorized to view this payment");
+        if (!payment.getUserId().equals(userId)) {
+            throw new PaymentAccessDeniedException("Not authorized to view this payment");
         }
-        return ResponseEntity.ok(ApiResponse.success(mapToResponse(payment)));
+        return ResponseEntity.ok(ApiResponse.success(mapToDto(payment)));
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentByOrder(
+    public ResponseEntity<ApiResponse<PaymentDto>> getPaymentByOrder(
             @PathVariable UUID orderId,
-            @AuthenticationPrincipal UserEntity user) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
         Payment payment = paymentService.getPaymentByOrderId(orderId);
         // Check if user owns this order
-        if (!payment.getOrder().getUserId().equals(user.getId())) {
-            throw new SecurityException("Not authorized to view this payment");
+        if (!payment.getUserId().equals(userId)) {
+            throw new PaymentAccessDeniedException("Not authorized to view this payment");
         }
-        return ResponseEntity.ok(ApiResponse.success(mapToResponse(payment)));
+        return ResponseEntity.ok(ApiResponse.success(mapToDto(payment)));
     }
 
     @GetMapping("/my-payments")
-    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getMyPayments(
-            @AuthenticationPrincipal UserEntity user) {
-        List<Payment> payments = paymentRepository.findByUserId(user.getId());
-        List<PaymentResponse> response = payments.stream()
-                .map(this::mapToResponse)
+    public ResponseEntity<ApiResponse<List<PaymentDto>>> getMyPayments(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        List<Payment> payments = paymentService.getPaymentsByUserId(userId);
+        List<PaymentDto> response = payments.stream()
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
@@ -67,16 +69,11 @@ public class PaymentController {
     // Admin endpoints
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getAllPayments(
+    public ResponseEntity<ApiResponse<List<PaymentDto>>> getAllPayments(
             @RequestParam(required = false) PaymentStatus status) {
-        List<Payment> payments;
-        if (status != null) {
-            payments = paymentService.getPaymentsByStatus(status);
-        } else {
-            payments = paymentRepository.findAll();
-        }
-        List<PaymentResponse> response = payments.stream()
-                .map(this::mapToResponse)
+        List<Payment> payments = paymentService.getAllPayments(status);
+        List<PaymentDto> response = payments.stream()
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
@@ -87,10 +84,10 @@ public class PaymentController {
         return ResponseEntity.ok(ApiResponse.success(paymentService.getTotalRevenue()));
     }
 
-    private PaymentResponse mapToResponse(Payment payment) {
-        return new PaymentResponse(
+    private PaymentDto mapToDto(Payment payment) {
+        return new PaymentDto(
                 payment.getId(),
-                payment.getOrder().getId(),
+                payment.getOrderId(),
                 payment.getTransactionId(),
                 payment.getMethod(),
                 payment.getStatus(),
@@ -98,11 +95,10 @@ public class PaymentController {
                 payment.getCurrency(),
                 payment.getPaidAt(),
                 payment.getFailureReason(),
-                payment.getCreatedAt()
-        );
+                payment.getCreatedAt());
     }
 
-    public record PaymentResponse(
+    public record PaymentDto(
             UUID id,
             UUID orderId,
             String transactionId,
@@ -112,8 +108,27 @@ public class PaymentController {
             String currency,
             java.time.LocalDateTime paidAt,
             String failureReason,
-            java.time.LocalDateTime createdAt
-    ) {}
+            java.time.LocalDateTime createdAt) {
+    }
+
+    @PostMapping("/init")
+    public ResponseEntity<ApiResponse<PaymentGateway.PaymentResponse>> initPayment(
+            @RequestBody PaymentInitRequest request,
+            HttpServletRequest httpRequest,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        var response = initiatePaymentUseCase.execute(
+                request.orderId(),
+                userId,
+                request.returnUrl(),
+                httpRequest.getRemoteAddr());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    public record PaymentInitRequest(
+            UUID orderId,
+            String returnUrl) {
+    }
 
     // Payment Gateway Webhook Handlers
 
@@ -122,22 +137,11 @@ public class PaymentController {
             @RequestParam Map<String, String> params,
             HttpServletRequest request) {
         log.info("Received VNPay callback from IP: {}", request.getRemoteAddr());
-
-        PaymentGateway.CallbackResult result = vnPayService.processCallback(params);
-
-        if (result.success()) {
-            // Find and update payment
-            try {
-                Payment payment = paymentService.getPaymentByTransactionId(result.transactionId());
-                paymentService.processPayment(payment.getId(), result.transactionId());
-                return ResponseEntity.ok(ApiResponse.success("Payment successful"));
-            } catch (Exception e) {
-                log.error("Error processing successful payment", e);
-                return ResponseEntity.ok(ApiResponse.success("Payment processed but error updating order"));
-            }
-        } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error(400, result.message()));
+        var result = handlePaymentCallbackUseCase.execute(PaymentMethod.VNPAY, params);
+        if (result.httpStatus() >= 400) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(result.httpStatus(), result.message()));
         }
+        return ResponseEntity.ok(ApiResponse.success(result.message()));
     }
 
     @GetMapping("/momo/callback")
@@ -145,20 +149,10 @@ public class PaymentController {
             @RequestParam Map<String, String> params,
             HttpServletRequest request) {
         log.info("Received Momo callback from IP: {}", request.getRemoteAddr());
-
-        PaymentGateway.CallbackResult result = momoService.processCallback(params);
-
-        if (result.success()) {
-            try {
-                Payment payment = paymentService.getPaymentByTransactionId(result.transactionId());
-                paymentService.processPayment(payment.getId(), result.transactionId());
-                return ResponseEntity.ok(ApiResponse.success("Payment successful"));
-            } catch (Exception e) {
-                log.error("Error processing successful payment", e);
-                return ResponseEntity.ok(ApiResponse.success("Payment processed but error updating order"));
-            }
-        } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error(400, result.message()));
+        var result = handlePaymentCallbackUseCase.execute(PaymentMethod.MOMO, params);
+        if (result.httpStatus() >= 400) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(result.httpStatus(), result.message()));
         }
+        return ResponseEntity.ok(ApiResponse.success(result.message()));
     }
 }

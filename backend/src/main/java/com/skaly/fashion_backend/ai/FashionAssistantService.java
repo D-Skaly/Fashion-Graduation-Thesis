@@ -1,18 +1,14 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+import com.skaly.fashion_backend.ai.domain.port.AIModelPort;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -25,21 +21,15 @@ public class FashionAssistantService {
     private final Counter successCounter;
     private final Counter failureCounter;
     private final Counter unavailableCounter;
-    private final com.skaly.fashion_backend.product.application.ProductEmbeddingService productEmbeddingService;
-    private final com.skaly.fashion_backend.product.domain.port.ProductRepository productRepository;
     private final ChatSessionService chatSessionService;
 
     public FashionAssistantService(
             AIModelPort aiModelPort,
             AiAssistantProperties properties,
             MeterRegistry meterRegistry,
-            com.skaly.fashion_backend.product.application.ProductEmbeddingService productEmbeddingService,
-            com.skaly.fashion_backend.product.domain.port.ProductRepository productRepository,
             ChatSessionService chatSessionService) {
         this.aiModelPort = aiModelPort;
         this.properties = properties;
-        this.productEmbeddingService = productEmbeddingService;
-        this.productRepository = productRepository;
         this.chatSessionService = chatSessionService;
         this.latencyTimer = Timer.builder("ai.chat.latency")
                 .description("Latency for AI chat completion")
@@ -61,11 +51,36 @@ public class FashionAssistantService {
 
     public String chatWithContext(String message, UUID sessionId, int maxHistoryMessages) {
         long startNs = System.nanoTime();
+        String prompt = preparePrompt(message, sessionId, maxHistoryMessages);
 
+        try {
+            String answer = aiModelPort.completeChatPrompt(prompt);
+            successCounter.increment();
+            latencyTimer.record(System.nanoTime() - startNs, TimeUnit.NANOSECONDS);
+            return answer;
+        } catch (Exception ex) {
+            failureCounter.increment();
+            latencyTimer.record(System.nanoTime() - startNs, TimeUnit.NANOSECONDS);
+            log.error("event=ai_chat_failure reason={}", ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public Flux<String> chatStream(String message, UUID sessionId, int maxHistoryMessages) {
+        String prompt = preparePrompt(message, sessionId, maxHistoryMessages);
+        return aiModelPort.streamChatPrompt(prompt)
+                .doOnComplete(successCounter::increment)
+                .doOnError(t -> {
+                    failureCounter.increment();
+                    log.error("event=ai_chat_stream_failure reason={}", t.getMessage());
+                });
+    }
+
+    private String preparePrompt(String message, UUID sessionId, int maxHistoryMessages) {
         if (!properties.enabled() || aiModelPort == null) {
             unavailableCounter.increment();
             throw new AiServiceUnavailableException(
-                    "AI assistant is currently unavailable. Please configure AI_ASSISTANT_ENABLED=true and a valid GEMINI_API_KEY.");
+                    "AI assistant is currently unavailable. Please configure AI_ASSISTANT_ENABLED=true and a valid API key.");
         }
 
         String cleanedMessage = normalize(message);
@@ -82,63 +97,14 @@ public class FashionAssistantService {
             context = chatSessionService.buildContextFromHistory(sessionId, maxHistoryMessages);
         }
 
-        // RAG: Tìm kiếm sản phẩm liên quan
-        String productContext = "";
-        try {
-            float[] queryVector = productEmbeddingService.embedQuery(cleanedMessage);
-            var products = productRepository.findTopKByEmbeddingVectorClosestTo(queryVector, 5);
-            if (!products.isEmpty()) {
-                StringBuilder sb = new StringBuilder("Dưới đây là một số sản phẩm liên quan từ cửa hàng của chúng tôi:\n");
-                for (var p : products) {
-                    sb.append(String.format("- %s (Giá: %s): %s\n", p.getName(), p.getBasePrice(), p.getDescription()));
-                }
-                productContext = sb.toString();
-            }
-        } catch (Exception e) {
-            log.warn("Failed to fetch product context for RAG: {}", e.getMessage());
-        }
-
-        String prompt = buildPromptWithContext(cleanedMessage, context, productContext);
-
-        try {
-            String answer = executeChat(prompt).join();
-            successCounter.increment();
-            latencyTimer.record(System.nanoTime() - startNs, TimeUnit.NANOSECONDS);
-            return answer;
-        } catch (Exception ex) {
-            failureCounter.increment();
-            latencyTimer.record(System.nanoTime() - startNs, TimeUnit.NANOSECONDS);
-            log.error("event=ai_chat_failure reason={}", ex.getMessage());
-            throw ex;
-        }
+        return buildPromptWithContext(cleanedMessage, context);
     }
 
-    @CircuitBreaker(name = "aiAssistant", fallbackMethod = "chatFallback")
-    @Retry(name = "aiAssistant")
-    @TimeLimiter(name = "aiAssistant")
-    public CompletableFuture<String> executeChat(String prompt) {
-        return CompletableFuture.supplyAsync(() -> aiModelPort.completeChatPrompt(prompt));
-    }
-
-    public CompletableFuture<String> chatFallback(String prompt, Throwable t) {
-        log.warn("event=ai_chat_fallback reason={} prompt_preview={}", 
-                t.getMessage(), 
-                prompt.substring(0, Math.min(prompt.length(), 50)));
-        return CompletableFuture.completedFuture(
-                "Xin lỗi, tôi đang gặp khó khăn khi kết nối với hệ thống AI. Vui lòng thử lại sau giây lát.");
-    }
-
-    private String buildPromptWithContext(String cleanedMessage, String context, String productContext) {
+    private String buildPromptWithContext(String cleanedMessage, String context) {
         StringBuilder prompt = new StringBuilder();
         prompt.append("Bạn là stylist AI cho một shop thời trang cao cấp. ");
         prompt.append("Trả lời ngắn gọn, thực tế, ưu tiên tư vấn phối đồ và gợi ý theo dịp sử dụng. ");
         prompt.append("Nếu người dùng không nói rõ, hãy hỏi thêm tối đa 1 câu để làm rõ nhu cầu.\n\n");
-
-        if (!productContext.isEmpty()) {
-            prompt.append("Thông tin sản phẩm có sẵn:\n");
-            prompt.append(productContext);
-            prompt.append("\n");
-        }
 
         if (!context.isEmpty()) {
             prompt.append("Lịch sử trò chuyện gần đây:\n");
@@ -157,6 +123,6 @@ public class FashionAssistantService {
     }
 
     public void reindex() {
-        productEmbeddingService.generateEmbeddingsForAllMissing();
+        // TODO: trigger re-indexing if needed
     }
 }

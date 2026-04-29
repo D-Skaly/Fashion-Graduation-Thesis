@@ -7,9 +7,10 @@ Graduation thesis: e-commerce thời trang với **Spring Modulith**, **Next.js*
 ## 🚀 Tech Stack
 
 ### Backend
-- **Framework:** Spring Boot 3.5.x
+- **Language:** Java 21 (LTS)
+- **Framework:** Spring Boot 3.3.x
 - **Architecture:** Spring Modulith (Modular Monolith)
-- **AI Integration:** Spring AI (Google Gemini, PGVector)
+- **AI Integration:** Spring AI 1.0
 - **Database:** PostgreSQL 15+ with `pgvector`
 - **Caching:** Redis 7
 - **Security:** Spring Security, OAuth2, JWT
@@ -17,7 +18,7 @@ Graduation thesis: e-commerce thời trang với **Spring Modulith**, **Next.js*
 - **Build Tool:** Maven
 
 ### Frontend
-- **Framework:** Next.js 16 (App Router)
+- **Framework:** Next.js (App Router)
 - **UI Components:** Shadcn UI, Tailwind CSS, Lucide React
 - **State Management:** TanStack Query (React Query)
 - **Language:** TypeScript
@@ -25,6 +26,10 @@ Graduation thesis: e-commerce thời trang với **Spring Modulith**, **Next.js*
 ### AI Orchestrator
 - **Framework:** NestJS
 - **Language:** TypeScript
+
+### AI Service
+- **Framework:** FastAPI
+- **Language:** Python
 
 ### Infrastructure
 - **Containerization:** Docker, Docker Compose
@@ -37,12 +42,12 @@ Graduation thesis: e-commerce thời trang với **Spring Modulith**, **Next.js*
 
 ```text
 .
-├── backend/            # Spring Boot 3 application (Core API)
+├── backend/            # Spring Boot 3 application (Core API, Java 21)
 ├── frontend/           # Next.js web application (App Router)
 ├── ai-orchestrator/    # NestJS AI orchestration layer
 ├── ai-service/         # FastAPI — tác vụ AI nặng (vd. try-on pipeline)
 ├── nginx/              # Nginx configuration for reverse proxy
-├── docs/               # Mục lục: docs/README.md + architecture, API, testing
+├── docs/               # Documentation (flat structure, see docs/README.md)
 ├── docker-compose.yml  # Development infrastructure (DB, Redis)
 └── docker-compose.prod.yml # Production deployment configuration
 ```
@@ -161,12 +166,17 @@ npm run lint
 
 ## 📖 Documentation
 
-- **Mục lục & lộ trình đọc:** [docs/README.md](docs/README.md)
-- **Quy tắc kiến trúc / agent:** [.junie/AGENTS.md](.junie/AGENTS.md)
-- [System Architecture](docs/architecture/01_system_architecture.md)
-- [Database Schema](docs/architecture/02_database_schema.md)
-- [Coding Standards](docs/development/coding_standards.md)
-- [Getting Started Guide](docs/development/getting_started.md)
+- **Documentation Index:** [docs/README.md](docs/README.md)
+- **Agent Rules:** [docs/agent-rules.md](docs/agent-rules.md)
+- **Architecture:** [docs/architecture.md](docs/architecture.md)
+- **Backend Setup:** [docs/backend.md](docs/backend.md)
+- **AI Integration:** [docs/ai-integration.md](docs/ai-integration.md)
+- **Concurrency:** [docs/concurrency.md](docs/concurrency.md)
+- **Data Privacy:** [docs/data-privacy.md](docs/data-privacy.md)
+- **Do's & Don'ts:** [docs/do-dont.md](docs/do-dont.md)
+- **Prompt Patterns:** [docs/prompt-patterns.md](docs/prompt-patterns.md)
+- **ADR Index:** [docs/adr/README.md](docs/adr/README.md)
+- **Mandatory Agent Guide:** [`.junie/AGENTS.md`](.junie/AGENTS.md)
 
 ---
 

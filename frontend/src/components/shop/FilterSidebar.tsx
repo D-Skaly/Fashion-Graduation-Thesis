@@ -82,17 +82,16 @@ export function FilterSidebar({
     const hasActiveFilters = selectedCategories.length > 0 || selectedBrands.length > 0;
 
     return (
-        <div className={className}>
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-lg">Filters</h3>
+        <div className={`space-y-8 ${className}`}>
+            <div className="flex items-center justify-between mb-6">
+                <h3 className="font-bold text-xl tracking-widest uppercase">Filters</h3>
                 {hasActiveFilters && (
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={handleClearAll}
-                        className="text-muted-foreground"
+                        className="text-xs font-semibold tracking-wider text-muted-foreground hover:text-foreground uppercase h-auto py-1"
                     >
-                        <X className="h-4 w-4 mr-1" />
                         Clear All
                     </Button>
                 )}
@@ -100,8 +99,8 @@ export function FilterSidebar({
 
             {/* Price Range */}
             {priceRange && (
-                <div className="space-y-4 mb-6">
-                    <h4 className="font-medium">Price Range</h4>
+                <div className="space-y-5">
+                    <h4 className="font-semibold tracking-wide text-sm uppercase text-muted-foreground">Price Range</h4>
                     <div className="px-2">
                         <Slider
                             min={priceRange.min}
@@ -112,34 +111,35 @@ export function FilterSidebar({
                             className="my-4"
                         />
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">${currentPrice[0]}</span>
-                        <span className="text-muted-foreground">${currentPrice[1]}</span>
+                    <div className="flex items-center justify-between text-sm font-medium">
+                        <span>${currentPrice[0]}</span>
+                        <span>${currentPrice[1]}</span>
                     </div>
                 </div>
             )}
 
-            <Separator className="mb-6" />
+            <Separator className="bg-border/50" />
 
             {/* Categories */}
             {categories && categories.options.length > 0 && (
-                <div className="space-y-3 mb-6">
-                    <h4 className="font-medium">{categories.name}</h4>
-                    <div className="space-y-2">
+                <div className="space-y-5">
+                    <h4 className="font-semibold tracking-wide text-sm uppercase text-muted-foreground">{categories.name}</h4>
+                    <div className="space-y-3">
                         {categories.options.map((option) => (
-                            <div key={option.id} className="flex items-center space-x-2">
+                            <div key={option.id} className="flex items-center space-x-3 group">
                                 <Checkbox
                                     id={`category-${option.id}`}
                                     checked={selectedCategories.includes(option.id)}
                                     onCheckedChange={() => handleCategoryToggle(option.id)}
+                                    className="rounded-[4px] border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary transition-colors"
                                 />
                                 <label
                                     htmlFor={`category-${option.id}`}
-                                    className="text-sm cursor-pointer flex-1 flex items-center justify-between"
+                                    className="text-sm cursor-pointer flex-1 flex items-center justify-between group-hover:text-primary transition-colors"
                                 >
-                                    <span>{option.name}</span>
-                                    <span className="text-muted-foreground text-xs">
-                                        ({option.count})
+                                    <span className="font-medium">{option.name}</span>
+                                    <span className="text-muted-foreground text-xs opacity-70">
+                                        {option.count}
                                     </span>
                                 </label>
                             </div>
@@ -148,27 +148,28 @@ export function FilterSidebar({
                 </div>
             )}
 
-            {categories && brands && <Separator className="mb-6" />}
+            {categories && brands && <Separator className="bg-border/50" />}
 
             {/* Brands */}
             {brands && brands.options.length > 0 && (
-                <div className="space-y-3">
-                    <h4 className="font-medium">{brands.name}</h4>
-                    <div className="space-y-2">
+                <div className="space-y-5">
+                    <h4 className="font-semibold tracking-wide text-sm uppercase text-muted-foreground">{brands.name}</h4>
+                    <div className="space-y-3">
                         {brands.options.map((option) => (
-                            <div key={option.id} className="flex items-center space-x-2">
+                            <div key={option.id} className="flex items-center space-x-3 group">
                                 <Checkbox
                                     id={`brand-${option.id}`}
                                     checked={selectedBrands.includes(option.id)}
                                     onCheckedChange={() => handleBrandToggle(option.id)}
+                                    className="rounded-[4px] border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary transition-colors"
                                 />
                                 <label
                                     htmlFor={`brand-${option.id}`}
-                                    className="text-sm cursor-pointer flex-1 flex items-center justify-between"
+                                    className="text-sm cursor-pointer flex-1 flex items-center justify-between group-hover:text-primary transition-colors"
                                 >
-                                    <span>{option.name}</span>
-                                    <span className="text-muted-foreground text-xs">
-                                        ({option.count})
+                                    <span className="font-medium">{option.name}</span>
+                                    <span className="text-muted-foreground text-xs opacity-70">
+                                        {option.count}
                                     </span>
                                 </label>
                             </div>

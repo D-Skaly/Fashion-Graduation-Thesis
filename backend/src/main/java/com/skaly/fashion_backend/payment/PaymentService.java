@@ -1,6 +1,5 @@
 package com.skaly.fashion_backend.payment;
 
-import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -8,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -16,11 +16,13 @@ import java.util.UUID;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final List<com.skaly.fashion_backend.payment.gateway.PaymentGateway> gateways;
 
     @Transactional
-    public Payment createPayment(OrderEntity order, PaymentMethod method, BigDecimal amount) {
+    public Payment createPayment(UUID orderId, UUID userId, PaymentMethod method, BigDecimal amount) {
         Payment payment = Payment.builder()
-                .order(order)
+                .orderId(orderId)
+                .userId(userId)
                 .method(method)
                 .amount(amount)
                 .status(PaymentStatus.PENDING)
@@ -28,8 +30,28 @@ public class PaymentService {
                 .build();
 
         Payment saved = paymentRepository.save(payment);
-        log.info("Payment created for order {}: {}", order.getId(), saved.getId());
+        log.info("Payment created for order {} for user {}: {}", orderId, userId, saved.getId());
         return saved;
+    }
+
+    @Transactional
+    public com.skaly.fashion_backend.payment.gateway.PaymentGateway.PaymentResponse initiatePayment(UUID paymentId,
+            String returnUrl, String ipAddress) {
+        Payment payment = getPaymentById(paymentId);
+
+        com.skaly.fashion_backend.payment.gateway.PaymentGateway gateway = gateways.stream()
+                .filter(g -> g.getPaymentMethod().equalsIgnoreCase(payment.getMethod().name()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No gateway found for method: " + payment.getMethod()));
+
+        var response = gateway.createPayment(payment, returnUrl, ipAddress);
+
+        if (response.success()) {
+            payment.setTransactionId(response.transactionId());
+            paymentRepository.save(payment);
+        }
+
+        return response;
     }
 
     @Transactional
@@ -37,8 +59,17 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment not found: " + paymentId));
 
-        if (payment.getStatus() != PaymentStatus.PENDING) {
-            throw new IllegalStateException("Payment is not in PENDING status");
+        if (payment.getStatus() == PaymentStatus.COMPLETED) {
+            if (!Objects.equals(payment.getTransactionId(), transactionId)) {
+                log.warn(
+                        "Duplicate payment callback with different transactionId. paymentId={}, existing={}, incoming={}",
+                        paymentId, payment.getTransactionId(), transactionId);
+            }
+            return payment;
+        }
+
+        if (payment.getStatus() != PaymentStatus.PENDING && payment.getStatus() != PaymentStatus.PROCESSING) {
+            throw new IllegalStateException("Payment cannot be completed from status: " + payment.getStatus());
         }
 
         payment.markAsPaid(transactionId);
@@ -51,6 +82,20 @@ public class PaymentService {
     public Payment failPayment(UUID paymentId, String reason) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment not found: " + paymentId));
+
+        if (payment.getStatus() == PaymentStatus.FAILED) {
+            return payment;
+        }
+
+        if (payment.getStatus() == PaymentStatus.COMPLETED) {
+            log.warn("Ignoring failure callback for completed payment: {}", paymentId);
+            return payment;
+        }
+
+        if (payment.getStatus() != PaymentStatus.PENDING && payment.getStatus() != PaymentStatus.PROCESSING) {
+            log.warn("Ignoring failure callback for payment {} in status {}", paymentId, payment.getStatus());
+            return payment;
+        }
 
         payment.markAsFailed(reason);
         Payment updated = paymentRepository.save(payment);
@@ -86,10 +131,16 @@ public class PaymentService {
         return paymentRepository.sumByStatus(PaymentStatus.COMPLETED);
     }
 
-    public static class PaymentNotFoundException extends RuntimeException {
-        public PaymentNotFoundException(String message) {
-            super(message);
+    @Transactional(readOnly = true)
+    public List<Payment> getPaymentsByUserId(UUID userId) {
+        return paymentRepository.findByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Payment> getAllPayments(PaymentStatus status) {
+        if (status != null) {
+            return paymentRepository.findByStatus(status);
         }
+        return paymentRepository.findAll();
     }
 }
-

@@ -19,9 +19,8 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
 
     List<Payment> findByStatus(PaymentStatus status);
 
-    @Query("SELECT p FROM Payment p WHERE p.order.userId = :userId")
-    List<Payment> findByUserId(@Param("userId") UUID userId);
+    List<Payment> findByUserId(UUID userId);
 
-    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.status = :status")
+    @Query("SELECT p FROM Payment p WHERE p.status = :status")
     BigDecimal sumByStatus(@Param("status") PaymentStatus status);
 }

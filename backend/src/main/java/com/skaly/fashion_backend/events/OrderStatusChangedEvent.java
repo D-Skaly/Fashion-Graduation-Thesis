@@ -10,6 +10,8 @@ public class OrderStatusChangedEvent extends DomainEvent {
     private final String orderNumber;
     private final String oldStatus;
     private final String newStatus;
+    private final java.math.BigDecimal totalAmount;
+    private final java.util.List<OrderCreatedEvent.OrderItemInfo> items;
 
     @JsonCreator
     public OrderStatusChangedEvent(
@@ -17,13 +19,25 @@ public class OrderStatusChangedEvent extends DomainEvent {
             @JsonProperty("userId") UUID userId,
             @JsonProperty("orderNumber") String orderNumber,
             @JsonProperty("oldStatus") String oldStatus,
-            @JsonProperty("newStatus") String newStatus) {
+            @JsonProperty("newStatus") String newStatus,
+            @JsonProperty("totalAmount") java.math.BigDecimal totalAmount,
+            @JsonProperty("items") java.util.List<OrderCreatedEvent.OrderItemInfo> items) {
         super("OrderStatusChanged");
         this.orderId = orderId;
         this.userId = userId;
         this.orderNumber = orderNumber;
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
+        this.totalAmount = totalAmount;
+        this.items = items;
+    }
+
+    public java.math.BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public java.util.List<OrderCreatedEvent.OrderItemInfo> getItems() {
+        return items;
     }
 
     public UUID getOrderId() {

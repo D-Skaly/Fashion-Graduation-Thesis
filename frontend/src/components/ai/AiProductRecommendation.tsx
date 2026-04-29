@@ -6,7 +6,7 @@ import { Sparkles, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 import api from "@/lib/axios";
@@ -26,7 +26,6 @@ const fetchRecommendations = async (): Promise<RecommendedProduct[]> => {
 };
 
 export function AiProductRecommendation() {
-    const { toast } = useToast();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     const { data: products, isLoading, refetch } = useQuery({
@@ -38,14 +37,11 @@ export function AiProductRecommendation() {
         setIsRefreshing(true);
         try {
             await refetch();
-            toast({
-                title: "Đã cập nhật gợi ý",
+            toast.success("Đã cập nhật gợi ý", {
                 description: "Đề xuất sản phẩm mới dựa trên sở thích của bạn.",
             });
         } catch {
-            toast({
-                variant: "destructive",
-                title: "Lỗi",
+            toast.error("Lỗi", {
                 description: "Không thể cập nhật gợi ý.",
             });
         } finally {

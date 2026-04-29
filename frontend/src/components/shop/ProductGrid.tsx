@@ -1,17 +1,6 @@
 "use client";
 
-import { ProductCard } from "@/components/product/ProductCard";
-
-interface Product {
-    id: string;
-    name: string;
-    price: number;
-    category: string;
-    image: string;
-    isNew?: boolean;
-    isSale?: boolean;
-    salePrice?: number;
-}
+import { ProductCard, Product } from "@/components/product/ProductCard";
 
 interface ProductGridProps {
     products: Product[];
@@ -34,10 +23,16 @@ export function ProductGrid({
         return (
             <div className={gridClasses}>
                 {Array.from({ length: 8 }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="aspect-[3/4] bg-secondary/20 rounded-xl animate-pulse"
-                    />
+                    <div key={i} className="flex flex-col gap-4">
+                        <div className="aspect-[3/4] bg-secondary/30 rounded-2xl animate-pulse relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
+                        </div>
+                        <div className="space-y-2">
+                            <div className="h-3 w-1/3 bg-secondary/30 rounded-full animate-pulse" />
+                            <div className="h-5 w-3/4 bg-secondary/40 rounded-full animate-pulse" />
+                            <div className="h-5 w-1/4 bg-secondary/30 rounded-full animate-pulse mt-2" />
+                        </div>
+                    </div>
                 ))}
             </div>
         );

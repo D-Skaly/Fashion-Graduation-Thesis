@@ -5,23 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skaly.fashion_backend.recommendation.domain.model.FashionIntentResult;
 import com.skaly.fashion_backend.recommendation.domain.model.RecommendedProduct;
 import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.client.ChatClient;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 /**
- * Adapter dựa trên Spring AI {@link ChatModel} (thường cấu hình Gemini qua spring.ai.google.genai).
+ * Adapter dựa trên Spring AI {@link ChatClient} (Spring AI 2.0).
+ * Sử dụng ChatClient pattern thay vì ChatModel trực tiếp.
  * Dùng cho môi trường dev/test khi không bật {@code application.gemini.rest.enabled}.
  */
 public class SpringAiAIModelAdapter implements AIModelPort {
 
-    private final ChatModel chatModel;
+    private final ChatClient chatClient;
     private final ObjectMapper objectMapper;
 
-    public SpringAiAIModelAdapter(ChatModel chatModel, ObjectMapper objectMapper) {
-        this.chatModel = chatModel;
+    public SpringAiAIModelAdapter(ChatClient.Builder chatClientBuilder, ObjectMapper objectMapper) {
+        this.chatClient = chatClientBuilder.build();
         this.objectMapper = objectMapper;
     }
 
@@ -34,7 +35,11 @@ public class SpringAiAIModelAdapter implements AIModelPort {
                 Câu người dùng: %s
                 """.formatted(userMessage);
         try {
-            String raw = chatModel.call(prompt).trim();
+            String raw = chatClient.prompt()
+                    .user(prompt)
+                    .call()
+                    .content()
+                    .trim();
             return parseIntent(raw, userMessage);
         } catch (Exception ex) {
             return FashionIntentResult.generalConversation();
@@ -43,10 +48,13 @@ public class SpringAiAIModelAdapter implements AIModelPort {
 
     @Override
     public String completeChatPrompt(String composedPrompt) {
-        if (chatModel == null) {
+        if (chatClient == null) {
             return "";
         }
-        return chatModel.call(composedPrompt);
+        return chatClient.prompt()
+                .user(composedPrompt)
+                .call()
+                .content();
     }
 
     @Override
@@ -65,6 +73,18 @@ public class SpringAiAIModelAdapter implements AIModelPort {
                 Nhu cầu: %s
                 """.formatted(sb, userMessage);
         return completeChatPrompt(prompt);
+    }
+
+    @Override
+    public reactor.core.publisher.Flux<String> streamChatPrompt(String composedPrompt) {
+        if (chatClient == null) {
+            return reactor.core.publisher.Flux.empty();
+        }
+        return chatClient.prompt()
+                .user(composedPrompt)
+                .stream()
+                .content()
+                .filter(content -> !content.isEmpty());
     }
 
     private FashionIntentResult parseIntent(String raw, String userMessage) {

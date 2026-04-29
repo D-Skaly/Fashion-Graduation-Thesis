@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,10 +26,29 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<OrderDto>> placeOrder(
-            @RequestBody PlaceOrderRequest request,
+            @RequestBody PlaceOrderWithCartRequest request,
             Authentication authentication) {
-        return ResponseEntity.ok(ApiResponse.success(placeOrderUseCase.execute(authentication.getName(), request)));
+        var userId = UUID.fromString(authentication.getName());
+        var cartItems = request.cartItems().stream()
+                .map(item -> new PlaceOrderUseCase.CartItemRequest(
+                        item.productVariantId(),
+                        item.quantity(),
+                        item.snapshotPrice()))
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(
+                placeOrderUseCase.execute(userId, authentication.getName(), cartItems, request.orderRequest())));
     }
+
+    public record PlaceOrderWithCartRequest(
+            PlaceOrderRequest orderRequest,
+            List<CartItemRequest> cartItems
+    ) {}
+
+    public record CartItemRequest(
+            UUID productVariantId,
+            Integer quantity,
+            BigDecimal snapshotPrice
+    ) {}
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<OrderDto>>> getUserOrders(Authentication authentication) {

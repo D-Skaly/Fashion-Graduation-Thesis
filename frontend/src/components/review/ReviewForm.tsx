@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import api from "@/lib/axios";
 
 interface ReviewFormProps {
@@ -18,7 +18,6 @@ interface ReviewFormProps {
 
 export function ReviewForm({ productId, orderId, onSuccess }: ReviewFormProps) {
     const queryClient = useQueryClient();
-    const { toast } = useToast();
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [comment, setComment] = useState("");
@@ -29,8 +28,7 @@ export function ReviewForm({ productId, orderId, onSuccess }: ReviewFormProps) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
             queryClient.invalidateQueries({ queryKey: ["product", productId] });
-            toast({
-                title: "Đánh giá thành công",
+            toast.success("Đánh giá thành công", {
                 description: "Cảm ơn bạn đã chia sẻ trải nghiệm!",
             });
             setRating(0);
@@ -38,9 +36,7 @@ export function ReviewForm({ productId, orderId, onSuccess }: ReviewFormProps) {
             onSuccess?.();
         },
         onError: () => {
-            toast({
-                variant: "destructive",
-                title: "Lỗi",
+            toast.error("Lỗi", {
                 description: "Không thể gửi đánh giá. Vui lòng thử lại.",
             });
         },
@@ -49,10 +45,7 @@ export function ReviewForm({ productId, orderId, onSuccess }: ReviewFormProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (rating === 0) {
-            toast({
-                variant: "destructive",
-                title: "Vui lòng chọn số sao",
-            });
+            toast.error("Vui lòng chọn số sao");
             return;
         }
         mutation.mutate({ rating, comment, orderId });

@@ -11,13 +11,10 @@ WORKDIR /app
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
 
-# Download dependencies (cached layer)
-RUN ./mvnw dependency:go-offline -B
-
 # Copy source code
 COPY src ./src
 
-# Build the application
+# Build the application (skip tests for faster build)
 RUN ./mvnw clean package -DskipTests -B
 
 # Stage 2: Runtime

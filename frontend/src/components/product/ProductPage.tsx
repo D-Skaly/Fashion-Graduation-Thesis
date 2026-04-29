@@ -17,6 +17,7 @@ import { ColorSelector } from "./ColorSelector";
 import { QuantitySelector } from "./QuantitySelector";
 import { AddToCartButton } from "./AddToCartButton";
 import { ReviewList } from "./ReviewList";
+import { VirtualTryOn } from "@/components/ai/VirtualTryOn";
 import { cn } from "@/lib/utils";
 
 // Types
@@ -184,10 +185,10 @@ export function ProductPage() {
 
     return (
         <div className="container mx-auto px-4 py-10 md:py-16">
-            <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+            <div className="grid md:grid-cols-12 gap-12 lg:gap-16">
                 
                 {/* Gallery */}
-                <div>
+                <div className="md:col-span-7 lg:col-span-8">
                     <ImageGallery 
                         images={product.images || []} 
                         productName={product.name}
@@ -195,91 +196,116 @@ export function ProductPage() {
                 </div>
 
                 {/* Product Info */}
-                <div className="space-y-8">
+                <div className="md:col-span-5 lg:col-span-4 space-y-8 sticky top-24 self-start">
                     <div>
-                        <Badge variant="secondary" className="mb-3">{product.categoryName}</Badge>
-                        {product.isFeatured && (
-                            <Badge className="mb-3 ml-2 bg-amber-500 hover:bg-amber-600">Featured</Badge>
-                        )}
-                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{product.name}</h1>
-                        <div className="flex items-end gap-4">
-                            <span className="text-2xl font-bold">
-                                {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(currentPrice)}
-                            </span>
-                            {product.soldCount > 0 && (
-                                <span className="text-sm text-muted-foreground">
-                                    {product.soldCount} sold
-                                </span>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            <Badge variant="secondary" className="bg-secondary/50 hover:bg-secondary text-xs uppercase tracking-wider">{product.categoryName}</Badge>
+                            {product.isFeatured && (
+                                <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-0 text-xs uppercase tracking-wider">Featured</Badge>
                             )}
                         </div>
-                        {product.brand && (
-                            <p className="text-sm text-muted-foreground mt-1">Brand: {product.brand}</p>
-                        )}
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter mb-4 leading-tight">{product.name}</h1>
+                        <div className="flex items-end gap-4 mb-2">
+                            <span className="text-3xl font-light tracking-tight">
+                                {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(currentPrice)}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
+                            {product.soldCount > 0 && (
+                                <span className="flex items-center">
+                                    🔥 <span className="ml-1 font-medium text-foreground">{product.soldCount}</span> sold
+                                </span>
+                            )}
+                            {product.brand && (
+                                <span>Brand: <span className="font-medium text-foreground">{product.brand}</span></span>
+                            )}
+                        </div>
                     </div>
 
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed font-light text-sm md:text-base">
                         {product.description}
                     </p>
 
-                    <Separator />
+                    <Separator className="bg-border/50" />
 
                     {/* Selectors */}
                     <div className="space-y-6">
                         {/* Color */}
                         {uniqueColors.length > 0 && (
-                            <ColorSelector
-                                colors={uniqueColors}
-                                selectedColor={selectedColor}
-                                onSelectColor={setSelectedColor}
-                            />
+                            <div className="space-y-3">
+                                <ColorSelector
+                                    colors={uniqueColors}
+                                    selectedColor={selectedColor}
+                                    onSelectColor={setSelectedColor}
+                                />
+                            </div>
                         )}
 
                         {/* Size */}
                         {uniqueSizes.length > 0 && (
-                            <SizeSelector
-                                sizes={uniqueSizes}
-                                selectedSize={selectedSize}
-                                onSelectSize={setSelectedSize}
-                                stockMap={stockMap}
-                            />
+                            <div className="space-y-3">
+                                <SizeSelector
+                                    sizes={uniqueSizes}
+                                    selectedSize={selectedSize}
+                                    onSelectSize={setSelectedSize}
+                                    stockMap={stockMap}
+                                />
+                            </div>
                         )}
                         
                         {/* Quantity */}
-                        <QuantitySelector
-                            quantity={quantity}
-                            onQuantityChange={setQuantity}
-                            max={selectedVariant?.stockQuantity || 99}
-                        />
+                        <div className="space-y-3">
+                            <QuantitySelector
+                                quantity={quantity}
+                                onQuantityChange={setQuantity}
+                                max={selectedVariant?.stockQuantity || 99}
+                            />
+                        </div>
                     </div>
 
-                    <Separator />
+                    <Separator className="bg-border/50" />
 
                     {/* Actions */}
-                    <div className="flex gap-4">
-                        <AddToCartButton
-                            isPending={addToCartMutation.isPending}
-                            isSuccess={isAdded}
-                            disabled={!selectedVariant || selectedVariant.stockQuantity < 1}
-                            outOfStock={selectedVariant?.stockQuantity === 0}
-                            onClick={() => addToCartMutation.mutate()}
+                    <div className="flex flex-col gap-3">
+                        <div className="flex gap-3">
+                            <div className="flex-1">
+                                <AddToCartButton
+                                    isPending={addToCartMutation.isPending}
+                                    isSuccess={isAdded}
+                                    disabled={!selectedVariant || selectedVariant.stockQuantity < 1}
+                                    outOfStock={selectedVariant?.stockQuantity === 0}
+                                    onClick={() => addToCartMutation.mutate()}
+                                />
+                            </div>
+                            <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border/50 hover:bg-secondary/50">
+                                <Heart className="h-5 w-5" />
+                            </Button>
+                            <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border/50 hover:bg-secondary/50">
+                                <Share2 className="h-5 w-5" />
+                            </Button>
+                        </div>
+                        
+                        {/* AI Virtual Try-on Component */}
+                        <VirtualTryOn 
+                            productId={product.id}
+                            productName={product.name}
+                            productImage={product.images?.[0]?.url || "/placeholder.jpg"}
                         />
-                        <Button variant="outline" size="icon" className="h-12 w-12">
-                            <Heart className="h-5 w-5" />
-                        </Button>
-                        <Button variant="outline" size="icon" className="h-12 w-12">
-                            <Share2 className="h-5 w-5" />
-                        </Button>
                     </div>
 
                     {/* Features */}
-                    <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <Truck className="h-4 w-4" />
-                            <span>Free shipping over $100</span>
+                    <div className="grid grid-cols-2 gap-4 py-4 rounded-xl bg-secondary/20 px-4 mt-6">
+                        <div className="flex items-center gap-3 text-sm font-medium">
+                            <div className="bg-background p-2 rounded-lg shadow-sm">
+                                <Truck className="h-4 w-4 text-primary" />
+                            </div>
+                            <span>Free shipping<br/><span className="text-xs text-muted-foreground font-normal">over $100</span></span>
                         </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <ShieldCheck className="h-4 w-4" />
-                            <span>Lifetime Warranty</span>
+                        <div className="flex items-center gap-3 text-sm font-medium">
+                            <div className="bg-background p-2 rounded-lg shadow-sm">
+                                <ShieldCheck className="h-4 w-4 text-primary" />
+                            </div>
+                            <span>Lifetime<br/><span className="text-xs text-muted-foreground font-normal">Warranty</span></span>
                         </div>
                     </div>
 

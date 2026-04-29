@@ -17,14 +17,14 @@ export function AdminSidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="hidden md:flex w-64 flex-col border-r bg-background">
-            <div className="flex h-16 items-center border-b px-6">
-                <Link href="/admin" className="flex items-center gap-2 font-bold text-xl uppercase tracking-widest">
-                    Fashion<span className="text-primary">.Admin</span>
+        <aside className="hidden md:flex w-64 flex-col border-r border-white/10 glass-dark shadow-2xl relative z-20">
+            <div className="flex h-16 items-center border-b border-white/10 px-6">
+                <Link href="/admin" className="flex items-center gap-2 font-black text-xl uppercase tracking-widest text-white drop-shadow-md">
+                    Fashion<span className="text-primary/80">.AI</span>
                 </Link>
             </div>
-            <div className="flex-1 overflow-y-auto py-4">
-                <nav className="grid items-start px-4 text-sm font-medium gap-2">
+            <div className="flex-1 overflow-y-auto py-6">
+                <nav className="grid items-start px-4 text-sm font-medium gap-3">
                     {sidebarLinks.map((link) => {
                         const Icon = link.icon;
                         const isActive = pathname === link.href || (link.href !== "/admin" && pathname.startsWith(link.href));
@@ -34,10 +34,10 @@ export function AdminSidebar() {
                                 key={link.href}
                                 href={link.href}
                                 className={cn(
-                                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                                    "flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-300 font-bold uppercase tracking-wider text-xs",
                                     isActive
-                                        ? "bg-primary text-primary-foreground hover:text-primary-foreground"
-                                        : "text-muted-foreground"
+                                        ? "bg-primary/20 text-primary border border-primary/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                                        : "text-stone-400 hover:text-white hover:bg-white/5"
                                 )}
                             >
                                 <Icon className="h-4 w-4" />

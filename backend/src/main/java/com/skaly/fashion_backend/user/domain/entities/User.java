@@ -29,4 +29,12 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime lastLoginAt;
+    @Builder.Default
+    private Integer loyaltyPoints = 0;
+
+    public void addLoyaltyPoints(int points) {
+        if (points > 0) {
+            this.loyaltyPoints += points;
+        }
+    }
 }

@@ -28,8 +28,8 @@ export class TryOnConsumer extends WorkerHost {
         } else {
             this.logger.warn(`AI Service returned status ${aiResponse.status}, using default/cached result`);
         }
-    } catch (error) {
-        this.logger.error(`Failed to call AI Service: ${error.message}. Falling back to simulation.`);
+    } catch (error: unknown) {
+        this.logger.error(`Failed to call AI Service: ${(error as Error).message}. Falling back to simulation.`);
         // Simulation fallback
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
@@ -46,8 +46,8 @@ export class TryOnConsumer extends WorkerHost {
                 })
             });
             this.logger.log(`Callback sent for job ${backendJobId}`);
-        } catch (error) {
-            this.logger.error(`Failed to send callback for job ${backendJobId}: ${error.message}`);
+        } catch (error: unknown) {
+            this.logger.error(`Failed to send callback for job ${backendJobId}: ${(error as Error).message}`);
         }
     }
 

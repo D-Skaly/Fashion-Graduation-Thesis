@@ -14,6 +14,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 public class AiChatRateLimitInterceptor implements HandlerInterceptor {
@@ -22,6 +23,7 @@ public class AiChatRateLimitInterceptor implements HandlerInterceptor {
     private final ObjectMapper objectMapper;
     private final Counter blockedCounter;
     private final Map<String, Deque<Long>> requestWindows = new ConcurrentHashMap<>();
+    private final Map<String, ReentrantLock> locks = new ConcurrentHashMap<>();
 
     public AiChatRateLimitInterceptor(AiAssistantProperties properties, ObjectMapper objectMapper, MeterRegistry meterRegistry) {
         this.properties = properties;
@@ -42,8 +44,10 @@ public class AiChatRateLimitInterceptor implements HandlerInterceptor {
         long windowStart = now - properties.rateLimit().windowSeconds() * 1000L;
 
         Deque<Long> timestamps = requestWindows.computeIfAbsent(key, ignored -> new ArrayDeque<>());
+        ReentrantLock lock = locks.computeIfAbsent(key, k -> new ReentrantLock());
 
-        synchronized (timestamps) {
+        lock.lock();
+        try {
             while (!timestamps.isEmpty() && timestamps.peekFirst() < windowStart) {
                 timestamps.pollFirst();
             }
@@ -58,6 +62,8 @@ public class AiChatRateLimitInterceptor implements HandlerInterceptor {
             }
 
             timestamps.offerLast(now);
+        } finally {
+            lock.unlock();
         }
 
         return true;

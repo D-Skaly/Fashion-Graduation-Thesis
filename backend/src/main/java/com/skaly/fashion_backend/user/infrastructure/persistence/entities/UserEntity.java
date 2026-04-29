@@ -65,6 +65,10 @@ public class UserEntity implements UserDetails {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    @Column(name = "loyalty_points")
+    @Builder.Default
+    private Integer loyaltyPoints = 0;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

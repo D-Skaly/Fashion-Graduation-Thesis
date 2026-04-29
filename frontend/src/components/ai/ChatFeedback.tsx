@@ -6,7 +6,7 @@ import { ThumbsUp, ThumbsDown, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import api from "@/lib/axios";
 
 interface ChatFeedbackProps {
@@ -14,7 +14,6 @@ interface ChatFeedbackProps {
 }
 
 export function ChatFeedback({ messageId }: ChatFeedbackProps) {
-    const { toast } = useToast();
     const [feedback, setFeedback] = useState<"positive" | "negative" | null>(null);
     const [comment, setComment] = useState("");
     const [showComment, setShowComment] = useState(false);
@@ -23,8 +22,7 @@ export function ChatFeedback({ messageId }: ChatFeedbackProps) {
         mutationFn: (data: { type: "positive" | "negative"; comment?: string }) =>
             api.post("/ai/chat/feedback", { messageId, ...data }),
         onSuccess: () => {
-            toast({
-                title: "Cảm ơn phản hồi của bạn",
+            toast.success("Cảm ơn phản hồi của bạn", {
                 description: "Điều này giúp chúng tôi cải thiện dịch vụ.",
             });
             setFeedback(null);
@@ -32,9 +30,7 @@ export function ChatFeedback({ messageId }: ChatFeedbackProps) {
             setShowComment(false);
         },
         onError: () => {
-            toast({
-                variant: "destructive",
-                title: "Lỗi",
+            toast.error("Lỗi", {
                 description: "Không thể gửi phản hồi.",
             });
         },

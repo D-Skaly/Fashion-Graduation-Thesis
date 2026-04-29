@@ -3,7 +3,7 @@ import { StrategistService } from './strategist.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AdminPlan } from './entities/admin-plan.entity';
 import { SpringFiAgentGateway } from './spring-fiagent.gateway';
-import { LlmClient } from '../common/llm/llm.client';
+import { LLM_PROVIDER } from '../common/llm/llm-provider.interface';
 
 describe('StrategistService', () => {
   let service: StrategistService;
@@ -34,7 +34,7 @@ describe('StrategistService', () => {
           useValue: adminPlanRepository,
         },
         {
-          provide: LlmClient,
+          provide: LLM_PROVIDER,
           useValue: llmClient,
         },
         {

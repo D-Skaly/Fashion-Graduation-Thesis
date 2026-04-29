@@ -1,8 +1,8 @@
 {
-  "name": "fi-agent-orchestrator",
+  "name": "fashion-ai-orchestrator",
   "version": "0.1.0",
   "private": true,
-  "description": "NestJS orchestration layer for FashIntelligence FI-Agent",
+  "description": "NestJS orchestration layer for Fashion Graduation Thesis AI Agent",
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.1.19",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.7.4",
     "typescript": "^5.6.2"
   }

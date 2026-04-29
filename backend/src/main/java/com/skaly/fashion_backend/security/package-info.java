@@ -1,5 +1,5 @@
 @org.springframework.modulith.ApplicationModule(
-    id = "security",
+    displayName = "security",
     type = org.springframework.modulith.ApplicationModule.Type.OPEN
 )
 package com.skaly.fashion_backend.security;

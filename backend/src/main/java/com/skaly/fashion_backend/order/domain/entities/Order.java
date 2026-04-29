@@ -55,10 +55,48 @@ public class Order {
     private LocalDateTime updatedAt;
 
     public void addItem(OrderItem item) {
+        if (this.status != OrderStatus.PENDING) {
+            throw new com.skaly.fashion_backend.order.domain.InvalidOrderStateException("Cannot add items to " + this.status + " order");
+        }
         items.add(item);
+        calculateTotal();
+    }
+
+    public void confirm() {
+        if (this.status != OrderStatus.PENDING) {
+            throw new com.skaly.fashion_backend.order.domain.InvalidOrderStateException("Only PENDING orders can be confirmed");
+        }
+        if (items.isEmpty()) {
+            throw new IllegalStateException("Cannot confirm order with no items");
+        }
+        this.status = OrderStatus.CONFIRMED;
+    }
+
+    public void markAsPaid() {
+        if (this.status != OrderStatus.PENDING) {
+            throw new com.skaly.fashion_backend.order.domain.InvalidOrderStateException("Only PENDING orders can be marked as paid");
+        }
+        this.status = OrderStatus.CONFIRMED;
+    }
+
+    public void ship() {
+        if (this.status != OrderStatus.CONFIRMED) {
+            throw new com.skaly.fashion_backend.order.domain.InvalidOrderStateException("Only CONFIRMED orders can be shipped");
+        }
+        this.status = OrderStatus.SHIPPED;
+    }
+
+    public void complete() {
+        if (this.status != OrderStatus.SHIPPED) {
+            throw new com.skaly.fashion_backend.order.domain.InvalidOrderStateException("Only SHIPPED orders can be completed");
+        }
+        this.status = OrderStatus.COMPLETED;
     }
 
     public void cancel(String reason) {
+        if (this.status == OrderStatus.SHIPPED || this.status == OrderStatus.COMPLETED) {
+            throw new com.skaly.fashion_backend.order.domain.InvalidOrderStateException("Cannot cancel " + this.status + " order");
+        }
         this.status = OrderStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
         this.cancelledReason = reason;

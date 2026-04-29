@@ -52,7 +52,7 @@ export function RevenueChart({ data, title = "Revenue Overview", showOrders = fa
                             <Tooltip
                                 contentStyle={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}
                                 itemStyle={{ color: 'var(--foreground)' }}
-                                formatter={(value: number) => `$${value.toLocaleString()}`}
+                                formatter={(value) => typeof value === 'number' ? `$${value.toLocaleString()}` : value}
                             />
                             {showOrders && <Legend />}
                             <Line

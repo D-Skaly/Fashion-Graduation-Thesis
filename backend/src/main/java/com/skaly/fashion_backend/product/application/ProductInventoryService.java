@@ -40,14 +40,18 @@ public class ProductInventoryService {
                 variant.getSize(),
                 variant.getColor(),
                 price,
-                variant.getStockQuantity()
-        );
+                variant.getStockQuantity());
     }
 
     @Transactional(readOnly = true)
     public ProductVariantEntity getProductVariantById(UUID id) {
         return jpaProductVariantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product variant not found with id: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public int getCurrentStock(UUID id) {
+        return getProductVariantById(id).getStockQuantity();
     }
 
     @Transactional
@@ -67,6 +71,20 @@ public class ProductInventoryService {
         }
 
         variant.setStockQuantity(variant.getStockQuantity() - quantity);
+        jpaProductVariantRepository.save(variant);
+    }
+
+    @Transactional
+    public void addStock(UUID variantId, Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+        ProductVariantEntity variant = jpaProductVariantRepository.findByIdForUpdate(variantId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product variant not found with id: " + variantId));
+
+        variant.setStockQuantity(variant.getStockQuantity() + quantity);
+        jpaProductVariantRepository.save(variant);
     }
 
     @Transactional

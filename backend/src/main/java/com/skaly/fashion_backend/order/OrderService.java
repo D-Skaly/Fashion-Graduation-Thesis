@@ -1,19 +1,12 @@
 package com.skaly.fashion_backend.order;
 
-import com.skaly.fashion_backend.cart.api.dto.CartDto;
-import com.skaly.fashion_backend.cart.api.dto.CartItemDto;
-import com.skaly.fashion_backend.cart.application.CartService;
 import com.skaly.fashion_backend.common.ResourceNotFoundException;
 import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.order.domain.entities.OrderItem;
-import com.skaly.fashion_backend.order.OrderRepository;
+import com.skaly.fashion_backend.order.domain.OrderPricingService;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderStatusHistoryEntity;
-
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.ShippingEntity;
-
 import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
-import com.skaly.fashion_backend.user.api.dto.UserInternalResponse;
-import com.skaly.fashion_backend.user.application.UserInternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +16,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Order query and lifecycle management service.
+ * Place-order logic lives in {@link com.skaly.fashion_backend.order.application.PlaceOrderUseCase}.
+ * Cross-module dependencies are resolved via gateway ports, not direct service imports.
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -30,66 +28,36 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderStatusHistoryRepository statusHistoryRepository;
     private final ShippingRepository shippingRepository;
-    private final UserInternalService userInternalService;
-    private final CartService cartService;
+    private final OrderUserGateway orderUserGateway;
     private final OrderInventoryGateway orderInventoryGateway;
     private final OrderPricingService orderPricingService;
     private final OrderEventService orderEventService;
 
-    @Transactional
-    public OrderDto placeOrder(String userEmail, PlaceOrderRequest request) {
-        UserInternalResponse user = userInternalService.getUserByEmail(userEmail);
-        CartDto cart = getValidatedCart(userEmail);
-
-        Order order = Order.builder()
-                .userId(user.id())
-                .status(OrderStatus.PENDING)
-                .shippingAddress(request.shippingAddress())
-                .build();
-
-        BigDecimal totalAmount = addOrderItems(order, cart.items());
-        order.setTotalAmount(totalAmount);
-
-        Order savedOrder = orderRepository.save(order);
-        orderEventService.publishOrderCreated(savedOrder);
-
-        // Clear cart after successful order creation
-        cartService.clearCart(userEmail, null);
-
-        return mapToDto(savedOrder);
-    }
-
     @Transactional(readOnly = true)
     public List<OrderDto> getUserOrders(String userEmail) {
-        UserInternalResponse user = userInternalService.getUserByEmail(userEmail);
-
-        return orderRepository.findByUserId(user.id()).stream()
+        UUID userId = orderUserGateway.getUserIdByEmail(userEmail);
+        return orderRepository.findByUserId(userId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public OrderDto getOrderById(String userEmail, UUID orderId) {
-        UserInternalResponse user = userInternalService.getUserByEmail(userEmail);
+        UUID userId = orderUserGateway.getUserIdByEmail(userEmail);
         Order order = getOrderByIdOrThrow(orderId);
-        validateOrderOwnership(user, order, "view");
-
+        validateOrderOwnership(userId, order, "view");
         return mapToDto(order);
     }
 
     @Transactional
     public OrderDto cancelOrder(String userEmail, UUID orderId, String reason) {
-        UserInternalResponse user = userInternalService.getUserByEmail(userEmail);
+        UUID userId = orderUserGateway.getUserIdByEmail(userEmail);
         Order order = getOrderByIdOrThrow(orderId);
-        validateOrderOwnership(user, order, "cancel");
-
+        validateOrderOwnership(userId, order, "cancel");
         validateOrderCanBeCancelled(order);
 
         OrderStatus oldStatus = order.getStatus();
         order.cancel(reason);
-        // Note: Domain Order doesn't handle status history Entity directly. 
-        // We'll handle it in the application service for now or move to domain.
-        // For simplicity, let's keep the entity logic here for now but use domain order.
 
         Order savedOrder = orderRepository.save(order);
         orderEventService.publishOrderStatusChanged(savedOrder, oldStatus);
@@ -104,13 +72,13 @@ public class OrderService {
     @Transactional(readOnly = true)
     public ShippingEntity getOrderShipping(UUID orderId) {
         return shippingRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("ShippingEntity info not found for order: " + orderId));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Shipping info not found for order: " + orderId));
     }
 
     @Transactional
     public void updateOrderStatus(UUID orderId, OrderStatus newStatus, String note) {
         Order order = getOrderByIdOrThrow(orderId);
-
         OrderStatus oldStatus = order.getStatus();
         order.setStatus(newStatus);
 
@@ -118,21 +86,13 @@ public class OrderService {
         orderEventService.publishOrderStatusChanged(savedOrder, oldStatus);
     }
 
-    private CartDto getValidatedCart(String userEmail) {
-        CartDto cart = cartService.getCart(userEmail, null);
-        if (cart.items().isEmpty()) {
-            throw new IllegalStateException("Cart is empty");
-        }
-        return cart;
-    }
-
     private Order getOrderByIdOrThrow(UUID orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + orderId));
     }
 
-    private void validateOrderOwnership(UserInternalResponse user, Order order, String action) {
-        if (!order.getUserId().equals(user.id())) {
+    private void validateOrderOwnership(UUID userId, Order order, String action) {
+        if (!order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("Not authorized to " + action + " this order");
         }
     }
@@ -141,35 +101,16 @@ public class OrderService {
         if (order.getStatus() == OrderStatus.CANCELLED) {
             throw new IllegalStateException("Order is already cancelled");
         }
-
         if (order.getStatus() == OrderStatus.SHIPPED || order.getStatus() == OrderStatus.COMPLETED) {
             throw new IllegalStateException("Cannot cancel order that has been shipped or completed");
         }
     }
 
-    private BigDecimal addOrderItems(Order order, List<CartItemDto> cartItems) {
-        BigDecimal totalAmount = BigDecimal.ZERO;
-
-        for (CartItemDto cartItem : cartItems) {
-            ProductVariantInternalResponse variant = orderInventoryGateway.getProductVariant(cartItem.productVariantId());
-            BigDecimal unitPrice = orderPricingService.calculateUnitPrice(variant);
-            OrderItem orderItem = OrderItem.builder()
-                    .productVariantId(variant.id())
-                    .quantity(cartItem.quantity())
-                    .snapshotPrice(unitPrice)
-                    .build();
-
-            order.addItem(orderItem);
-            totalAmount = totalAmount.add(orderPricingService.calculateLineTotal(unitPrice, cartItem.quantity()));
-        }
-
-        return totalAmount;
-    }
-
     private OrderDto mapToDto(Order order) {
         List<OrderItemDto> itemDtos = order.getItems().stream()
                 .map(item -> {
-                    ProductVariantInternalResponse variant = orderInventoryGateway.getProductVariant(item.getProductVariantId());
+                    ProductVariantInternalResponse variant = orderInventoryGateway
+                            .getProductVariant(item.getProductVariantId());
                     BigDecimal subtotal = item.getSnapshotPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity()));
                     return new OrderItemDto(
@@ -192,4 +133,3 @@ public class OrderService {
                 order.getCreatedAt());
     }
 }
-

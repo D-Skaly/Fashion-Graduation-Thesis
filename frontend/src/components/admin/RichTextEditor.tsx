@@ -162,7 +162,8 @@ export function RichTextEditor({ value, onChange, placeholder = "Enter content..
                     style={{ minHeight }}
                     dangerouslySetInnerHTML={{ __html: value }}
                     onInput={(e) => onChange(e.currentTarget.innerHTML)}
-                    placeholder={placeholder}
+                    data-placeholder={placeholder}
+                    aria-label={placeholder}
                 />
             </CardContent>
         </Card>

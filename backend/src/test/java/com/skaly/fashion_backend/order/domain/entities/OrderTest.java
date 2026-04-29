@@ -1,106 +1,172 @@
 package com.skaly.fashion_backend.order.domain.entities;
 
 import com.skaly.fashion_backend.order.OrderStatus;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
 
-    @Nested
-    @DisplayName("cancel")
-    class Cancel {
+    private Order order;
+    private OrderItem validItem;
 
-        @Test
-        void setsCancelledStatusReasonAndTimestamp() {
-            Order order = Order.builder()
-                    .id(UUID.randomUUID())
-                    .status(OrderStatus.PENDING)
-                    .build();
-            LocalDateTime before = LocalDateTime.now().minusNanos(500_000_000);
+    @BeforeEach
+    void setUp() {
+        order = Order.builder()
+                .id(UUID.randomUUID())
+                .userId(UUID.randomUUID())
+                .status(OrderStatus.PENDING)
+                .build();
 
-            order.cancel("Khách đổi ý");
-
-            assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
-            assertThat(order.getCancelledReason()).isEqualTo("Khách đổi ý");
-            assertThat(order.getCancelledAt()).isNotNull();
-            assertThat(order.getCancelledAt()).isAfterOrEqualTo(before);
-            assertThat(order.getCancelledAt()).isBeforeOrEqualTo(LocalDateTime.now().plusSeconds(1));
-        }
+        validItem = OrderItem.builder()
+                .id(UUID.randomUUID())
+                .productId(UUID.randomUUID())
+                .productName("Test Product")
+                .snapshotPrice(new BigDecimal("100.00"))
+                .quantity(2)
+                .build();
     }
 
-    @Nested
-    @DisplayName("addItem")
-    class AddItem {
+    @Test
+    void addItem_shouldAddItemAndRecalculateTotal() {
+        order.addItem(validItem);
 
-        @Test
-        void appendsItemToCollection() {
-            Order order = Order.builder().items(new ArrayList<>()).build();
-            OrderItem line = OrderItem.builder()
-                    .id(UUID.randomUUID())
-                    .productVariantId(UUID.randomUUID())
-                    .quantity(2)
-                    .snapshotPrice(new BigDecimal("50.00"))
-                    .build();
-
-            order.addItem(line);
-
-            assertThat(order.getItems()).containsExactly(line);
-        }
+        assertEquals(1, order.getItems().size());
+        assertEquals(new BigDecimal("200.00"), order.getTotalAmount());
     }
 
-    @Nested
-    @DisplayName("calculateTotal")
-    class CalculateTotal {
+    @Test
+    void addItem_shouldThrowExceptionWhenOrderNotPending() {
+        order.confirm();
 
-        @Test
-        void withNoItems_subTotalZero_totalReflectsTaxShippingAndDiscount() {
-            Order order = Order.builder()
-                    .items(new ArrayList<>())
-                    .taxAmount(new BigDecimal("10.00"))
-                    .shippingCost(new BigDecimal("5.00"))
-                    .discountAmount(new BigDecimal("3.00"))
-                    .build();
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.addItem(validItem));
+    }
 
-            order.calculateTotal();
+    @Test
+    void addItem_shouldThrowExceptionWhenOrderCanceled() {
+        order.cancel("Test reason");
 
-            assertThat(order.getSubTotal()).isEqualByComparingTo(BigDecimal.ZERO);
-            assertThat(order.getTotalAmount()).isEqualByComparingTo(new BigDecimal("12.00"));
-        }
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.addItem(validItem));
+    }
 
-        @Test
-        void withItems_computesSubTotalAndFinalTotal() {
-            UUID v1 = UUID.randomUUID();
-            Order order = Order.builder()
-                    .items(new ArrayList<>(List.of(
-                            OrderItem.builder()
-                                    .productVariantId(v1)
-                                    .quantity(2)
-                                    .snapshotPrice(new BigDecimal("25.00"))
-                                    .build(),
-                            OrderItem.builder()
-                                    .productVariantId(UUID.randomUUID())
-                                    .quantity(1)
-                                    .snapshotPrice(new BigDecimal("10.00"))
-                                    .build()
-                    )))
-                    .taxAmount(new BigDecimal("5.00"))
-                    .shippingCost(new BigDecimal("5.00"))
-                    .discountAmount(new BigDecimal("15.00"))
-                    .build();
+    @Test
+    void confirm_shouldChangeStatusToConfirmed() {
+        order.addItem(validItem);
+        order.confirm();
 
-            order.calculateTotal();
+        assertEquals(OrderStatus.CONFIRMED, order.getStatus());
+    }
 
-            assertThat(order.getSubTotal()).isEqualByComparingTo(new BigDecimal("60.00"));
-            assertThat(order.getTotalAmount()).isEqualByComparingTo(new BigDecimal("55.00"));
-        }
+    @Test
+    void confirm_shouldThrowExceptionWhenNoItems() {
+        assertThrows(IllegalStateException.class, () -> order.confirm());
+    }
+
+    @Test
+    void confirm_shouldThrowExceptionWhenNotPending() {
+        order.confirm();
+
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.confirm());
+    }
+
+    @Test
+    void markAsPaid_shouldChangeStatusToConfirmed() {
+        order.markAsPaid();
+
+        assertEquals(OrderStatus.CONFIRMED, order.getStatus());
+    }
+
+    @Test
+    void ship_shouldChangeStatusToShipped() {
+        order.addItem(validItem);
+        order.confirm();
+        order.ship();
+
+        assertEquals(OrderStatus.SHIPPED, order.getStatus());
+    }
+
+    @Test
+    void ship_shouldThrowExceptionWhenNotConfirmed() {
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.ship());
+    }
+
+    @Test
+    void complete_shouldChangeStatusToCompleted() {
+        order.addItem(validItem);
+        order.confirm();
+        order.ship();
+        order.complete();
+
+        assertEquals(OrderStatus.COMPLETED, order.getStatus());
+    }
+
+    @Test
+    void complete_shouldThrowExceptionWhenNotShipped() {
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.complete());
+    }
+
+    @Test
+    void cancel_shouldChangeStatusToCancelled() {
+        order.cancel("Customer request");
+
+        assertEquals(OrderStatus.CANCELLED, order.getStatus());
+        assertEquals("Customer request", order.getCancelledReason());
+        assertNotNull(order.getCancelledAt());
+    }
+
+    @Test
+    void cancel_shouldThrowExceptionWhenShipped() {
+        order.addItem(validItem);
+        order.confirm();
+        order.ship();
+
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.cancel("Test reason"));
+    }
+
+    @Test
+    void cancel_shouldThrowExceptionWhenCompleted() {
+        order.addItem(validItem);
+        order.confirm();
+        order.ship();
+        order.complete();
+
+        assertThrows(com.skaly.fashion_backend.order.domain.InvalidOrderStateException.class,
+                () -> order.cancel("Test reason"));
+    }
+
+    @Test
+    void calculateTotal_shouldIncludeSubtotalTaxShippingAndDiscount() {
+        OrderItem item1 = OrderItem.builder()
+                .snapshotPrice(new BigDecimal("50.00"))
+                .quantity(2)
+                .build();
+        OrderItem item2 = OrderItem.builder()
+                .snapshotPrice(new BigDecimal("30.00"))
+                .quantity(1)
+                .build();
+
+        order.addItem(item1);
+        order.addItem(item2);
+
+        order.setTaxAmount(new BigDecimal("10.00"));
+        order.setShippingCost(new BigDecimal("5.00"));
+        order.setDiscountAmount(new BigDecimal("15.00"));
+
+        order.calculateTotal();
+
+        // Subtotal: 50*2 + 30*1 = 130
+        // Total: 130 + 10 + 5 - 15 = 130
+        assertEquals(new BigDecimal("130.00"), order.getSubTotal());
+        assertEquals(new BigDecimal("130.00"), order.getTotalAmount());
     }
 }

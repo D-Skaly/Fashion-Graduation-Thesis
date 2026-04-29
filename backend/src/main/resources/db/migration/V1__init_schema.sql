@@ -326,6 +326,19 @@ CREATE TABLE analytics (
     CONSTRAINT uk_analytics_product_date UNIQUE (product_id, analytics_date)
 );
 
+-- AI Try-On Module Table
+CREATE TABLE try_on_jobs (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id),
+    product_id UUID NOT NULL,
+    user_image_url VARCHAR(255),
+    result_image_url VARCHAR(255),
+    status VARCHAR(50) CHECK (status IN ('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED')),
+    error_message TEXT,
+    created_at TIMESTAMP(6) WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP(6) WITHOUT TIME ZONE DEFAULT NOW()
+);
+
 -- ============================================
 -- Indexes
 -- ============================================

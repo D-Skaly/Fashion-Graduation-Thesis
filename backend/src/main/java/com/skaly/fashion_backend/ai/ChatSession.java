@@ -1,6 +1,5 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,8 +10,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chat_sessions", indexes = {
-    @Index(name = "idx_chat_session_user_id", columnList = "user_id"),
-    @Index(name = "idx_chat_session_created_at", columnList = "createdAt")
+        @Index(name = "idx_chat_session_user_id", columnList = "user_id"),
+        @Index(name = "idx_chat_session_created_at", columnList = "createdAt")
 })
 @Getter
 @Setter
@@ -25,9 +24,8 @@ public class ChatSession {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
 
     @Column(length = 255)
     private String title;
@@ -68,5 +66,3 @@ public class ChatSession {
         message.setSession(null);
     }
 }
-
-

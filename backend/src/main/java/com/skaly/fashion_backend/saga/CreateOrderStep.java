@@ -1,7 +1,6 @@
 package com.skaly.fashion_backend.saga;
 
-import com.skaly.fashion_backend.order.OrderRepository;
-import com.skaly.fashion_backend.order.domain.entities.Order;
+import com.skaly.fashion_backend.saga.application.SagaOrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CreateOrderStep implements SagaStep<OrderSagaContext> {
 
-    private final OrderRepository orderRepository;
+    private final SagaOrderService sagaOrderService;
 
     @Override
     public String getName() {
@@ -21,12 +20,9 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
     @Override
     public void execute(OrderSagaContext context) {
         log.info("Creating order with orderNumber: {}", context.getOrderNumber());
-
-        Order order = orderRepository.findById(context.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-
-        context.setOrderStatus(order.getStatus().name());
-        log.info("Order loaded successfully with status: {}", order.getStatus());
+        String orderStatus = sagaOrderService.getOrderStatus(context.getOrderId());
+        context.setOrderStatus(orderStatus);
+        log.info("Order loaded successfully with status: {}", orderStatus);
     }
 
     @Override
@@ -34,11 +30,8 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
         log.info("Compensating CreateOrder: cancelling order {}", context.getOrderId());
 
         try {
-            orderRepository.findById(context.getOrderId()).ifPresent(order -> {
-                order.cancel("Saga compensation: CreateOrder rolled back");
-                orderRepository.save(order);
-                log.info("Order cancelled successfully");
-            });
+            sagaOrderService.cancelOrder(context.getOrderId(), "Saga compensation: CreateOrder rolled back");
+            log.info("Order cancelled successfully");
         } catch (Exception e) {
             log.error("Failed to compensate CreateOrder", e);
         }
