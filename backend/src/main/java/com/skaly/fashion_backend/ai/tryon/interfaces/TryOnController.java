@@ -5,7 +5,7 @@ import com.skaly.fashion_backend.ai.tryon.application.TryOnNotificationService;
 import com.skaly.fashion_backend.ai.tryon.domain.JobStatus;
 import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJob;
 import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJobRepository;
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order.interfaces;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.order.application.OrderDto;
 import com.skaly.fashion_backend.order.application.OrderService;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderStatusHistoryEntity;

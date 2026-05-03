@@ -1,0 +1,24 @@
+# robots.txt for Fashion Thesis
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private paths
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /account/
+Disallow: /cart/
+Disallow: /login
+Disallow: /register
+
+# Allow search engines to crawl shop and products
+Allow: /shop
+Allow: /product/
+
+# Sitemap
+Sitemap: https://fashion-thesis.com/sitemap.xml
+
+# Crawl-delay (optional, uncomment if needed)
+# Crawl-delay: 1

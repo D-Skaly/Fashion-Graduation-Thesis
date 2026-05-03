@@ -2,41 +2,43 @@ package com.skaly.fashion_backend.common.infrastructure.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.MDC;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.UUID;
 
-@Component
+/**
+ * Interceptor to add correlation ID to requests for tracing.
+ * Configured in WebMvcConfig.
+ */
+@RequiredArgsConstructor
 public class CorrelationIdInterceptor implements HandlerInterceptor {
-
-    private static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
-    private static final String CORRELATION_ID_LOG_KEY = "correlationId";
-
+    
+    private final String headerName;
+    
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String correlationId = request.getHeader(CORRELATION_ID_HEADER);
+        String correlationId = request.getHeader(headerName);
         
         if (correlationId == null || correlationId.isEmpty()) {
             correlationId = UUID.randomUUID().toString();
         }
         
-        // Add to MDC for logging
-        MDC.put(CORRELATION_ID_LOG_KEY, correlationId);
+        // Add to request attribute
+        request.setAttribute("correlationId", correlationId);
         
         // Add to response header
-        response.setHeader(CORRELATION_ID_HEADER, correlationId);
+        response.setHeader("X-Correlation-ID", correlationId);
         
-        // Add to request attribute for use in controllers
-        request.setAttribute(CORRELATION_ID_LOG_KEY, correlationId);
+        // Optionally set to MDC for logging
+        org.slf4j.MDC.put("correlationId", correlationId);
         
         return true;
     }
-
+    
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        // Clean up MDC
-        MDC.remove(CORRELATION_ID_LOG_KEY);
+        // Clear MDC after request
+        org.slf4j.MDC.remove("correlationId");
     }
 }

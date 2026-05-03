@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.user.interfaces;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.user.api.dto.BodyProfileDto;
 import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.application.BodyProfileService;

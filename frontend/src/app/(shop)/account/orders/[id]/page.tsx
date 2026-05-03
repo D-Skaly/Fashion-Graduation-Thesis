@@ -1,10 +1,10 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
-import { ArrowLeft, Package, Truck, MapPin, CreditCard, Clock, AlertCircle } from "lucide-react";
+import { ArrowLeft, Package, Truck, MapPin, CreditCard, Clock, AlertCircle, Printer, ShoppingCart, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 
@@ -25,6 +25,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { OrderStatusTimeline } from "@/components/orders/OrderStatusTimeline";
 import { CancelOrderDialog } from "@/components/orders/CancelOrderDialog";
+import { PrintInvoiceButton } from "@/components/admin/PrintInvoiceButton";
 
 // Types
 interface OrderItem {
@@ -110,6 +111,7 @@ const getStatusColor = (status: string) => {
 
 export default function OrderDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const orderId = params.id as string;
 
@@ -147,6 +149,27 @@ export default function OrderDetailPage() {
     onError: (error: unknown) => {
       const axiosError = error as { response?: { data?: { message?: string } } };
       toast.error(axiosError.response?.data?.message || "Failed to cancel order");
+    },
+  });
+
+  const reorderMutation = useMutation({
+    mutationFn: async () => {
+      if (!order?.items) return;
+      const promises = order.items.map((item) =>
+        api.post("/cart/add", {
+          productVariantId: item.id,
+          quantity: item.quantity,
+        })
+      );
+      await Promise.all(promises);
+    },
+    onSuccess: () => {
+      toast.success("Items added to cart!");
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      router.push("/cart");
+    },
+    onError: () => {
+      toast.error("Failed to reorder. Please try again.");
     },
   });
 
@@ -385,19 +408,43 @@ export default function OrderDetailPage() {
           </Card>
 
           {/* Actions */}
-          <div className="space-y-3">
-            {canCancel(order.status) && (
-              <CancelOrderDialog 
-                orderId={orderId}
-                onCancel={(reason) => cancelMutation.mutate(reason)}
-                isLoading={cancelMutation.isPending}
-              />
-            )}
+           <div className="space-y-3">
+             {canCancel(order.status) && (
+               <CancelOrderDialog 
+                 orderId={orderId}
+                 onCancel={(reason) => cancelMutation.mutate(reason)}
+                 isLoading={cancelMutation.isPending}
+               />
+             )}
 
-            <Button variant="outline" className="w-full" asChild>
-              <Link href="/account/orders">Back to Orders</Link>
-            </Button>
-          </div>
+             <Button
+               variant="outline"
+               className="w-full"
+               onClick={() => reorderMutation.mutate()}
+               disabled={reorderMutation.isPending}
+             >
+               {reorderMutation.isPending ? (
+                 <>
+                   <RotateCcw className="mr-2 h-4 w-4 animate-spin" />
+                   Adding to Cart...
+                 </>
+               ) : (
+                 <>
+                   <ShoppingCart className="mr-2 h-4 w-4" />
+                   Reorder Items
+                 </>
+               )}
+             </Button>
+
+             <PrintInvoiceButton orderId={orderId} variant="outline" className="w-full">
+               <Printer className="mr-2 h-4 w-4" />
+               Download Invoice
+             </PrintInvoiceButton>
+
+             <Button variant="outline" className="w-full" asChild>
+               <Link href="/account/orders">Back to Orders</Link>
+             </Button>
+           </div>
 
           {/* Cancelled Notice */}
           {order.status === "CANCELLED" && order.cancelledAt && (

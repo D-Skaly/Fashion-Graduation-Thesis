@@ -1,29 +1,33 @@
 package com.skaly.fashion_backend.common.domain;
 
 /**
- * Base exception for all business/domain-level errors.
- * Subclass this for domain-specific exceptions instead of using
- * generic IllegalStateException or IllegalArgumentException.
+ * Base business exception for domain rule violations.
+ * Used across all modules for business logic errors.
  */
-public abstract class BusinessException extends RuntimeException {
-
+public class BusinessException extends RuntimeException {
+    
     private final String errorCode;
-
-    protected BusinessException(String message) {
+    
+    public BusinessException(String message) {
         super(message);
-        this.errorCode = getClass().getSimpleName();
+        this.errorCode = "BUSINESS_ERROR";
     }
-
-    protected BusinessException(String errorCode, String message) {
+    
+    public BusinessException(String errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }
-
-    protected BusinessException(String message, Throwable cause) {
+    
+    public BusinessException(String message, Throwable cause) {
         super(message, cause);
-        this.errorCode = getClass().getSimpleName();
+        this.errorCode = "BUSINESS_ERROR";
     }
-
+    
+    public BusinessException(String errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+    }
+    
     public String getErrorCode() {
         return errorCode;
     }

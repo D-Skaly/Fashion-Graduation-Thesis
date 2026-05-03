@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.ai.infrastructure;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;

@@ -32,10 +32,6 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  // Compute effective selected values (with defaults)
-  const effectiveSelectedColor = selectedColor ?? (uniqueColors.length > 0 ? uniqueColors[0] : null);
-  const effectiveSelectedSize = selectedSize ?? (uniqueSizes.length > 0 ? uniqueSizes[0] : null);
-
   const { data: product, isLoading, isError } = useQuery({
     queryKey: queryKeys.products.detail(id),
     queryFn: () => fetchProduct(id),
@@ -47,9 +43,12 @@ export default function ProductDetailPage() {
 
     const colors = Array.from(new Set(product.variants.map(v => v.color))).filter(Boolean);
     const sizes = Array.from(new Set(product.variants.map(v => v.size))).filter(Boolean);
-
     return { uniqueColors: colors as string[], uniqueSizes: sizes as string[] };
   }, [product]);
+
+  // Compute effective selected values (with defaults)
+  const effectiveSelectedColor = selectedColor ?? (uniqueColors.length > 0 ? uniqueColors[0] : null);
+  const effectiveSelectedSize = selectedSize ?? (uniqueSizes.length > 0 ? uniqueSizes[0] : null);
 
   // Find Selected Variant
   const selectedVariant = useMemo(() => {

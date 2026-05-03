@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.product.interfaces;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.product.application.ProductService;
 import com.skaly.fashion_backend.product.interfaces.dto.CreateProductRequest;
 import com.skaly.fashion_backend.product.interfaces.dto.ProductResponse;

@@ -14,7 +14,11 @@ interface MeasurementResult {
   waist: number;
 }
 
-export function BodyMeasurement() {
+interface BodyMeasurementProps {
+  onComplete?: (data: MeasurementResult) => void;
+}
+
+export function BodyMeasurement({ onComplete }: BodyMeasurementProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMeasuring, setIsMeasuring] = useState(false);
@@ -109,6 +113,7 @@ export function BodyMeasurement() {
       setIsMeasuring(false);
       setIsProcessing(false);
       setMeasurementResult(response.data.data);
+      onComplete?.(response.data.data);
       
      
     } catch (error) {

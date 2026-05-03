@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.common.infrastructure.security;
 
-import com.skaly.fashion_backend.user.CustomOAuth2User;
+import com.skaly.fashion_backend.user.domain.model.CustomOAuth2User;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.auth.interfaces;
 
 import com.skaly.fashion_backend.auth.application.AuthenticationService;
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.infrastructure.persistence.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;

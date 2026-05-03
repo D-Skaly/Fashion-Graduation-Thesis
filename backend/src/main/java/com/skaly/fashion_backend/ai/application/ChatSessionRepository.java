@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.ai.application;
 
+import com.skaly.fashion_backend.ai.domain.model.ChatSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

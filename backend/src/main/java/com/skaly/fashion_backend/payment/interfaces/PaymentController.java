@@ -1,8 +1,12 @@
 package com.skaly.fashion_backend.payment.interfaces;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
+import com.skaly.fashion_backend.payment.application.PaymentService;
 import com.skaly.fashion_backend.payment.application.usecase.HandlePaymentCallbackUseCase;
 import com.skaly.fashion_backend.payment.application.usecase.InitiatePaymentUseCase;
+import com.skaly.fashion_backend.payment.domain.Payment;
+import com.skaly.fashion_backend.payment.domain.PaymentMethod;
+import com.skaly.fashion_backend.payment.domain.PaymentStatus;
 import com.skaly.fashion_backend.payment.gateway.PaymentGateway;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

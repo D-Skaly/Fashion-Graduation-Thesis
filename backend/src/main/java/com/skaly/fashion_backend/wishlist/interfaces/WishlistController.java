@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.wishlist.interfaces;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.wishlist.application.WishlistService;
 import com.skaly.fashion_backend.wishlist.domain.model.WishlistResponse;
 import lombok.RequiredArgsConstructor;

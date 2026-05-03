@@ -1,26 +1,27 @@
 package com.skaly.fashion_backend.payment.application;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import com.skaly.fashion_backend.payment.domain.Payment;
+import com.skaly.fashion_backend.payment.domain.PaymentStatus;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-public interface PaymentRepository extends JpaRepository<Payment, UUID> {
-
-    Optional<Payment> findByOrderId(UUID orderId);
-
-    Optional<Payment> findByTransactionId(String transactionId);
-
+/**
+ * Repository interface for Payment (Port in Clean Architecture).
+ * Lives in payment/application/ (use cases layer).
+ */
+public interface PaymentRepository {
+    
+    Payment save(Payment payment);
+    
+    Optional<Payment> findById(UUID paymentId);
+    
+    List<Payment> findByOrderId(UUID orderId);
+    
     List<Payment> findByStatus(PaymentStatus status);
-
-    List<Payment> findByUserId(UUID userId);
-
-    @Query("SELECT p FROM Payment p WHERE p.status = :status")
-    BigDecimal sumByStatus(@Param("status") PaymentStatus status);
+    
+    void deleteById(UUID paymentId);
+    
+    boolean existsById(UUID paymentId);
 }

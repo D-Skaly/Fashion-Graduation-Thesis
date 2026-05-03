@@ -1,101 +1,56 @@
 package com.skaly.fashion_backend.saga.domain;
 
 import com.skaly.fashion_backend.payment.domain.Payment;
+import com.skaly.fashion_backend.order.domain.entities.Order;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Context for Order Saga transactions.
+ * Carries data between saga steps.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderSagaContext {
     private UUID orderId;
-    private UUID userId;
-    private String orderNumber;
-    private BigDecimal totalAmount;
-    private String orderStatus;
+    private Order order;
     private Payment payment;
-    private Map<UUID, Integer> productVariantsWithQuantity; // variantId -> quantity
-    private Map<UUID, Integer> originalStockQuantities; // variantId -> original stock
     private String errorMessage;
-    private boolean compensationRequired;
-
-    // Getters and Setters
-    public UUID getOrderId() {
-        return orderId;
+    private boolean failed;
+    
+    /**
+     * Check if the saga has failed.
+     */
+    public boolean hasFailed() {
+        return failed;
     }
-
-    public void setOrderId(UUID orderId) {
-        this.orderId = orderId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public Payment getPayment() {
-        return payment;
-    }
-
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
-
-    public Map<UUID, Integer> getProductVariantsWithQuantity() {
-        return productVariantsWithQuantity;
-    }
-
-    public void setProductVariantsWithQuantity(Map<UUID, Integer> productVariantsWithQuantity) {
-        this.productVariantsWithQuantity = productVariantsWithQuantity;
-    }
-
-    public Map<UUID, Integer> getOriginalStockQuantities() {
-        return originalStockQuantities;
-    }
-
-    public void setOriginalStockQuantities(Map<UUID, Integer> originalStockQuantities) {
-        this.originalStockQuantities = originalStockQuantities;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
+    
+    /**
+     * Mark the saga as failed with error message.
+     */
+    public void markAsFailed(String errorMessage) {
+        this.failed = true;
         this.errorMessage = errorMessage;
     }
-
-    public boolean isCompensationRequired() {
-        return compensationRequired;
+    
+    /**
+     * Set the created order.
+     */
+    public void setOrder(Order order) {
+        this.order = order;
+        this.orderId = order != null ? order.getId() : null;
     }
-
-    public void setCompensationRequired(boolean compensationRequired) {
-        this.compensationRequired = compensationRequired;
+    
+    /**
+     * Set the created payment.
+     */
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }

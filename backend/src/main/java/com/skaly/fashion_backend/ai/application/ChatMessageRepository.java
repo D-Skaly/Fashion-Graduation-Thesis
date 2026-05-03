@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.ai.application;
 
+import com.skaly.fashion_backend.ai.domain.model.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

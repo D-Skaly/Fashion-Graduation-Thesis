@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.ai.tryon.infrastructure.adapter;
 
+import com.skaly.fashion_backend.ai.domain.port.ProductInfoPort;
 import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +22,18 @@ public class FastApiTryOnAdapter implements TryOnPort {
     private final RestTemplate restTemplate;
     private final com.skaly.fashion_backend.ai.tryon.application.TryOnService tryOnService;
     private final com.skaly.fashion_backend.ai.tryon.application.TryOnNotificationService notificationService;
-    private final com.skaly.fashion_backend.product.domain.port.ProductRepository productRepository;
+    private final ProductInfoPort productInfoPort;
 
     @Autowired
     public FastApiTryOnAdapter(
             RestTemplate restTemplate,
             @Lazy com.skaly.fashion_backend.ai.tryon.application.TryOnService tryOnService,
             com.skaly.fashion_backend.ai.tryon.application.TryOnNotificationService notificationService,
-            com.skaly.fashion_backend.product.domain.port.ProductRepository productRepository) {
+            ProductInfoPort productInfoPort) {
         this.restTemplate = restTemplate;
         this.tryOnService = tryOnService;
         this.notificationService = notificationService;
-        this.productRepository = productRepository;
+        this.productInfoPort = productInfoPort;
     }
 
     @Value("${application.ai.tryon.fastapi.url:http://localhost:8001}")
@@ -72,14 +73,14 @@ public class FastApiTryOnAdapter implements TryOnPort {
     private void simulateAiProcessing(UUID jobId, UUID userId, UUID productId) {
         log.info("[REAL-SIM] Simulating REAL AI processing for job: {} (ETA: 8s)", jobId);
         
-        new Thread(() -> {
+        Thread.startVirtualThread(() -> {
             try {
                 // Simulate deep learning latency
-                Thread.sleep(8000); 
+                Thread.sleep(Duration.ofSeconds(8));
                 
-                // Fetch product info to make the image "REAL"
-                var product = productRepository.findById(productId).orElse(null);
-                String productName = product != null ? product.getName() : "fashion item";
+                // Fetch product info via ProductInfoPort (decoupled from product module)
+                var productInfo = productInfoPort.getProductInfo(productId);
+                String productName = productInfo.name() != null ? productInfo.name() : "fashion item";
                 
                 // Use Pollinations.ai for DYNAMIC real-time image generation
                 // Construct a professional fashion photography prompt
@@ -104,6 +105,6 @@ public class FastApiTryOnAdapter implements TryOnPort {
             } catch (Exception e) {
                 log.error("[REAL-SIM] Failed to generate dynamic image", e);
             }
-        }).start();
+        });
     }
 }

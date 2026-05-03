@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.payment.application;
 
+import com.skaly.fashion_backend.payment.domain.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
 

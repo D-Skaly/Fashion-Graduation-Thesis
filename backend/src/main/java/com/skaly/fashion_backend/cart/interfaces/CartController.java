@@ -3,7 +3,7 @@ package com.skaly.fashion_backend.cart.interfaces;
 import com.skaly.fashion_backend.cart.api.dto.*;
 import com.skaly.fashion_backend.cart.application.CartService;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.common.infrastructure.config;
 
-import com.skaly.fashion_backend.interceptor.CacheControlInterceptor;
-import com.skaly.fashion_backend.interceptor.CorrelationIdInterceptor;
+import com.skaly.fashion_backend.common.infrastructure.interceptor.CacheControlInterceptor;
+import com.skaly.fashion_backend.common.infrastructure.interceptor.CorrelationIdInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

@@ -191,4 +191,4 @@ storage:
     access-key: ${MINIO_ACCESS_KEY:minioadmin}
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     bucket-name: ${MINIO_BUCKET:fashion-images-dev}
-    url-expiry: ${MINIO_URL_EXPIRY:3600}
+    url-expiry: ${MINIO_URL_EXPIRY:1800}

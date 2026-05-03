@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.storage.interfaces;
 
-import com.skaly.fashion_backend.common.application.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.storage.application.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

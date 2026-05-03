@@ -22,15 +22,21 @@ public class FashionAssistantService {
     private final Counter failureCounter;
     private final Counter unavailableCounter;
     private final ChatSessionService chatSessionService;
+    private final FactCheckingEvaluator factChecker;
+    private final RelevancyEvaluator relevancyEvaluator;
 
     public FashionAssistantService(
             AIModelPort aiModelPort,
             AiAssistantProperties properties,
             MeterRegistry meterRegistry,
-            ChatSessionService chatSessionService) {
+            ChatSessionService chatSessionService,
+            FactCheckingEvaluator factChecker,
+            RelevancyEvaluator relevancyEvaluator) {
         this.aiModelPort = aiModelPort;
         this.properties = properties;
         this.chatSessionService = chatSessionService;
+        this.factChecker = factChecker;
+        this.relevancyEvaluator = relevancyEvaluator;
         this.latencyTimer = Timer.builder("ai.chat.latency")
                 .description("Latency for AI chat completion")
                 .register(meterRegistry);
@@ -55,6 +61,16 @@ public class FashionAssistantService {
 
         try {
             String answer = aiModelPort.completeChatPrompt(prompt);
+            
+            // Run evaluators
+            FactCheckingEvaluator.EvaluationResult factCheck = factChecker.evaluate(message, answer);
+            if (!factCheck.passed()) {
+                log.warn("Fact check failed: {}", factCheck.reason());
+            }
+            
+            double relevancy = relevancyEvaluator.evaluateRelevancy(message, answer);
+            log.info("Relevancy score: {} for message: {}", relevancy, message);
+            
             successCounter.increment();
             latencyTimer.record(System.nanoTime() - startNs, TimeUnit.NANOSECONDS);
             return answer;

@@ -1,11 +1,15 @@
 package com.skaly.fashion_backend.common.infrastructure;
 
-import com.skaly.fashion_backend.ai.AiServiceUnavailableException;
+import com.skaly.fashion_backend.common.domain.AiServiceUnavailableException;
+import com.skaly.fashion_backend.common.domain.ApiResponse;
+import com.skaly.fashion_backend.common.domain.ResourceNotFoundException;
+import com.skaly.fashion_backend.common.domain.BusinessException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
