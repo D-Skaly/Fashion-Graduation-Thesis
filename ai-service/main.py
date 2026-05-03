@@ -4,7 +4,6 @@ from typing import Optional, Dict, List
 import uuid
 import logging
 from datetime import datetime, timedelta
-import base64
 import os
 
 from size_model import get_model, Size, Gender
@@ -41,14 +40,14 @@ TRYON_JOB_TTL = 3600  # seconds
 
 
 class BodyProfile(BaseModel):
-    chest: Optional[float] = None
-    waist: Optional[float] = None
-    hips: Optional[float] = None
-    shoulder: Optional[float] = None
-    inseam: Optional[float] = None
-    gender: str = "unisex"
-    clothing_type: str = "tops"
-    fit_preference: str = "regular"
+    chest: Optional[float] = Field(None, ge=0, description="Chest measurement must be non-negative")
+    waist: Optional[float] = Field(None, ge=0, description="Waist measurement must be non-negative")
+    hips: Optional[float] = Field(None, ge=0, description="Hips measurement must be non-negative")
+    shoulder: Optional[float] = Field(None, ge=0, description="Shoulder measurement must be non-negative")
+    inseam: Optional[float] = Field(None, ge=0, description="Inseam measurement must be non-negative")
+    gender: str = Field("unisex", pattern="^(male|female|unisex)$")
+    clothing_type: str = Field("tops", pattern="^(tops|bottoms|dresses)$")
+    fit_preference: str = Field("regular", pattern="^(tight|regular|loose)$")
 
 
 class SizeRecommendationResponse(BaseModel):
@@ -131,6 +130,13 @@ def process_tryon(request: TryOnRequest):
     """
     job_id = str(uuid.uuid4())
     
+    # ✅ Fail if MinIO not available (privacy compliance)
+    if not USE_MINIO:
+        raise HTTPException(
+            status_code=503,
+            detail="Try-on service temporarily unavailable. MinIO storage required for privacy compliance."
+        )
+    
     job_data = {
         "status": "PROCESSING",
         "user_image_url": request.user_image_url,
@@ -167,20 +173,13 @@ def process_tryon(request: TryOnRequest):
         # Upload result to MinIO with presigned URL for privacy
         object_name = f"tryon-results/{job_id}.jpg"
         
-        if USE_MINIO:
-            # Upload to MinIO and generate presigned download URL
-            minio_client.upload_bytes(result_bytes, object_name, 'image/jpeg')
-            result_url = minio_client.get_presigned_download_url(
-                object_name, 
-                expires_in_seconds=TRYON_JOB_TTL
-            )
-            logger.info(f"Uploaded result to MinIO: {object_name}")
-        else:
-            # Fallback to base64 (with privacy warning)
-            result_b64 = base64.b64encode(result_bytes).decode('utf-8')
-            result_url = f"data:image/jpeg;base64,{result_b64[:100]}...[truncated]"
-            logger.warning("Using base64 fallback - not privacy-compliant!")
-        
+        # Upload to MinIO and generate presigned download URL
+        minio_client.upload_bytes(result_bytes, object_name, 'image/jpeg')
+        result_url = minio_client.get_presigned_download_url(
+            object_name, 
+            expires_in_seconds=TRYON_JOB_TTL
+        )
+        logger.info(f"Uploaded result to MinIO: {object_name}")
         # Update job status
         if USE_REDIS:
             redis_client.hset(f"tryon_job:{job_id}", "status", "COMPLETED")

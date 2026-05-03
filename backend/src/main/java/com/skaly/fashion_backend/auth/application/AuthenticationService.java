@@ -40,6 +40,9 @@ public class AuthenticationService {
 
     @Transactional
     public AuthenticationResponse register(RegisterRequest request, String deviceInfo, String ipAddress) {
+        // ✅ Validate password strength
+        validatePasswordStrength(request.password());
+
         // Check if user already exists
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new IllegalArgumentException("Email already registered");
@@ -156,5 +159,22 @@ public class AuthenticationService {
                 user.getRole().name(),
                 user.getAvatarUrl()
         );
+    }
+
+    private void validatePasswordStrength(String password) {
+        if (password == null || password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+        
+        boolean hasUpper = !password.equals(password.toLowerCase());
+        boolean hasLower = !password.equals(password.toUpperCase());
+        boolean hasDigit = password.matches(".*\\d.*");
+        boolean hasSpecial = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
+        
+        if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+            throw new IllegalArgumentException(
+                "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+            );
+        }
     }
 }

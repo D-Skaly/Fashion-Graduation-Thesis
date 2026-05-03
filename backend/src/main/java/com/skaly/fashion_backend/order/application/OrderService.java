@@ -5,6 +5,7 @@ import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.order.domain.entities.OrderItem;
 import com.skaly.fashion_backend.order.domain.OrderPricingService;
 import com.skaly.fashion_backend.order.domain.OrderStatus;
+import com.skaly.fashion_backend.order.domain.port.ProductVariantInfo;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderStatusHistoryEntity;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.ShippingEntity;
 import lombok.RequiredArgsConstructor;
@@ -108,14 +109,24 @@ public class OrderService {
     }
 
     private OrderDto mapToDto(Order order) {
+        // ✅ Batch fetch variants
+        List<UUID> variantIds = order.getItems().stream()
+                .map(com.skaly.fashion_backend.order.domain.entities.OrderItem::getProductVariantId)
+                .toList();
+        
+        Map<UUID, ProductVariantInfo> variants = orderInventoryGateway.getProductVariantsBatch(variantIds);
+        
         List<OrderItemDto> itemDtos = order.getItems().stream()
                 .map(item -> {
-                    // Note: This still uses cross-module import - should be refactored to use gateway
-                    // For now keeping as is, but need to fix later
-                    com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse variant = orderInventoryGateway
-                            .getProductVariant(item.getProductVariantId());
+                    ProductVariantInfo variant = variants.get(item.getProductVariantId());
+                    if (variant == null) {
+                        log.warn("Variant not found: {}", item.getProductVariantId());
+                        return null;
+                    }
+                    
                     BigDecimal subtotal = item.getSnapshotPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity()));
+                            
                     return new OrderItemDto(
                             item.getId(),
                             variant.productName(),
@@ -125,6 +136,7 @@ public class OrderService {
                             item.getSnapshotPrice(),
                             subtotal);
                 })
+                .filter(java.util.Objects::nonNull)
                 .collect(Collectors.toList());
 
         return new OrderDto(

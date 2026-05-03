@@ -1,10 +1,10 @@
 package com.skaly.fashion_backend.email.application;
 
+import com.skaly.fashion_backend.common.infrastructure.config.AppProperties;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -21,26 +21,21 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
+    private final EmailProperties emailProperties;
+    private final AppProperties appProperties;
 
-    @Value("${spring.mail.from}")
-    private String fromEmail;
-
-    @Value("${app.frontend.url}")
-    private String frontendUrl;
-
-    @Async
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(fromEmail);
+            helper.setFrom(emailProperties.getFrom());
             helper.setTo(to);
             helper.setSubject(subject);
 
             Context context = new Context();
             context.setVariables(variables);
-            context.setVariable("frontendUrl", frontendUrl);
+            context.setVariable("frontendUrl", appProperties.getUrl());
 
             String htmlContent = templateEngine.process(templateName, context);
             helper.setText(htmlContent, true);

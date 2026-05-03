@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -18,17 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class StorageService {
 
     private final MinioClient minioClient;
-
-    @Value("${storage.minio.endpoint:http://localhost:9000}")
-    private String minioEndpoint;
-
-    @Value("${storage.minio.bucket-name:fashion-images}")
-    private String bucketName;
-
-    @Value("${storage.minio.url-expiry:3600}")
-    private int urlExpirySeconds;
+    private final MinioProperties minioProperties;
 
     public String uploadFile(MultipartFile file, String folder) {
+        // ✅ Validate file
+        validateFile(file);
         try {
             ensureBucketExists();
 
@@ -53,6 +48,8 @@ public class StorageService {
     }
 
     public String uploadFile(MultipartFile file, String folder, String customFilename) {
+        // ✅ Validate file
+        validateFile(file);
         try {
             ensureBucketExists();
 
@@ -82,9 +79,9 @@ public class StorageService {
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
-                            .bucket(bucketName)
+                            .bucket(minioProperties.getBucketName())
                             .object(objectName)
-                            .expiry(urlExpirySeconds, TimeUnit.SECONDS)
+                            .expiry(minioProperties.getUrlExpiry(), TimeUnit.SECONDS)
                             .build()
             );
         } catch (Exception e) {
@@ -94,7 +91,7 @@ public class StorageService {
     }
 
     public String getPermanentUrl(String objectName) {
-        return minioEndpoint.replace("http://", "https://") + "/" + bucketName + "/" + objectName;
+        return minioProperties.getEndpoint().replace("http://", "https://") + "/" + minioProperties.getBucketName() + "/" + objectName;
     }
 
     public void deleteFile(String objectName) {
@@ -151,7 +148,33 @@ public class StorageService {
         if (filename == null || !filename.contains(".")) {
             return "";
         }
-        return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        return filename.substring(filename.lastIndexOf(".") +1).toLowerCase();
+    }
+
+    private void validateFile(MultipartFile file) {
+        // Check file size (max 10MB)
+        long maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.getSize() > maxSize) {
+            throw new StorageException("File size exceeds maximum limit of 10MB");
+        }
+        
+        // Check content type
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new StorageException("Only image files are allowed");
+        }
+        
+        // Check file extension
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new StorageException("Invalid file name");
+        }
+        
+        String extension = getFileExtension(originalFilename);
+        Set<String> allowedExtensions = Set.of("jpg", "jpeg", "png", "gif", "webp");
+        if (!allowedExtensions.contains(extension.toLowerCase())) {
+            throw new StorageException("Allowed file types: " + allowedExtensions);
+        }
     }
 
     public static class StorageException extends RuntimeException {

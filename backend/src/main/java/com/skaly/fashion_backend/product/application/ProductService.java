@@ -5,6 +5,7 @@ import com.skaly.fashion_backend.product.interfaces.dto.CreateProductRequest;
 import com.skaly.fashion_backend.product.interfaces.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,15 @@ public class ProductService {
     private final ProductSearchService productSearchService;
     private final ProductCacheService productCacheService;
 
+    private static final int MAX_PAGE_SIZE = 100;
+
+    private Pageable enforceMaxPageSize(Pageable pageable) {
+        if (pageable.getPageSize() > MAX_PAGE_SIZE) {
+            return PageRequest.of(pageable.getPageNumber(), MAX_PAGE_SIZE, pageable.getSort());
+        }
+        return pageable;
+    }
+
     @Transactional
     public ProductResponse createProduct(CreateProductRequest request) {
         return productManagementService.createProduct(request);
@@ -38,7 +48,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
-        return productManagementService.getAllProducts(pageable);
+        return productManagementService.getAllProducts(enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +73,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> searchProducts(String keyword, Pageable pageable) {
-        return productSearchService.searchProducts(keyword, pageable);
+        return productSearchService.searchProducts(keyword, enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)
@@ -73,27 +83,27 @@ public class ProductService {
             String sortBy,
             String sortDirection,
             Pageable pageable) {
-        return productSearchService.filterProducts(categoryId, minPrice, maxPrice, sortBy, sortDirection, pageable);
+        return productSearchService.filterProducts(categoryId, minPrice, maxPrice, sortBy, sortDirection, enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getFeaturedProducts(Pageable pageable) {
-        return productCacheService.getFeaturedProducts(pageable);
+        return productCacheService.getFeaturedProducts(enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getNewArrivals(Pageable pageable) {
-        return productCacheService.getNewArrivals(pageable);
+        return productCacheService.getNewArrivals(enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductsByBrand(String brand, Pageable pageable) {
-        return productManagementService.getProductsByBrand(brand, pageable);
+        return productManagementService.getProductsByBrand(brand, enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductsByTag(String tag, Pageable pageable) {
-        return productManagementService.getProductsByTag(tag, pageable);
+        return productManagementService.getProductsByTag(tag, enforceMaxPageSize(pageable));
     }
 
     @Transactional(readOnly = true)

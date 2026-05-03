@@ -2,7 +2,10 @@ package com.skaly.fashion_backend.product.domain.port;
 
 import com.skaly.fashion_backend.product.domain.port.dto.ProductVariantInfo;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Port for cart module to access product information.
@@ -21,4 +24,12 @@ public interface ProductCartServicePort {
      * Check if product variant has sufficient stock.
      */
     boolean hasSufficientStock(UUID variantId, int quantity);
+
+    default Map<UUID, ProductVariantInfo> getProductVariantsBatch(List<UUID> variantIds) {
+        return variantIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        this::getProductVariantInfo
+                ));
+    }
 }

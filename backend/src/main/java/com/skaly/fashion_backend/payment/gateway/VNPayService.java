@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.payment.gateway;
 
 import com.skaly.fashion_backend.payment.domain.Payment;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -15,19 +15,10 @@ import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class VNPayService implements PaymentGateway {
 
-    @Value("${payment.vnpay.tmn-code:}")
-    private String vnpTmnCode;
-
-    @Value("${payment.vnpay.hash-secret:}")
-    private String vnpHashSecret;
-
-    @Value("${payment.vnpay.url:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}")
-    private String vnpPayUrl;
-
-    @Value("${payment.vnpay.api-url:https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}")
-    private String vnpApiUrl;
+    private final VnPayProperties vnPayProperties;
 
     @Override
     public PaymentResponse createPayment(Payment payment, String returnUrl, String ipAddress) {
@@ -38,7 +29,7 @@ public class VNPayService implements PaymentGateway {
             Map<String, String> vnpParams = new TreeMap<>();
             vnpParams.put("vnp_Version", "2.1.0");
             vnpParams.put("vnp_Command", "pay");
-            vnpParams.put("vnp_TmnCode", vnpTmnCode);
+            vnpParams.put("vnp_TmnCode", vnPayProperties.getTmnCode());
             vnpParams.put("vnp_Amount", String.valueOf(payment.getAmount().multiply(BigDecimal.valueOf(100)).longValue()));
             vnpParams.put("vnp_CurrCode", "VND");
             vnpParams.put("vnp_TxnRef", vnpTxnRef);
@@ -70,10 +61,10 @@ public class VNPayService implements PaymentGateway {
             }
 
             // Create secure hash
-            String secureHash = hmacSHA512(vnpHashSecret, hashData.toString());
+            String secureHash = hmacSHA512(vnPayProperties.getHashSecret(), hashData.toString());
             query.append("&vnp_SecureHash=").append(secureHash);
 
-            String paymentUrl = vnpPayUrl + "?" + query;
+            String paymentUrl = vnPayProperties.getUrl() + "?" + query;
 
             return new PaymentResponse(true, paymentUrl, vnpTxnRef, "Payment URL created successfully");
 
@@ -88,7 +79,7 @@ public class VNPayService implements PaymentGateway {
         try {
             String secureHash = params.remove("vnp_SecureHash");
             String hashData = buildHashData(params);
-            String calculatedHash = hmacSHA512(vnpHashSecret, hashData);
+            String calculatedHash = hmacSHA512(vnPayProperties.getHashSecret(), hashData);
 
             if (!calculatedHash.equals(secureHash)) {
                 log.error("Invalid secure hash");

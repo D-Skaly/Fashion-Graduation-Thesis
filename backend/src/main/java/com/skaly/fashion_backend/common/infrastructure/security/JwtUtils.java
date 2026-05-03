@@ -1,13 +1,12 @@
 package com.skaly.fashion_backend.common.infrastructure.security;
 
+import com.skaly.fashion_backend.common.infrastructure.config.JwtProperties;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -21,12 +20,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtUtils {
 
-    @Value("${application.security.jwt.secret-key}")
-    private String secretKey;
-
-    @Value("${application.security.jwt.expiration}")
-    private long jwtExpiration;
-
+    private final JwtProperties jwtProperties;
     private final UserRepository userRepository;
 
     public String extractUsername(String token) {
@@ -59,7 +53,7 @@ public class JwtUtils {
                 .setClaims(extraClaims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.common.infrastructure.security.token;
 
+import com.skaly.fashion_backend.common.infrastructure.config.RefreshTokenProperties;
 import com.skaly.fashion_backend.security.JwtUtils;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
@@ -7,7 +8,6 @@ import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepo
 import com.skaly.fashion_backend.user.infrastructure.persistence.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +27,7 @@ public class RefreshTokenService {
     private final JwtUtils jwtUtils;
     private final JpaUserRepository jpaUserRepository;
     private final UserMapper userMapper;
-
-    @Value("${application.security.refresh-token.expiration:604800000}") // 7 days default
-    private long refreshTokenExpirationMs;
-
-    @Value("${application.security.refresh-token.max-tokens-per-user:5}")
-    private int maxTokensPerUser;
+    private final RefreshTokenProperties refreshTokenProperties;
 
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -47,7 +42,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(generateToken());
         refreshToken.setUser(userEntity);
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenExpirationMs));
+        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenProperties.getExpiration()));
         refreshToken.setDeviceInfo(deviceInfo);
         refreshToken.setIpAddress(ipAddress);
         refreshToken.setIsRevoked(false);
@@ -109,14 +104,14 @@ public class RefreshTokenService {
         long validTokenCount = refreshTokenRepository.countByUserIdAndIsRevokedFalseAndExpiryDateAfter(
                 userId, Instant.now());
 
-        if (validTokenCount >= maxTokensPerUser) {
+        if (validTokenCount >= refreshTokenProperties.getMaxTokensPerUser()) {
             // Get oldest tokens and revoke them
             List<RefreshToken> tokens = refreshTokenRepository.findAllValidByUserId(userId, Instant.now());
             if (tokens.size() >= maxTokensPerUser) {
-                // Revoke oldest tokens (by creation date)
+                 // Revoke oldest tokens (by creation date)
                 tokens.stream()
                         .sorted((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()))
-                        .limit(tokens.size() - maxTokensPerUser + 1)
+                        .limit(tokens.size() - refreshTokenProperties.getMaxTokensPerUser() + 1)
                         .forEach(t -> {
                             t.setIsRevoked(true);
                             refreshTokenRepository.save(t);
@@ -132,7 +127,7 @@ public class RefreshTokenService {
     }
 
     public long getRefreshTokenExpirationMs() {
-        return refreshTokenExpirationMs;
+        return refreshTokenProperties.getExpiration();
     }
 
     public record TokenPair(String accessToken, String refreshToken, Instant refreshTokenExpiry) {}

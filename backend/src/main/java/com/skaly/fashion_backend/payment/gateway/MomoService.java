@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.payment.gateway;
 
 import com.skaly.fashion_backend.payment.domain.Payment;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -14,19 +14,10 @@ import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MomoService implements PaymentGateway {
 
-    @Value("${payment.momo.partner-code:}")
-    private String partnerCode;
-
-    @Value("${payment.momo.access-key:}")
-    private String accessKey;
-
-    @Value("${payment.momo.secret-key:}")
-    private String secretKey;
-
-    @Value("${payment.momo.endpoint:https://test-payment.momo.vn/v2/gateway/api/create}")
-    private String endpoint;
+    private final MomoProperties momoProperties;
 
     @Override
     public PaymentResponse createPayment(Payment payment, String returnUrl, String ipAddress) {
@@ -36,22 +27,22 @@ public class MomoService implements PaymentGateway {
             String orderInfo = "Payment for order " + payment.getOrderId();
             String amount = payment.getAmount().toString();
 
-            String rawHash = "accessKey=" + accessKey +
+            String rawHash = "accessKey=" + momoProperties.getAccessKey() +
                     "&amount=" + amount +
                     "&extraData=" +
                     "&ipnUrl=" + returnUrl +
                     "&orderId=" + orderId +
                     "&orderInfo=" + orderInfo +
-                    "&partnerCode=" + partnerCode +
+                    "&partnerCode=" + momoProperties.getPartnerCode() +
                     "&redirectUrl=" + returnUrl +
                     "&requestId=" + requestId +
                     "&requestType=captureWallet";
 
-            String signature = hmacSHA256(secretKey, rawHash);
+            String signature = hmacSHA256(momoProperties.getSecretKey(), rawHash);
 
             // Build request body
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("partnerCode", partnerCode);
+            requestBody.put("partnerCode", momoProperties.getPartnerCode());
             requestBody.put("partnerName", "Fashion Store");
             requestBody.put("storeId", "FashionStore001");
             requestBody.put("requestId", requestId);
@@ -67,7 +58,7 @@ public class MomoService implements PaymentGateway {
 
             // In a real implementation, you would make an HTTP POST to Momo's API
             // For now, return a mock response
-            String paymentUrl = endpoint + "?" + buildQueryString(requestBody);
+            String paymentUrl = momoProperties.getEndpoint() + "?" + buildQueryString(requestBody);
 
             return new PaymentResponse(true, paymentUrl, orderId, "Payment URL created successfully");
 
@@ -94,21 +85,21 @@ public class MomoService implements PaymentGateway {
             String extraData = params.get("extraData");
 
             // Verify signature
-            String rawHash = "accessKey=" + accessKey +
+            String rawHash = "accessKey=" + momoProperties.getAccessKey() +
                     "&amount=" + amount +
                     "&extraData=" + extraData +
                     "&message=" + message +
                     "&orderId=" + orderId +
                     "&orderInfo=" + orderInfo +
                     "&orderType=" + orderType +
-                    "&partnerCode=" + partnerCode +
+                    "&partnerCode=" + momoProperties.getPartnerCode() +
                     "&payType=" + payType +
                     "&requestId=" + requestId +
                     "&responseTime=" + responseTime +
                     "&resultCode=" + resultCode +
                     "&transId=" + transId;
 
-            String calculatedSignature = hmacSHA256(secretKey, rawHash);
+            String calculatedSignature = hmacSHA256(momoProperties.getSecretKey(), rawHash);
 
             if (!calculatedSignature.equals(signature)) {
                 log.error("Invalid signature");
