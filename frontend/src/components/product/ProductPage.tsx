@@ -87,6 +87,10 @@ export function ProductPage() {
     const [quantity, setQuantity] = useState(1);
     const [isAdded, setIsAdded] = useState(false);
 
+    // Compute effective selected values (with defaults)
+    const effectiveSelectedColor = selectedColor ?? (uniqueColors.length > 0 ? uniqueColors[0] : null);
+    const effectiveSelectedSize = selectedSize ?? (uniqueSizes.length > 0 ? uniqueSizes[0] : null);
+
     const { data: product, isLoading, isError } = useQuery({
         queryKey: ["product", id],
         queryFn: () => fetchProduct(id),
@@ -111,31 +115,23 @@ export function ProductPage() {
 
     // Stock Map for Sizes
     const stockMap = useMemo(() => {
-        if (!product?.variants || !selectedColor) return {};
+        if (!product?.variants || !effectiveSelectedColor) return {};
         
         const map: Record<string, number> = {};
         product.variants
-            .filter(v => v.color === selectedColor)
+            .filter(v => v.color === effectiveSelectedColor)
             .forEach(v => {
                 map[v.size] = v.stockQuantity;
             });
         
         return map;
-    }, [product, selectedColor]);
+    }, [product, effectiveSelectedColor]);
 
     // Find Selected Variant
     const selectedVariant = useMemo(() => {
-        if (!product?.variants || !selectedColor || !selectedSize) return null;
-        return product.variants.find(v => v.color === selectedColor && v.size === selectedSize);
-    }, [product, selectedColor, selectedSize]);
-
-    // Set defaults on load
-    useEffect(() => {
-        if (product?.variants && product.variants.length > 0) {
-            if (!selectedColor && uniqueColors.length > 0) setSelectedColor(uniqueColors[0]);
-            if (!selectedSize && uniqueSizes.length > 0) setSelectedSize(uniqueSizes[0]);
-        }
-    }, [product, uniqueColors, uniqueSizes]);
+        if (!product?.variants || !effectiveSelectedColor || !effectiveSelectedSize) return null;
+        return product.variants.find(v => v.color === effectiveSelectedColor && v.size === effectiveSelectedSize);
+    }, [product, effectiveSelectedColor, effectiveSelectedSize]);
 
     // Add to Cart Mutation
     const addToCartMutation = useMutation({
@@ -157,8 +153,9 @@ export function ProductPage() {
             // Reset success state after 2 seconds
             setTimeout(() => setIsAdded(false), 2000);
         },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Failed to add to cart");
+        onError: (error: unknown) => {
+            const axiosError = error as { response?: { data?: { message?: string } } };
+            toast.error(axiosError.response?.data?.message || "Failed to add to cart");
         }
     });
 
@@ -176,7 +173,7 @@ export function ProductPage() {
     }
 
     if (isError || !product) {
-        return <div className="container mx-auto px-4 py-32 text-center">Product not found</div>;
+        return <div className="container mx-auto px-4 py-32 text-center border rounded-xl bg-muted/20">Product not found</div>;
     }
 
     const currentPrice = product.basePrice + (selectedVariant?.priceAdjustment || 0);
@@ -235,7 +232,7 @@ export function ProductPage() {
                             <div className="space-y-3">
                                 <ColorSelector
                                     colors={uniqueColors}
-                                    selectedColor={selectedColor}
+                                    selectedColor={effectiveSelectedColor}
                                     onSelectColor={setSelectedColor}
                                 />
                             </div>
@@ -246,7 +243,7 @@ export function ProductPage() {
                             <div className="space-y-3">
                                 <SizeSelector
                                     sizes={uniqueSizes}
-                                    selectedSize={selectedSize}
+                                    selectedSize={effectiveSelectedSize}
                                     onSelectSize={setSelectedSize}
                                     stockMap={stockMap}
                                 />
@@ -310,36 +307,36 @@ export function ProductPage() {
                     </div>
 
                     {/* Product Details */}
-                    <div className="space-y-3 text-sm">
-                        {product.material && (
+                        <div className="space-y-3 text-sm">
+                            {product.material && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Material:</span>
+                                    <span className="font-medium">{product.material}</span>
+                                </div>
+                            )}
+                            {product.careInstructions && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Care:</span>
+                                    <span className="font-medium">{product.careInstructions}</span>
+                                </div>
+                            )}
+                            {product.dimensions && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Dimensions:</span>
+                                    <span className="font-medium">{product.dimensions}</span>
+                                </div>
+                            )}
+                            {product.weight && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Weight:</span>
+                                    <span className="font-medium">{product.weight} kg</span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
-                                <span className="text-muted-foreground">Material:</span>
-                                <span className="font-medium">{product.material}</span>
+                                <span className="text-muted-foreground">SKU:</span>
+                                <span className="font-medium">{selectedVariant?.skuCode || product.sku}</span>
                             </div>
-                        )}
-                        {product.careInstructions && (
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Care:</span>
-                                <span className="font-medium">{product.careInstructions}</span>
-                            </div>
-                        )}
-                        {product.dimensions && (
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Dimensions:</span>
-                                <span className="font-medium">{product.dimensions}</span>
-                            </div>
-                        )}
-                        {product.weight && (
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Weight:</span>
-                                <span className="font-medium">{product.weight} kg</span>
-                            </div>
-                        )}
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">SKU:</span>
-                            <span className="font-medium">{selectedVariant?.skuCode || product.sku}</span>
                         </div>
-                    </div>
 
                     {/* Tags */}
                     {product.tags && product.tags.length > 0 && (

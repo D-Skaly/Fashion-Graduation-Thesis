@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.user.address;
 
-import com.skaly.fashion_backend.common.ApiResponse;
+import com.skaly.fashion_backend.common.application.ApiResponse;
 import com.skaly.fashion_backend.user.application.AddressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

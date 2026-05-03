@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { X, Upload, Image as ImageIcon } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -13,6 +13,21 @@ interface ReviewImagesProps {
 
 export function ReviewImages({ images, onImagesChange, maxImages = 5 }: ReviewImagesProps) {
     const [isDragging, setIsDragging] = useState(false);
+
+    const handleFiles = useCallback((files: File[]) => {
+        const remainingSlots = maxImages - images.length;
+        const filesToAdd = files.slice(0, remainingSlots);
+
+        filesToAdd.forEach(file => {
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    onImagesChange([...images, reader.result as string]);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }, [images, onImagesChange, maxImages]);
 
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -30,27 +45,12 @@ export function ReviewImages({ images, onImagesChange, maxImages = 5 }: ReviewIm
         
         const files = Array.from(e.dataTransfer.files);
         handleFiles(files);
-    }, [images, onImagesChange, maxImages]);
+    }, [handleFiles]);
 
     const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
         handleFiles(files);
-    }, [images, onImagesChange, maxImages]);
-
-    const handleFiles = (files: File[]) => {
-        const remainingSlots = maxImages - images.length;
-        const filesToAdd = files.slice(0, remainingSlots);
-
-        filesToAdd.forEach(file => {
-            if (file.type.startsWith("image/")) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    onImagesChange([...images, reader.result as string]);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    };
+    }, [handleFiles]);
 
     const removeImage = (index: number) => {
         onImagesChange(images.filter((_, i) => i !== index));

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Upload, Loader2, RefreshCw } from "lucide-react";
+import { Sparkles, Upload, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import api from "@/lib/axios";
 import { toast } from "sonner";
@@ -19,8 +19,10 @@ export function VirtualTryOn({ productImage, productName, productId }: VirtualTr
     const [userImage, setUserImage] = useState<string | null>(null);
     const [userImageFile, setUserImageFile] = useState<File | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isUploading, setIsUploading] = useState(false);
     const [resultImage, setResultImage] = useState<string | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [jobId, setJobId] = useState<string | null>(null);
 
     const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

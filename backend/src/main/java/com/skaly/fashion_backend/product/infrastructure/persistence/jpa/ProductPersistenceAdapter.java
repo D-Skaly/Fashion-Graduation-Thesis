@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.StructuredTaskScope;
 import java.util.stream.Collectors;
 
 @Repository
@@ -30,14 +31,29 @@ public class ProductPersistenceAdapter implements ProductRepository, CategoryRep
 
     @Override
     public Product save(Product product) {
-        ProductEntity entity = mapper.toEntity(product);
-        ProductEntity savedEntity = jpaProductRepository.save(entity);
-        return mapper.toDomain(savedEntity);
+        // Wrap DB call in Virtual Thread
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> {
+                ProductEntity entity = mapper.toEntity(product);
+                return jpaProductRepository.save(entity);
+            });
+            scope.join();
+            return mapper.toDomain(future.get());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save product", e);
+        }
     }
 
     @Override
     public Optional<Product> findById(UUID id) {
-        return jpaProductRepository.findById(id).map(mapper::toDomain);
+        // Wrap DB call in Virtual Thread
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaProductRepository.findById(id));
+            scope.join();
+            return future.get().map(mapper::toDomain);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find product by id", e);
+        }
     }
 
     @Override

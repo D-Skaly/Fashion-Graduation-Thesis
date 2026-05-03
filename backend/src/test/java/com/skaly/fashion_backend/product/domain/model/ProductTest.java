@@ -29,9 +29,11 @@ class ProductTest {
     void addVariant_shouldAddVariantToSet() {
         ProductVariant variant = ProductVariant.builder()
                 .id(UUID.randomUUID())
+                .sku("SKU-001")
                 .size("M")
                 .color("Red")
                 .stockQuantity(10)
+                .price(new BigDecimal("100.00"))
                 .build();
 
         product.addVariant(variant);
@@ -46,7 +48,7 @@ class ProductTest {
                 .id(UUID.randomUUID())
                 .url("http://example.com/image.jpg")
                 .isPrimary(true)
-                .sortOrder(1)
+                .displayOrder(1)
                 .build();
 
         product.addImage(image);
@@ -73,9 +75,7 @@ class ProductTest {
 
     @Test
     void setRatingAvg_shouldUpdateRating() {
-        BigDecimal newRating = new BigDecimal("4.5");
-        product.setRatingAvg(newRating);
-
+        product.setRatingAvg(new BigDecimal("4.5"));
         assertEquals(new BigDecimal("4.5"), product.getRatingAvg());
     }
 
@@ -83,7 +83,6 @@ class ProductTest {
     void incrementViewCount_shouldIncreaseViewCount() {
         long initialCount = product.getViewCount();
         product.setViewCount(initialCount + 1);
-
         assertEquals(initialCount + 1, product.getViewCount());
     }
 }

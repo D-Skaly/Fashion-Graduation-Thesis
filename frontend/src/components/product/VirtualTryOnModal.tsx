@@ -65,7 +65,7 @@ export function VirtualTryOnModal({ productId, productName, trigger, className }
             }
         };
 
-        eventSource.addEventListener("TRY_ON_UPDATE", handleUpdate as any);
+        eventSource.addEventListener("TRY_ON_UPDATE", handleUpdate as EventListener);
 
         eventSource.onerror = () => {
             console.error("SSE Connection Error");
@@ -73,7 +73,7 @@ export function VirtualTryOnModal({ productId, productName, trigger, className }
         };
 
         return () => {
-            eventSource.removeEventListener("TRY_ON_UPDATE", handleUpdate as any);
+            eventSource.removeEventListener("TRY_ON_UPDATE", handleUpdate as EventListener);
             eventSource.close();
         };
     }, [isOpen, job]);
@@ -91,8 +91,9 @@ export function VirtualTryOnModal({ productId, productName, trigger, className }
             const response = await api.post(`/tryon?productId=${productId}&userImageUrl=${encodeURIComponent(userImageUrl)}`);
             setJob(response.data.data);
             toast.info("AI is processing your request...");
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to start AI Try-On");
+        } catch (error: unknown) {
+            const axiosError = error as { response?: { data?: { message?: string } } };
+            toast.error(axiosError.response?.data?.message || "Failed to start AI Try-On");
         } finally {
             setIsSubmitting(false);
         }

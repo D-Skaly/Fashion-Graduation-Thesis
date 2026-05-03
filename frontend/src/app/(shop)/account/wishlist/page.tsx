@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Trash2, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import api from "@/lib/axios";

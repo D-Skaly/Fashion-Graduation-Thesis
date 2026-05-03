@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.payment.application.usecase;
 
-import com.skaly.fashion_backend.payment.Payment;
-import com.skaly.fashion_backend.payment.PaymentAccessDeniedException;
-import com.skaly.fashion_backend.payment.PaymentService;
+import com.skaly.fashion_backend.payment.domain.Payment;
+import com.skaly.fashion_backend.payment.domain.PaymentAccessDeniedException;
+import com.skaly.fashion_backend.payment.application.PaymentService;
 import com.skaly.fashion_backend.payment.gateway.PaymentGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

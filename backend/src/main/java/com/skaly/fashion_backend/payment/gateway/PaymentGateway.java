@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment.gateway;
 
-import com.skaly.fashion_backend.payment.Payment;
+import com.skaly.fashion_backend.payment.domain.Payment;
 
 import java.math.BigDecimal;
 import java.util.Map;

@@ -5,7 +5,6 @@ import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { X } from "lucide-react";
 
 interface FilterOption {
     id: string;

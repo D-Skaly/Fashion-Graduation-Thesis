@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, Camera, ArrowRight, Loader2 } from "lucide-react";
+import { Sparkles, Camera, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VirtualTryOnModal } from "@/components/product/VirtualTryOnModal";
 import { useQuery } from "@tanstack/react-query";

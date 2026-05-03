@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,7 +20,7 @@ interface RecommendedProduct {
 
 const fetchRecommendations = async (): Promise<RecommendedProduct[]> => {
     const { data } = await api.get("/ai/recommendations");
-    return data;
+    return data.data || data; // handle api response format
 };
 
 export function AiProductRecommendation() {
@@ -37,13 +35,9 @@ export function AiProductRecommendation() {
         setIsRefreshing(true);
         try {
             await refetch();
-            toast.success("Đã cập nhật gợi ý", {
-                description: "Đề xuất sản phẩm mới dựa trên sở thích của bạn.",
-            });
+            toast.success("AI has updated your recommendations.");
         } catch {
-            toast.error("Lỗi", {
-                description: "Không thể cập nhật gợi ý.",
-            });
+            toast.error("Failed to update recommendations.");
         } finally {
             setIsRefreshing(false);
         }
@@ -51,17 +45,12 @@ export function AiProductRecommendation() {
 
     if (isLoading) {
         return (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-primary" />
-                        Gợi ý cho bạn
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </CardContent>
-            </Card>
+            <div className="mt-32 pt-16 border-t border-border">
+                <div className="flex items-center gap-4 mb-10">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <h2 className="text-2xl md:text-3xl font-black tracking-tight uppercase">Curating Your Style...</h2>
+                </div>
+            </div>
         );
     }
 
@@ -70,73 +59,55 @@ export function AiProductRecommendation() {
     }
 
     return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-primary" />
-                        Gợi ý AI cho bạn
-                    </CardTitle>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleRefresh}
-                        disabled={isRefreshing}
-                    >
-                        {isRefreshing ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Sparkles className="h-4 w-4" />
-                        )}
-                    </Button>
+        <div className="mt-32 pt-16 border-t border-border">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-primary/5 border border-primary/10">
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-xs font-bold tracking-widest uppercase text-primary">AI Stylist</span>
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase">Complete The Look</h2>
                 </div>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    {products.slice(0, 3).map((product) => (
-                        <Link
-                            key={product.id}
-                            href={`/product/${product.id}`}
-                            className="block group"
-                        >
-                            <div className="flex gap-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors">
-                                <div className="relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden bg-muted">
-                                    {product.images[0] ? (
-                                        <Image
-                                            src={product.images[0]}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    ) : (
-                                        <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
-                                            Không có ảnh
-                                        </div>
-                                    )}
+                <Button 
+                    variant="ghost" 
+                    className="tracking-widest uppercase text-xs font-bold"
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                >
+                    {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
+                    Refresh
+                </Button>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                {products.slice(0, 4).map((product) => (
+                    <Link key={product.id} href={`/product/${product.id}`} className="group cursor-pointer block">
+                        <div className="aspect-[3/4] bg-secondary/20 mb-4 overflow-hidden relative border border-white/5 rounded-sm">
+                            {product.images && product.images[0] ? (
+                                <Image
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                            ) : (
+                                <div className="absolute inset-0 bg-stone-100 dark:bg-stone-900 transition-transform duration-700 group-hover:scale-105 flex items-center justify-center text-muted-foreground text-xs uppercase tracking-widest">
+                                    No Image
                                 </div>
-                                
-                                <div className="flex-1 min-w-0">
-                                    <Badge variant="outline" className="mb-1 text-xs">
-                                        {product.categoryName}
-                                    </Badge>
-                                    <h4 className="font-medium line-clamp-1 group-hover:underline">
-                                        {product.name}
-                                    </h4>
-                                    <p className="text-sm text-muted-foreground line-clamp-1 mt-1">
-                                        {product.reason}
-                                    </p>
-                                    <div className="flex items-center justify-between mt-2">
-                                        <span className="font-bold">
-                                            ${product.basePrice.toLocaleString()}
-                                        </span>
-                                        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                                    </div>
-                                </div>
+                            )}
+                            <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                <p className="text-xs text-white/90 line-clamp-2">{product.reason}</p>
                             </div>
-                        </Link>
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
+                        </div>
+                        <h3 className="text-sm font-bold uppercase tracking-wider mb-1 line-clamp-1 group-hover:underline underline-offset-4">
+                            {product.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                            ${product.basePrice.toLocaleString()}
+                        </p>
+                    </Link>
+                ))}
+            </div>
+        </div>
     );
 }

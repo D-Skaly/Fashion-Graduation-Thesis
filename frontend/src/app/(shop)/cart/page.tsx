@@ -3,9 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Minus, Plus, ShoppingBag, Trash2, ImageOff, Ticket, ArrowRight, Package } from "lucide-react";
+import { Loader2, Minus, Plus, Trash2, ImageOff, Ticket, ArrowRight, Package } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import api from "@/lib/axios";
@@ -13,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 // Types matching Backend DTOs
 type CartItem = {
@@ -65,7 +63,6 @@ function CartItemImage({ image, name }: { image?: string; name: string }) {
 }
 
 export default function CartPage() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);

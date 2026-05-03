@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment.infrastructure.gateway;
 
-import com.skaly.fashion_backend.payment.PaymentMethod;
+import com.skaly.fashion_backend.payment.domain.PaymentMethod;
 import com.skaly.fashion_backend.payment.domain.port.PaymentGatewayPort;
 import com.skaly.fashion_backend.payment.gateway.VNPayService;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.user.domain.entities;
 
-import com.skaly.fashion_backend.user.Provider;
-import com.skaly.fashion_backend.user.Role;
+import com.skaly.fashion_backend.user.domain.entities.Provider;
+import com.skaly.fashion_backend.user.domain.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.saga.application;
 
-import com.skaly.fashion_backend.order.OrderRepository;
+import com.skaly.fashion_backend.order.application.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

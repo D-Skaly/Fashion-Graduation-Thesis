@@ -5,7 +5,7 @@ const strategist_service_1 = require("./strategist.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const admin_plan_entity_1 = require("./entities/admin-plan.entity");
 const spring_fiagent_gateway_1 = require("./spring-fiagent.gateway");
-const llm_client_1 = require("../common/llm/llm.client");
+const llm_provider_interface_1 = require("../common/llm/llm-provider.interface");
 describe('StrategistService', () => {
     let service;
     let adminPlanRepository;
@@ -31,7 +31,7 @@ describe('StrategistService', () => {
                     useValue: adminPlanRepository,
                 },
                 {
-                    provide: llm_client_1.LlmClient,
+                    provide: llm_provider_interface_1.LLM_PROVIDER,
                     useValue: llmClient,
                 },
                 {

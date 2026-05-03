@@ -1,9 +1,9 @@
 package com.skaly.fashion_backend.saga.application;
 
-import com.skaly.fashion_backend.payment.Payment;
+import com.skaly.fashion_backend.payment.domain.Payment;
 import com.skaly.fashion_backend.payment.PaymentRepository;
-import com.skaly.fashion_backend.payment.PaymentService;
-import com.skaly.fashion_backend.payment.PaymentStatus;
+import com.skaly.fashion_backend.payment.application.PaymentService;
+import com.skaly.fashion_backend.payment.domain.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

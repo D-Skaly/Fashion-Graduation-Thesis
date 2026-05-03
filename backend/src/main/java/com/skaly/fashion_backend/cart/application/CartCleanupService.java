@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.cart.application;
 
-import com.skaly.fashion_backend.cart.CartRepository;
+import com.skaly.fashion_backend.cart.application.CartRepository;
 import com.skaly.fashion_backend.cart.domain.entities.Cart;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

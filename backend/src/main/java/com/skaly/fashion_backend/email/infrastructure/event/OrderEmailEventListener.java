@@ -2,7 +2,7 @@ package com.skaly.fashion_backend.email.infrastructure.event;
 
 import com.skaly.fashion_backend.email.application.EmailService;
 import com.skaly.fashion_backend.events.OrderCreatedEvent;
-import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

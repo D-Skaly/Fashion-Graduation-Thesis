@@ -47,7 +47,7 @@ __decorate([
 ], AdminPlan.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], AdminPlan.prototype, "reviewerComment", void 0);
 exports.AdminPlan = AdminPlan = __decorate([
     (0, typeorm_1.Entity)('admin_plans')

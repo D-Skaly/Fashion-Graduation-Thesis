@@ -7,12 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Camera as CameraIcon, ScanLine, Ruler, CheckCircle2 } from "lucide-react";
 import api from "@/lib/axios";
 
+interface MeasurementResult {
+  height: number;
+  weight: number;
+  chest: number;
+  waist: number;
+}
+
 export function BodyMeasurement() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMeasuring, setIsMeasuring] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [measurementResult, setMeasurementResult] = useState<any>(null);
+  const [measurementResult, setMeasurementResult] = useState<MeasurementResult | null>(null);
 
   useEffect(() => {
     if (!isMeasuring) return;
@@ -103,6 +110,7 @@ export function BodyMeasurement() {
       setIsProcessing(false);
       setMeasurementResult(response.data.data);
       
+     
     } catch (error) {
       console.error("Failed to process body measurement", error);
       setIsProcessing(false);

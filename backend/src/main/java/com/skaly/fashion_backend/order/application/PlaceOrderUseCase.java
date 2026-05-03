@@ -1,16 +1,16 @@
 package com.skaly.fashion_backend.order.application;
 
-import com.skaly.fashion_backend.order.OrderDto;
+import com.skaly.fashion_backend.order.application.OrderDto;
 import com.skaly.fashion_backend.order.OrderEventService;
-import com.skaly.fashion_backend.order.OrderItemDto;
+import com.skaly.fashion_backend.order.application.OrderItemDto;
 import com.skaly.fashion_backend.order.OrderInventoryGateway;
-import com.skaly.fashion_backend.order.OrderStatus;
-import com.skaly.fashion_backend.order.PlaceOrderRequest;
+import com.skaly.fashion_backend.order.domain.OrderStatus;
+import com.skaly.fashion_backend.order.application.PlaceOrderRequest;
 import com.skaly.fashion_backend.order.application.event.ClearCartRequestedEvent;
 import com.skaly.fashion_backend.order.domain.OrderPricingService;
 import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.order.domain.entities.OrderItem;
-import com.skaly.fashion_backend.order.OrderRepository;
+import com.skaly.fashion_backend.order.application.OrderRepository;
 import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

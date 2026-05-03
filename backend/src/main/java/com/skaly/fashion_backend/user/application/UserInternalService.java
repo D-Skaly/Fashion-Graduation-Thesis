@@ -1,9 +1,9 @@
 package com.skaly.fashion_backend.user.application;
 
-import com.skaly.fashion_backend.common.ResourceNotFoundException;
-import com.skaly.fashion_backend.user.api.dto.UserInternalResponse;
+import com.skaly.fashion_backend.common.domain.ResourceNotFoundException;
+import com.skaly.fashion_backend.user.interfaces.dto.UserInternalResponse;
 import com.skaly.fashion_backend.user.domain.entities.User;
-import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

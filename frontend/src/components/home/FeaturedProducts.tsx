@@ -1,10 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import api from "@/lib/axios";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,20 +13,21 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useProducts } from "@/hooks/useProducts";
 
-const fetchProducts = async () => {
-    const { data } = await api.get("/products?size=8");
-    return data.data.content; // Accessing the content from Page object
-};
+interface DisplayProduct {
+    id: string;
+    name: string;
+    price: number;
+    category: string;
+    image?: string;
+    isNew: boolean;
+}
 
 export function FeaturedProducts() {
-    const { data: products, isLoading, isError } = useQuery({
-        queryKey: ["featured-products"],
-        queryFn: fetchProducts,
-    });
+    const { data: products, isLoading, isError } = useProducts();
 
     const placeholders = Array.from({ length: 4 });
-    const colors = ["bg-slate-200", "bg-blue-100", "bg-stone-200", "bg-gray-100", "bg-orange-100", "bg-amber-100", "bg-emerald-100", "bg-yellow-100"];
 
     return (
         <section className="container mx-auto px-4 py-16 md:py-24">
@@ -70,26 +69,16 @@ export function FeaturedProducts() {
                 <Carousel
                     opts={{
                         align: "start",
-                        loop: products?.length > 4,
+                        loop: products && products.length > 4,
                     }}
                     className="w-full"
                 >
                     <CarouselContent className="-ml-4">
-                        {products?.map((serverProduct: any, index: number) => {
-                            const product = {
-                                id: serverProduct.id,
-                                name: serverProduct.name,
-                                price: serverProduct.basePrice,
-                                category: serverProduct.categoryName,
-                                image: colors[index % colors.length],
-                                isNew: index < 2
-                            };
-                            return (
-                                <CarouselItem key={product.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                                    <ProductCard product={product} />
-                                </CarouselItem>
-                            );
-                        })}
+                        {products?.map((product: DisplayProduct) => (
+                            <CarouselItem key={product.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                                <ProductCard product={product} />
+                            </CarouselItem>
+                        ))}
                     </CarouselContent>
                     <div className="flex justify-end gap-2 mt-6">
                         <CarouselPrevious className="relative left-0 top-0 translate-y-0 h-10 w-10 border-primary/20 hover:bg-primary hover:text-primary-foreground" />
@@ -100,4 +89,3 @@ export function FeaturedProducts() {
         </section>
     );
 }
-

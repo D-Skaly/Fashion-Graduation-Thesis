@@ -32,7 +32,7 @@ public class TryOnService {
     public TryOnJob createJob(UUID userId, UUID productId, String userImageUrl) {
         // 1. 校验用户存在（通过 Port，解耦 User module）
         if (!userLookupPort.existsById(userId)) {
-            throw new com.skaly.fashion_backend.common.ResourceNotFoundException("User not found: " + userId);
+            throw new com.skaly.fashion_backend.common.domain.ResourceNotFoundException("User not found: " + userId);
         }
 
         TryOnJob job = TryOnJob.builder()
@@ -63,7 +63,7 @@ public class TryOnService {
     @Transactional
     public TryOnJob updateJobStatus(UUID jobId, JobStatus status, String resultImageUrl, String error) {
         TryOnJob job = tryOnJobRepository.findById(jobId)
-                .orElseThrow(() -> new com.skaly.fashion_backend.common.ResourceNotFoundException(
+                .orElseThrow(() -> new com.skaly.fashion_backend.common.domain.ResourceNotFoundException(
                         "Job not found: " + jobId));
 
         job.setStatus(status);

@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.ai.infrastructure;
 
 import com.skaly.fashion_backend.ai.domain.port.UserLookupPort;
-import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

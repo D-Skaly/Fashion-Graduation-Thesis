@@ -96,7 +96,7 @@ export default function OrderHistoryPage() {
                     <Package className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h1 className="text-2xl font-bold">No orders yet</h1>
-                <p className="text-muted-foreground">You haven't placed any orders yet.</p>
+                <p className="text-muted-foreground">You haven&apos;t placed any orders yet.</p>
                 <Button asChild className="mt-4">
                     <a href="/shop">Start Shopping</a>
                 </Button>

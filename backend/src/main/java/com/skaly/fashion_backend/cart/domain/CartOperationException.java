@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.cart.domain;
 
-import com.skaly.fashion_backend.common.BusinessException;
+import com.skaly.fashion_backend.common.domain.BusinessException;
 
 /**
  * Thrown when cart operations fail (empty cart checkout, stock exceeded, etc.)

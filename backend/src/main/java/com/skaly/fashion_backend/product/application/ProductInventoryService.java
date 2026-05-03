@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.product.application;
 
-import com.skaly.fashion_backend.common.ResourceNotFoundException;
+import com.skaly.fashion_backend.common.domain.ResourceNotFoundException;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.JpaProductVariantRepository;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;

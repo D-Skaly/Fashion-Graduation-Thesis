@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.payment.application.usecase;
 
-import com.skaly.fashion_backend.payment.PaymentCallbackLedger;
-import com.skaly.fashion_backend.payment.PaymentCallbackLedgerRepository;
-import com.skaly.fashion_backend.payment.PaymentMethod;
+import com.skaly.fashion_backend.payment.application.PaymentCallbackLedger;
+import com.skaly.fashion_backend.payment.application.PaymentCallbackLedgerRepository;
+import com.skaly.fashion_backend.payment.domain.PaymentMethod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

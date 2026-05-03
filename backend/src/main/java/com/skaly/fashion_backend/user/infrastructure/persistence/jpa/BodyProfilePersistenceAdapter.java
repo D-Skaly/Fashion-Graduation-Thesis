@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.StructuredTaskScope;
 
 @Component
 @RequiredArgsConstructor
@@ -18,13 +19,27 @@ public class BodyProfilePersistenceAdapter implements BodyProfileRepository {
 
     @Override
     public Optional<BodyProfile> findByUserId(UUID userId) {
-        return jpaBodyProfileRepository.findByUserId(userId).map(this::toDomain);
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaBodyProfileRepository.findByUserId(userId).map(this::toDomain));
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find body profile by user id", e);
+        }
     }
 
     @Override
     public BodyProfile save(BodyProfile bodyProfile) {
-        BodyProfileEntity entity = toEntity(bodyProfile);
-        return toDomain(jpaBodyProfileRepository.save(entity));
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> {
+                BodyProfileEntity entity = toEntity(bodyProfile);
+                return toDomain(jpaBodyProfileRepository.save(entity));
+            });
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save body profile", e);
+        }
     }
 
     private BodyProfile toDomain(BodyProfileEntity entity) {

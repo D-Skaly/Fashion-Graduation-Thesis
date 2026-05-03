@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment.domain.port;
 
-import com.skaly.fashion_backend.payment.PaymentMethod;
+import com.skaly.fashion_backend.payment.domain.PaymentMethod;
 
 import java.util.Map;
 

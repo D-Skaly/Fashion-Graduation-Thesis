@@ -28,7 +28,7 @@ public class SizeRecommendationAdapter implements SizeRecommendationPort {
     @Override
     public ProductInfo getProductInfo(UUID productId) {
         var product = productRepository.findById(productId)
-                .orElseThrow(() -> new com.skaly.fashion_backend.common.ResourceNotFoundException(
+                .orElseThrow(() -> new com.skaly.fashion_backend.common.domain.ResourceNotFoundException(
                         "Product not found: " + productId));
 
         return new ProductInfo(
@@ -43,7 +43,7 @@ public class SizeRecommendationAdapter implements SizeRecommendationPort {
     @Override
     public BodyMeasurements getBodyMeasurements(UUID userId) {
         var profile = bodyProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new com.skaly.fashion_backend.common.ResourceNotFoundException(
+                .orElseThrow(() -> new com.skaly.fashion_backend.common.domain.ResourceNotFoundException(
                         "Body profile not found for user: " + userId));
 
         return new BodyMeasurements(

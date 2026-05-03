@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order.domain.entities;
 
-import com.skaly.fashion_backend.order.OrderStatus;
+import com.skaly.fashion_backend.order.domain.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

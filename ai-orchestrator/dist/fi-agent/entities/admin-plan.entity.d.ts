@@ -5,5 +5,5 @@ export declare class AdminPlan {
     requiresHumanApproval: boolean;
     status: 'DRAFT' | 'APPROVED' | 'REJECTED';
     createdAt: Date;
-    reviewerComment: string;
+    reviewerComment: string | null;
 }

@@ -1,8 +1,6 @@
 package com.skaly.fashion_backend.product.domain.port;
 
 import com.skaly.fashion_backend.product.domain.model.Product;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;

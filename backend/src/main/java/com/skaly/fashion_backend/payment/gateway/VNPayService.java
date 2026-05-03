@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment.gateway;
 
-import com.skaly.fashion_backend.payment.Payment;
+import com.skaly.fashion_backend.payment.domain.Payment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

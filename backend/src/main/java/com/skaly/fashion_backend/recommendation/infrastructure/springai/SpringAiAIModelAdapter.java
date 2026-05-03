@@ -89,7 +89,7 @@ public class SpringAiAIModelAdapter implements AIModelPort {
 
     private FashionIntentResult parseIntent(String raw, String userMessage) {
         try {
-            // Model đôi khi bọc JSON trong ``` — lấy phần giữa nếu có
+            // Model đôi khi bọc JSON trong  — lấy phần giữa nếu có
             String json = stripMarkdownFence(raw);
             JsonNode root = objectMapper.readTree(json);
             boolean discovery = root.path("productDiscovery").asBoolean(false);
@@ -114,9 +114,9 @@ public class SpringAiAIModelAdapter implements AIModelPort {
 
     private static String stripMarkdownFence(String raw) {
         String t = raw.trim();
-        if (t.startsWith("```")) {
+        if (t.startsWith("")) {
             int first = t.indexOf('\n');
-            int last = t.lastIndexOf("```");
+            int last = t.lastIndexOf("");
             if (first > 0 && last > first) {
                 return t.substring(first + 1, last).trim();
             }

@@ -14,4 +14,24 @@ public class ChatMessageModel {
     private String role;
     private String content;
     private LocalDateTime createdAt;
+
+    // Custom builder to auto-generate ID and createdAt
+    public static class ChatMessageModelBuilder {
+        private UUID id = UUID.randomUUID();
+        private LocalDateTime createdAt = LocalDateTime.now();
+        
+        public ChatMessageModelBuilder id(UUID id) {
+            this.id = id;
+            return this;
+        }
+        
+        public ChatMessageModelBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+        
+        public ChatMessageModel build() {
+            return new ChatMessageModel(id, role, content, createdAt);
+        }
+    }
 }

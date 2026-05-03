@@ -39,16 +39,18 @@ export interface CouponFormData {
 }
 
 export function CouponForm({ open, onOpenChange, onSubmit, isLoading = false }: CouponFormProps) {
-    const [formData, setFormData] = useState<CouponFormData>({
+    const [formData, setFormData] = useState<CouponFormData>(() => ({
         code: "",
         discountType: "PERCENTAGE",
         discountValue: 0,
         minPurchase: 0,
         maxDiscount: 0,
         usageLimit: 100,
+         
         startDate: new Date().toISOString().split("T")[0],
+         
         endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-    });
+    }));
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order.domain;
 
-import com.skaly.fashion_backend.common.BusinessException;
+import com.skaly.fashion_backend.common.domain.BusinessException;
 
 /**
  * Thrown when a user tries to access/modify an order they don't own.

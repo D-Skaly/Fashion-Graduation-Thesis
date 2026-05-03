@@ -114,7 +114,7 @@ Response should be structured and professional.
         }
         if (input.decision === 'REJECT') {
             draft.status = 'REJECTED';
-            draft.reviewerComment = input.reviewerComment;
+            draft.reviewerComment = input.reviewerComment ?? null;
             await this.adminPlanRepository.save(draft);
             return {
                 approved: false,
@@ -122,7 +122,7 @@ Response should be structured and professional.
             };
         }
         draft.status = 'APPROVED';
-        draft.reviewerComment = input.reviewerComment;
+        draft.reviewerComment = input.reviewerComment ?? null;
         await this.adminPlanRepository.save(draft);
         const finalInsights = input.reviewerComment
             ? `${draft.draftInsights}\n\nReviewer note: ${input.reviewerComment}`

@@ -8,7 +8,7 @@ import { ProductGrid } from "@/components/shop/ProductGrid";
 import { Pagination } from "@/components/shop/Pagination";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Filter, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 
 function ProductSkeletonGrid() {
     return (

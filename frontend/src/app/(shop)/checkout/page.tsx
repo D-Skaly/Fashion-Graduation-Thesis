@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import api from "@/lib/axios";
@@ -13,7 +13,6 @@ import api from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 
 import { ShippingForm } from "@/components/checkout/ShippingForm";
 import { PaymentMethodSelector, PaymentMethod } from "@/components/checkout/PaymentMethodSelector";

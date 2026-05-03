@@ -79,7 +79,7 @@ export function CategoryForm({
                             id="name"
                             value={formData.name}
                             onChange={(e) => handleNameChange(e.target.value)}
-                            placeholder="Men's Clothing"
+                            placeholder="Men&apos;s Clothing"
                             required
                         />
                     </div>
