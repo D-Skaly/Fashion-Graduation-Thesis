@@ -1,14 +1,14 @@
 package com.skaly.fashion_backend.user.application;
 
+import com.skaly.fashion_backend.common.infrastructure.config.AiServiceProperties;
 import com.skaly.fashion_backend.user.api.dto.BodyProfileDto;
 import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.BodyProfile;
-import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.BodyProfileRepository;
+import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -22,9 +22,7 @@ public class BodyProfileService {
     private final BodyProfileRepository bodyProfileRepository;
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
-
-    @Value("${spring.ai.service.url:http://localhost:8001}")
-    private String aiServiceUrl;
+    private final AiServiceProperties aiServiceProperties;
 
     @Transactional
     public BodyProfile saveOrUpdate(UUID userId, BodyProfileDto dto) {
@@ -61,7 +59,7 @@ public class BodyProfileService {
                     profile.getWaist(),
                     profile.getHips()
             );
-            return restTemplate.postForObject(aiServiceUrl + "/size/recommend", profileDto, SizeRecommendation.class);
+            return restTemplate.postForObject(aiServiceProperties.getUrl() + "/size/recommend", profileDto, SizeRecommendation.class);
         } catch (Exception e) {
             // Fallback to simple local logic if AI service is down
             String size = calculateSize(profile);
