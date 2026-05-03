@@ -1,4 +1,4 @@
-package com.skaly.fashion_backend.fiagent.customer;
+package com.skaly.fashion_backend.fiagent.infrastructure.persistence.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerProfile {
+public class CustomerProfileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

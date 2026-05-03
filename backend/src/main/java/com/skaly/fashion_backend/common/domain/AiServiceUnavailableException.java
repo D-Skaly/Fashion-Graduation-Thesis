@@ -1,8 +1,9 @@
-package com.skaly.fashion_backend.ai.domain;
+package com.skaly.fashion_backend.common.domain;
 
 /**
  * Exception thrown when AI service is unavailable.
  * Used in ai module when AI_ASSISTANT_ENABLED=false or API key is missing.
+ * Now in common/domain/ for use by GlobalExceptionHandler.
  */
 public class AiServiceUnavailableException extends RuntimeException {
     

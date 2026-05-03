@@ -1,5 +1,7 @@
 package com.skaly.fashion_backend.ai.application;
 
+import com.skaly.fashion_backend.ai.domain.model.ChatMessage;
+import com.skaly.fashion_backend.ai.domain.model.ChatSession;
 import com.skaly.fashion_backend.ai.domain.port.UserLookupPort;
 import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
 import lombok.RequiredArgsConstructor;

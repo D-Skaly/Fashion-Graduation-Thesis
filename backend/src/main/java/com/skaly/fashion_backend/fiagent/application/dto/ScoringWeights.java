@@ -1,4 +1,4 @@
-package com.skaly.fashion_backend.fiagent.scoring;
+package com.skaly.fashion_backend.fiagent.application.dto;
 
 /**
  * Weights from the FI-Agent optimization function:

@@ -1,4 +1,4 @@
-package com.skaly.fashion_backend.fiagent.analytics;
+package com.skaly.fashion_backend.fiagent.infrastructure.persistence.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Analytics {
+public class AnalyticsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

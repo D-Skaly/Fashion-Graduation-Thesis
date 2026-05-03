@@ -1,5 +1,8 @@
-package com.skaly.fashion_backend.fiagent.scoring;
+package com.skaly.fashion_backend.fiagent.application.service;
 
+import com.skaly.fashion_backend.fiagent.application.dto.ScoringInput;
+import com.skaly.fashion_backend.fiagent.application.dto.ScoringWeights;
+import com.skaly.fashion_backend.fiagent.domain.model.ScoredProduct;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;

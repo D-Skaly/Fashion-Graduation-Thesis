@@ -1,7 +1,10 @@
-package com.skaly.fashion_backend.fiagent.interfaces;
+package com.skaly.fashion_backend.fiagent.interfaces.rest;
 
-import com.skaly.fashion_backend.fiagent.scoring.ScoredProduct;
-import com.skaly.fashion_backend.fiagent.scoring.ScoringService;
+import com.skaly.fashion_backend.fiagent.application.dto.BatchScoringRequest;
+import com.skaly.fashion_backend.fiagent.application.dto.ProductCandidateResponse;
+import com.skaly.fashion_backend.fiagent.application.dto.StyleVectorSearchRequest;
+import com.skaly.fashion_backend.fiagent.application.service.ScoringService;
+import com.skaly.fashion_backend.fiagent.domain.model.ScoredProduct;
 import com.skaly.fashion_backend.product.domain.model.Product;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import jakarta.validation.Valid;

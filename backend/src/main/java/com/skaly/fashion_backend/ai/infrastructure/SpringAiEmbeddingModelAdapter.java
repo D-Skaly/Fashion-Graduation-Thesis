@@ -1,4 +1,4 @@
-package com.skaly.fashion_backend.common.infrastructure;
+package com.skaly.fashion_backend.ai.infrastructure;
 
 import com.skaly.fashion_backend.common.port.EmbeddingModelPort;
 import org.springframework.ai.embedding.EmbeddingModel;

@@ -1,4 +1,4 @@
-package com.skaly.fashion_backend.fiagent.interfaces;
+package com.skaly.fashion_backend.fiagent.application.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

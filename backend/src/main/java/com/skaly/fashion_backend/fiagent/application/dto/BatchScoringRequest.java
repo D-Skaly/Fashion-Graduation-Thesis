@@ -1,7 +1,7 @@
-package com.skaly.fashion_backend.fiagent.interfaces;
+package com.skaly.fashion_backend.fiagent.application.dto;
 
-import com.skaly.fashion_backend.fiagent.scoring.ScoringInput;
-import com.skaly.fashion_backend.fiagent.scoring.ScoringWeights;
+import com.skaly.fashion_backend.fiagent.application.dto.ScoringInput;
+import com.skaly.fashion_backend.fiagent.application.dto.ScoringWeights;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
