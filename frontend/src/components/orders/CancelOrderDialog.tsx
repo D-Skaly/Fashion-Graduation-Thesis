@@ -111,7 +111,7 @@ export function CancelOrderDialog({ orderId, onCancel, isLoading = false }: Canc
               <Label htmlFor="custom-reason">Please specify</Label>
               <Textarea
                 id="custom-reason"
-                placeholder="Tell us why you're cancelling..."
+                placeholder="Tell us why you&apos;re cancelling..."
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
                 className="min-h-[80px]"

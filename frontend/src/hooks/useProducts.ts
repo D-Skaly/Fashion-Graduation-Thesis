@@ -1,45 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
-import { Product } from "@/components/product/ProductCard";
-
-interface ProductResponse {
-    id: string;
-    name: string;
-    basePrice: number;
-    description: string;
-    categoryName: string;
-    variants?: any[];
-    createdAt?: string;
-    updatedAt?: string;
-}
-
-interface ApiResponse<T> {
-    status: number;
-    message: string;
-    data: T;
-}
-
-interface Page<T> {
-    content: T[];
-    totalPages: number;
-    totalElements: number;
-    size: number;
-    number: number;
-}
+import { ProductSummary, ProductResponse, Page } from "@/types/product";
 
 export const useProducts = () => {
     return useQuery({
         queryKey: ["products"],
         queryFn: async (): Promise<Product[]> => {
-            const { data: apiResponse } = await api.get<ApiResponse<Page<ProductResponse>>>("/products");
-            
-            // Map backend response to frontend Product interface
-            return apiResponse.data.content.map((item) => ({
+            // After axios interceptor unwraps ApiResponse, data is the Page<ProductResponse> directly
+            const { data: page } = await api.get<Page<ProductResponse>>("/products");
+
+            return page.content.map((item) => ({
                 id: item.id,
                 name: item.name,
                 price: item.basePrice || 0,
                 category: item.categoryName || "Uncategorized",
-                image: "bg-slate-200", // Default placeholder for now
+                image: item.images && item.images.length > 0 ? item.images[0] : undefined,
+                hoverImage: item.images && item.images.length > 1 ? item.images[1] : undefined,
+                isNew: item.createdAt
+                    ? Date.now() - new Date(item.createdAt).getTime() < 14 * 24 * 60 * 60 * 1000 // < 14 days old
+                    : false,
+                rating: item.averageRating,
+                reviewCount: item.reviewCount,
             }));
         },
     });

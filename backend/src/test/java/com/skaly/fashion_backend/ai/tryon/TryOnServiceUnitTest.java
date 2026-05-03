@@ -1,7 +1,12 @@
 package com.skaly.fashion_backend.ai.tryon;
 
 import com.skaly.fashion_backend.ai.tryon.application.TryOnService;
-import com.skaly.fashion_backend.ai.tryon.JobStatus;
+import com.skaly.fashion_backend.ai.tryon.domain.JobStatus;
+import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJob;
+import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJobRepository;
+import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnPort;
+import com.skaly.fashion_backend.ai.tryon.application.TryOnNotificationService;
+import com.skaly.fashion_backend.ai.domain.port.UserLookupPort;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,15 +31,16 @@ class TryOnServiceUnitTest {
     private TryOnJobRepository tryOnJobRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserLookupPort userLookupPort;
+
+    @Mock
+    private TryOnPort tryOnPort;
+
+    @Mock
+    private TryOnNotificationService notificationService;
 
     @InjectMocks
     private TryOnService tryOnService;
-
-    @BeforeEach
-    void setUp() {
-        ReflectionTestUtils.setField(tryOnService, "orchestratorUrl", "http://localhost:3001");
-    }
 
     @Test
     void shouldCreateJobWithPendingStatus() {
@@ -42,10 +48,8 @@ class TryOnServiceUnitTest {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
         String userImageUrl = "http://example.com/image.jpg";
-        User user = new User();
-        user.setId(userId);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userLookupPort.existsById(userId)).thenReturn(true);
         when(tryOnJobRepository.save(any(TryOnJob.class))).thenAnswer(invocation -> {
             TryOnJob job = invocation.getArgument(0);
             if (job.getId() == null) {

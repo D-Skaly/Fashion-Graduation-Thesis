@@ -13,8 +13,17 @@ export default function QueryProvider({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            staleTime: 5 * 60 * 1000, // 5 minutes
             refetchOnWindowFocus: false,
+            retry: 2,
+            gcTime: 10 * 60 * 1000, // 10 minutes
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+          },
+          mutations: {
+            onError: (error) => {
+              console.error("Mutation error:", error);
+            },
           },
         },
       })

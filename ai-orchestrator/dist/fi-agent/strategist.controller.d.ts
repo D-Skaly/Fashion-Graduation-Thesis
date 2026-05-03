@@ -5,4 +5,7 @@ export declare class StrategistController {
     constructor(strategistService: StrategistService);
     generateDraft(body: StrategistInsightRequestDto): Promise<StrategistDraftInsightDto>;
     reviewDraft(body: StrategistReviewDto): Promise<StrategistFinalInsightDto>;
+    createPlan(body: {
+        goal: string;
+    }): Promise<import("./entities/admin-plan.entity").AdminPlan>;
 }

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import api from "@/lib/axios";
@@ -13,7 +13,6 @@ import api from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 
 import { ShippingForm } from "@/components/checkout/ShippingForm";
 import { PaymentMethodSelector, PaymentMethod } from "@/components/checkout/PaymentMethodSelector";
@@ -43,7 +42,7 @@ const checkoutSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   address: z.string().min(10, "Address must be at least 10 characters"),
   note: z.string().optional(),
-  paymentMethod: z.nativeEnum(PaymentMethod).default(PaymentMethod.COD),
+  paymentMethod: z.nativeEnum(PaymentMethod),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -103,9 +102,10 @@ export default function CheckoutPage() {
         router.push("/checkout/success");
       }
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error("Order failed:", error);
-      toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      toast.error(axiosError.response?.data?.message || "Failed to place order. Please try again.");
     }
   });
 
@@ -133,61 +133,78 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Link href="/cart" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6">
-        <ArrowLeft className="h-4 w-4 mr-2" /> Back to Cart
-      </Link>
-
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="container mx-auto px-4 py-12 md:py-24">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-12 flex items-center justify-between">
+            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-widest">Checkout</h1>
+            <Button variant="ghost" asChild className="tracking-widest uppercase text-xs font-bold text-muted-foreground hover:text-foreground">
+                <Link href="/shop">Continue Shopping</Link>
+            </Button>
+        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="flex flex-col lg:flex-row gap-16">
               {/* Left Column: Forms */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Shipping Information */}
-                <div className="bg-card border rounded-lg p-6">
-                  <ShippingForm disabled={orderMutation.isPending} />
+              <div className="w-full lg:w-3/5 space-y-12">
+                {/* Contact & Shipping */}
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between border-b border-border pb-4">
+                        <h2 className="text-lg font-semibold uppercase tracking-widest">1. Shipping & Contact</h2>
+                    </div>
+                    <div className="pt-4">
+                        <ShippingForm disabled={orderMutation.isPending} />
+                    </div>
                 </div>
 
                 {/* Payment Method */}
-                <div className="bg-card border rounded-lg p-6">
-                  <PaymentMethodSelector disabled={orderMutation.isPending} />
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between border-b border-border pb-4">
+                        <h2 className="text-lg font-semibold uppercase tracking-widest">2. Payment</h2>
+                    </div>
+                    <div className="pt-4">
+                        <PaymentMethodSelector disabled={orderMutation.isPending} />
+                    </div>
                 </div>
               </div>
 
               {/* Right Column: Order Summary */}
-              <div className="lg:col-span-1">
-                <div className="sticky top-24 space-y-4">
+              <div className="w-full lg:w-2/5">
+                <div className="sticky top-28 bg-secondary/20 p-8">
+                  <h2 className="text-lg font-semibold uppercase tracking-widest mb-6">Order Summary</h2>
+                  
                   <OrderSummary 
                     cart={cart}
                     isLoading={isCartLoading}
                     shippingCost={0}
                   />
 
-                  <Separator />
+                  <div className="mt-8 pt-8 border-t border-border">
+                    <div className="flex justify-between items-end mb-6">
+                        <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Total</span>
+                        <span className="text-3xl font-black">${cart?.totalAmount?.toFixed(2) || "0.00"}</span>
+                    </div>
 
-                  {/* Submit Button */}
-                  <Button 
-                    type="submit" 
-                    size="lg" 
-                    className="w-full text-lg h-14" 
-                    disabled={orderMutation.isPending || isCartLoading}
-                  >
-                    {orderMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      `Place Order ${cart ? `($${cart.totalAmount.toFixed(2)})` : ""}`
-                    )}
-                  </Button>
+                    <Button 
+                        type="submit" 
+                        size="lg" 
+                        className="w-full text-sm font-bold tracking-widest uppercase h-14 rounded-none bg-foreground text-background hover:bg-foreground/90 transition-all" 
+                        disabled={orderMutation.isPending || isCartLoading}
+                    >
+                        {orderMutation.isPending ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                        </>
+                        ) : (
+                        "Place Order"
+                        )}
+                    </Button>
 
-                  <p className="text-xs text-center text-muted-foreground">
-                    By placing this order, you agree to our Terms of Service and Privacy Policy
-                  </p>
+                    <p className="text-xs text-center text-muted-foreground mt-4 font-light">
+                        By placing this order, you agree to our <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">Terms</Link> & <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</Link>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,354 +1,141 @@
-# Development Guide for Agents (Final Version)
+# Development Guide for Agents (Final Version - 2026 Update)
 
 ## 0. Purpose of This Guide
 
 This document is optimized for:
 
-* AI agents (code generation, refactor, audit)
-* Developers working in a modular monolith system
+- AI agents (code generation, refactor, audit)
+- Developers working in a modular monolith system
 
-Primary goal:
-Ensure consistent implementation aligned with **Clean Architecture + Spring Modulith + Business-first design**
-
-**Project-wide (Cursor / humans):** The repo root `.cursorrules` instructs agents to treat this file as mandatory for work across **backend**, **frontend**, **ai-orchestrator**, and **ai-service**.
+**Primary goal:**
+Ensure consistent implementation aligned with **Clean Architecture + Spring Modulith + Spring AI 1.0 + Java 21**
 
 ---
 
-# 1. Project Overview
+## 1. Project Overview
 
-## 1.1. Monorepo Structure (this repository)
+### 1.1. Monorepo Structure
 
 ```
-/backend          → Spring Boot 3.x (Java 21, Spring Modulith). Base package: com.skaly.fashion_backend
+/backend          → Spring Boot 3.3.x (Java 21, Spring Modulith, Spring AI 1.0)
 /frontend         → Next.js (TypeScript)
 /ai-orchestrator  → NestJS (AI orchestration, queues, gateway)
 /ai-service       → FastAPI (heavy AI processing)
-/docs             → Design notes, API docs (start at docs/README.md)
-```
-
-Legacy or local-only folders may exist; treat the tree above as the **source-of-truth** for agent work. **Documentation index:** [`docs/README.md`](../docs/README.md) (reading order, folder map, agent notes).
-
----
-
-## 1.2. Core Principles (MANDATORY)
-
-```
-RULE-1: Business logic MUST be independent from frameworks
-RULE-2: DO NOT access repositories across modules
-RULE-3: All external systems MUST go through ports/adapters
-RULE-4: Prefer async/event-driven over direct calls
-RULE-5: Privacy-first (no raw user image persistence)
+/docs             → Design notes, API docs
 ```
 
 ---
 
-# 2. Build & Configuration
+### 1.2. Core Principles (MANDATORY)
 
-## 2.1. Prerequisites
-
-* Java 21
-* Node.js 20+
-* Docker & Docker Compose
-
----
-
-## 2.2. Infrastructure Setup
-
-```bash
-docker-compose up -d
-```
-
-Services:
-
-* PostgreSQL (with pgvector)
-* Redis
+- **RULE-1:** Business logic MUST be independent from frameworks
+- **RULE-2:** DO NOT access repositories across modules
+- **RULE-3:** All external systems MUST go through ports/adapters
+- **RULE-4:** Use Virtual Threads for all I/O-bound AI tasks
+- **RULE-5:** Privacy-first (no raw user image persistence)
 
 ---
 
-## 2.3. Backend Setup
+## 2. Build & Configuration
 
-```bash
-cd backend
-cp .env.dev .env
-./mvnw spring-boot:run
-```
+### 2.1. Prerequisites
+
+- Java 21 (LTS)
+- Spring Boot 3.3.x+
+- Docker & Docker Compose (PostgreSQL with pgvector, Redis)
 
 ---
 
-## 2.4. Frontend Setup
+### 2.2. Backend Setup (application.properties)
 
-```bash
-cd frontend
-npm install
-npm run dev
+```properties
+# Enable Java 21 Virtual Threads
+spring.threads.virtual.enabled=true
+
+# Spring AI 1.0 Modular RAG configuration
+spring.ai.vectorstore.pgvector.initialize-schema=true
+spring.ai.vectorstore.pgvector.table-name=vector_store
 ```
 
 ---
 
-# 3. Architecture Rules (CRITICAL)
+## 3. Architecture Rules (CRITICAL)
 
-## 3.1. Modulith Structure (Outer Boundary)
+### 3.1. Internal Module Structure (Clean Architecture)
 
-Each module MUST be isolated by package (no cross-module repository access):
-
-```
-com.skaly.fashion_backend.product
-com.skaly.fashion_backend.order
-com.skaly.fashion_backend.ai.tryon
-com.skaly.fashion_backend.recommendation
-```
-
-Existing packages may not yet use the internal folder layout below; **all new features** MUST follow §3.2 inside their module/bounded context.
-
----
-
-## 3.2. Internal Module Structure (Clean Architecture)
-
-Each module MUST follow:
+Each module MUST follow this structure:
 
 ```
-module/
- ├── domain/
- ├── application/
- ├── infrastructure/
- └── interfaces/     ← Java cannot use package name "interface" (reserved keyword); use "interfaces" for REST adapters
+domain/         → Pure business logic (NO Spring annotations)
+application/    → Use cases & ports
+infrastructure/ → Adapters (JPA, VectorStore, MCP)
+interfaces/     → REST / SSE controllers
 ```
 
 ---
 
-## 3.3. Dependency Rules
+### 3.2. Concurrency (Java 21)
 
-Allowed:
+- **Virtual Threads:**
+  Always use for LLM calls and Vector Store operations to avoid thread blocking
 
-* interface → application → domain
-* infrastructure → domain (via adapters)
+- **Structured Concurrency:**
+  Use `StructuredTaskScope` for parallel data fetching
 
-Forbidden:
-
-* domain → infrastructure
-* controller → repository (direct)
-* module A → repository of module B
+- **Scoped Values:**
+  Replace `ThreadLocal` for passing user context across virtual threads
 
 ---
 
-## 3.4. Ports & Adapters (REQUIRED)
+## 4. AI Integration Rules (Spring AI 1.0)
+
+### 4.1. ChatClient & Advisor Pattern
+
+❌ DO NOT call `ChatModel` directly
+✅ MUST use `ChatClient` with Advisors
 
 ```java
-interface ProductRepositoryPort {
-    Product findById(ProductId id);
-}
-```
-
-```java
-class JpaProductRepositoryAdapter implements ProductRepositoryPort {}
-```
-
----
-
-# 4. Testing
-
-## 4.1. Testing Strategy
-
-| Type             | Scope                | Framework      |
-| ---------------- | -------------------- | -------------- |
-| Unit Test        | Domain / Application | JUnit          |
-| Integration Test | Spring Context       | SpringBootTest |
-
----
-
-## 4.2. Golden Rule
-
-```
-Domain MUST be testable WITHOUT Spring
+return chatClientBuilder
+  .defaultAdvisors(
+        new MessageChatMemoryAdvisor(chatMemory), // Context management
+        new RetrievalAugmentationAdvisor(retriever) // Modular RAG
+    )
+  .build();
 ```
 
 ---
 
-## 4.3. Running Tests
+### 4.2. Model Context Protocol (MCP)
 
-```bash
-./mvnw test
-./mvnw test -Dtest=ClassName
-```
+- Tools MUST be defined using `@Tool` in Spring AI core
+- Use `spring-ai-starter-mcp-client` for external integrations
 
 ---
 
-## 4.4. Test Naming Convention
+## 5. Data & Privacy
 
-* `*UnitTest.java`
-* `*IntegrationTest.java`
+- **Streaming:**
+  Use `stream()` API → return `Flux<String>` via Server-Sent Events (SSE)
 
----
-
-## 4.5. Example
-
-```java
-class OrderPricingServiceUnitTest {
-    private final OrderPricingService service = new OrderPricingService();
-
-    @Test
-    void shouldCalculateLineTotalCorrectly() {
-        assertEquals(new BigDecimal("300.00"),
-            service.calculateLineTotal(new BigDecimal("100"), 3));
-    }
-}
-```
+- **Evaluation:**
+  MUST implement:
+  - `FactCheckingEvaluator`
+  - `RelevancyEvaluator`
 
 ---
 
-# 5. AI Integration Rules (CRITICAL)
+## 6. DO & DON'T
 
-## 5.1. DO NOT
+### ✅ DO
 
-```java
-// WRONG
-openAIClient.generate(...)
-```
-
----
-
-## 5.2. MUST USE
-
-```java
-interface AIModelPort {
-    AIResponse generate(Prompt prompt);
-}
-```
+- Use `ReentrantLock` instead of `synchronized` (avoid thread pinning)
+- Write unit tests for Domain logic FIRST
+- Use `StructuredTaskScope.Joiner` for parallel AI task error handling
 
 ---
 
-# 6. Data & Privacy
+### ❌ DON'T
 
-## 6.1. Rules
-
-```
-- NEVER store raw user images permanently
-- Use temporary storage (presigned URL)
-- Auto-delete after processing
-```
-
----
-
-## 6.2. Try-On Pipeline
-
-```
-Client → Upload → Queue → AI Service → Result → WebSocket
-```
-
----
-
-# 7. Inter-Module Communication
-
-## 7.1. Preferred Approach
-
-```java
-applicationEventPublisher.publishEvent(new ProductReservedEvent(...));
-```
-
----
-
-## 7.2. Avoid
-
-* Direct service/repository calls across modules
-
----
-
-# 8. Frontend Rules
-
-* Default: React Server Components
-* Use "use client" ONLY when necessary
-* Follow API contract strictly
-
----
-
-# 9. API Standard
-
-```json
-{
-  "status": "success",
-  "message": "OK",
-  "data": {}
-}
-```
-
----
-
-# 10. Troubleshooting
-
-## 10.1. Flyway + pgvector
-
-Error:
-
-```
-functions in index predicate must be marked IMMUTABLE
-```
-
-Fix:
-
-* Check PostgreSQL version
-* Ensure pgvector compatibility
-
----
-
-## 10.2. Redis Issues
-
-* Check container running
-* Inspect ProductCacheService
-
----
-
-# 11. DO & DON'T
-
-## DO
-
-* Write business logic in domain layer
-* Use interfaces (ports)
-* Write unit tests first
-* Keep modules isolated
-* Use events for communication
-
----
-
-## DON'T
-
-* Put logic in controller
-* Use JPA entities as domain models
-* Call repository across modules
-* Hardcode AI providers
-* Store user images permanently
-
----
-
-# 12. Code Quality Checklist
-
-* Domain has NO Spring annotations
-* No cross-module repository access
-* All external calls use ports
-* Unit tests exist for business logic
-* No sensitive data stored
-
----
-
-# 13. Agent Execution Mode
-
-```
-STEP-1: Identify module
-STEP-2: Work inside module boundary
-STEP-3: Implement in domain → application → infra order
-STEP-4: Add unit test
-STEP-5: Validate architecture rules
-```
-
----
-
-# 14. Final Note
-
-This system is designed to scale like microservices but run as a monolith.
-
-Maintaining:
-
-* Clean boundaries
-* Business logic purity
-* Replaceable AI components
-
-is more important than writing less code.
+- Do NOT place AI logic inside Controllers
+- Do NOT use JPA Entities in Domain layer
+- Do NOT call OpenAI SDK directly if Spring AI abstraction exists

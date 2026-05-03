@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { CreditCard, Truck, Wallet, QrCode } from "lucide-react";
+import { CreditCard, Truck, Wallet } from "lucide-react";
 
 import {
   FormControl,

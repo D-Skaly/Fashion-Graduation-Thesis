@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -15,30 +15,7 @@ interface ImageUploaderProps {
 export function ImageUploader({ images, onImagesChange, maxImages = 5, accept = "image/*" }: ImageUploaderProps) {
     const [isDragging, setIsDragging] = useState(false);
 
-    const handleDragOver = useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(true);
-    }, []);
-
-    const handleDragLeave = useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(false);
-    }, []);
-
-    const handleDrop = useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(false);
-        
-        const files = Array.from(e.dataTransfer.files);
-        handleFiles(files);
-    }, [images, onImagesChange, maxImages]);
-
-    const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        handleFiles(files);
-    }, [images, onImagesChange, maxImages]);
-
-    const handleFiles = (files: File[]) => {
+    const handleFiles = useCallback((files: File[]) => {
         const remainingSlots = maxImages - images.length;
         const filesToAdd = files.slice(0, remainingSlots);
 
@@ -51,7 +28,32 @@ export function ImageUploader({ images, onImagesChange, maxImages = 5, accept = 
                 reader.readAsDataURL(file);
             }
         });
-    };
+    }, [images, onImagesChange, maxImages]);
+
+    const handleDragOver = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    }, []);
+
+     
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        
+        const files = Array.from(e.dataTransfer.files);
+        handleFiles(files);
+    }, [handleFiles]);
+
+     
+    const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        handleFiles(files);
+    }, [handleFiles]);
 
     const removeImage = (index: number) => {
         onImagesChange(images.filter((_, i) => i !== index));

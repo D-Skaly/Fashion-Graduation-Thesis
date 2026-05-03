@@ -64,19 +64,24 @@ public class ReviewService {
 
     @Transactional
     public Review createReview(User user, UUID productId, Integer rating, String comment, List<String> images, boolean isVerifiedPurchase) {
+        return createReviewByUserId(user.getId(), productId, rating, comment, images, isVerifiedPurchase);
+    }
+
+    @Transactional
+    public Review createReviewByUserId(UUID userId, UUID productId, Integer rating, String comment, List<String> images, boolean isVerifiedPurchase) {
         if (rating < 1 || rating > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5");
         }
 
-        if (hasUserReviewed(user.getId(), productId)) {
+        if (hasUserReviewed(userId, productId)) {
             throw new IllegalArgumentException("User has already reviewed this product");
         }
 
         ProductEntity product = jpaProductRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
 
-        UserEntity userEntity = jpaUserRepository.findById(user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + user.getId()));
+        UserEntity userEntity = jpaUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
         Review review = Review.builder()
                 .user(userEntity)
@@ -97,10 +102,15 @@ public class ReviewService {
 
     @Transactional
     public Review updateReview(UUID reviewId, User user, Integer rating, String comment, List<String> images) {
+        return updateReviewByUserId(reviewId, user.getId(), rating, comment, images);
+    }
+
+    @Transactional
+    public Review updateReviewByUserId(UUID reviewId, UUID userId, Integer rating, String comment, List<String> images) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found: " + reviewId));
 
-        if (!review.getUser().getId().equals(user.getId())) {
+        if (!review.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("Not authorized to update this review");
         }
 
@@ -128,10 +138,15 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(UUID reviewId, User user) {
+        deleteReviewByUserId(reviewId, user.getId());
+    }
+
+    @Transactional
+    public void deleteReviewByUserId(UUID reviewId, UUID userId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found: " + reviewId));
 
-        if (!review.getUser().getId().equals(user.getId())) {
+        if (!review.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("Not authorized to delete this review");
         }
 

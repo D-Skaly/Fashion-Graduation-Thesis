@@ -2,11 +2,12 @@ package com.skaly.fashion_backend.product.application;
 
 import com.skaly.fashion_backend.product.application.event.ProductCreatedEvent;
 import com.skaly.fashion_backend.product.application.event.ProductUpdatedEvent;
+import com.skaly.fashion_backend.common.port.EmbeddingModelPort;
+import com.skaly.fashion_backend.product.domain.port.ProductEmbeddingPort;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,12 +20,12 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProductEmbeddingService {
+public class ProductEmbeddingService implements ProductEmbeddingPort {
 
     private static final int REINDEX_PAGE_SIZE = 5_000;
 
     private final ProductRepository productRepository;
-    private final EmbeddingModel embeddingModel;
+    private final EmbeddingModelPort embeddingModelPort;
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -63,8 +64,8 @@ public class ProductEmbeddingService {
                         categoryName,
                         product.getDescription() != null ? product.getDescription() : "");
 
-                // Call OpenAI / Embedding Model
-                float[] embeddingArray = embeddingModel.embed(contentToEmbed);
+                // Call Embedding Model via Port (AI Provider Agnostic)
+                float[] embeddingArray = embeddingModelPort.embed(contentToEmbed);
 
                 // Update product
                 product.setEmbeddingVector(embeddingArray);
@@ -76,8 +77,16 @@ public class ProductEmbeddingService {
         });
     }
 
+    @Override
     public float[] embedQuery(String query) {
-        return embeddingModel.embed(query);
+        return embeddingModelPort.embed(query);
+    }
+
+    @Override
+    public java.util.List<RelatedProduct> searchRelatedProducts(float[] queryVector, int limit) {
+        return productRepository.findTopKByEmbeddingVectorClosestTo(queryVector, limit)
+                .stream()
+                .map(p -> new RelatedProduct(p.getName(), p.getBasePrice(), p.getDescription()))
+                .collect(java.util.stream.Collectors.toList());
     }
 }
-

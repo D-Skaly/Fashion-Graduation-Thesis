@@ -1,6 +1,8 @@
 package com.skaly.fashion_backend.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -19,9 +21,13 @@ class AiChatRateLimitInterceptorTest {
                 new AiAssistantProperties.Timeout(1000),
                 new AiAssistantProperties.RateLimit(true, 2, 60));
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         AiChatRateLimitInterceptor interceptor = new AiChatRateLimitInterceptor(
                 properties,
-                new ObjectMapper(),
+                objectMapper,
                 new SimpleMeterRegistry());
 
         MockHttpServletRequest request = new MockHttpServletRequest();

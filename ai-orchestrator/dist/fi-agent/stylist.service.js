@@ -8,17 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StylistService = void 0;
 const common_1 = require("@nestjs/common");
-const llm_client_1 = require("../common/llm/llm.client");
+const llm_provider_interface_1 = require("../common/llm/llm-provider.interface");
 const spring_fiagent_gateway_1 = require("./spring-fiagent.gateway");
 let StylistService = class StylistService {
     springGateway;
-    llmClient;
-    constructor(springGateway, llmClient) {
+    llmProvider;
+    constructor(springGateway, llmProvider) {
         this.springGateway = springGateway;
-        this.llmClient = llmClient;
+        this.llmProvider = llmProvider;
     }
     /**
      * Workflow:
@@ -42,7 +45,7 @@ Rules:
 - Mention why each recommendation fits the user profile.
 - Keep tone consultative and specific.
 `;
-        const advice = await this.llmClient.complete(prompt);
+        const advice = await this.llmProvider.complete(prompt);
         return {
             recommendedProducts: candidates,
             advice,
@@ -52,7 +55,7 @@ Rules:
 exports.StylistService = StylistService;
 exports.StylistService = StylistService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [spring_fiagent_gateway_1.SpringFiAgentGateway,
-        llm_client_1.LlmClient])
+    __param(1, (0, common_1.Inject)(llm_provider_interface_1.LLM_PROVIDER)),
+    __metadata("design:paramtypes", [spring_fiagent_gateway_1.SpringFiAgentGateway, Object])
 ], StylistService);
 //# sourceMappingURL=stylist.service.js.map

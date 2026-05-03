@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.coupon.application;
 
-import com.skaly.fashion_backend.common.ResourceNotFoundException;
+import com.skaly.fashion_backend.common.domain.ResourceNotFoundException;
 import com.skaly.fashion_backend.coupon.domain.exception.InvalidCouponException;
 import com.skaly.fashion_backend.coupon.infrastructure.persistence.jpa.CouponEntity;
 import com.skaly.fashion_backend.coupon.infrastructure.persistence.jpa.CouponJpaRepository;

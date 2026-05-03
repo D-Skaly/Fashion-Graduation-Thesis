@@ -2,8 +2,8 @@ package com.skaly.fashion_backend.cart.infrastructure.persistence.jpa;
 
 import com.skaly.fashion_backend.cart.domain.entities.Cart;
 import com.skaly.fashion_backend.cart.domain.entities.CartItem;
-import com.skaly.fashion_backend.cart.CartItemRepository;
-import com.skaly.fashion_backend.cart.CartRepository;
+import com.skaly.fashion_backend.cart.application.CartItemRepository;
+import com.skaly.fashion_backend.cart.application.CartRepository;
 import com.skaly.fashion_backend.product.domain.port.ProductVariantRepository;
 import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import com.skaly.fashion_backend.product.infrastructure.persistence.jpa.ProductVariantEntity;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.StructuredTaskScope;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,41 +33,88 @@ public class CartPersistenceAdapter implements CartRepository, CartItemRepositor
 
     @Override
     public Optional<Cart> findByUserId(UUID userId) {
-        return jpaCartRepository.findByUserId(userId).map(this::toDomain);
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaCartRepository.findByUserId(userId).map(this::toDomain));
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find cart by user id", e);
+        }
     }
 
     @Override
     public Optional<Cart> findByGuestId(String guestId) {
-        return jpaCartRepository.findByGuestId(guestId).map(this::toDomain);
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaCartRepository.findByGuestId(guestId).map(this::toDomain));
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find cart by guest id", e);
+        }
     }
 
     @Override
     public Optional<Cart> findById(UUID id) {
-        return jpaCartRepository.findById(id).map(this::toDomain);
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaCartRepository.findById(id).map(this::toDomain));
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find cart by id", e);
+        }
     }
 
     @Override
     public Cart save(Cart cart) {
-        CartEntity entity = toEntity(cart);
-        return toDomain(jpaCartRepository.save(entity));
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> {
+                CartEntity entity = toEntity(cart);
+                return toDomain(jpaCartRepository.save(entity));
+            });
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save cart", e);
+        }
     }
 
     @Override
     public void delete(Cart cart) {
-        jpaCartRepository.delete(toEntity(cart));
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> {
+                jpaCartRepository.delete(toEntity(cart));
+                return null;
+            });
+            scope.join();
+            future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete cart", e);
+        }
     }
 
     @Override
     public List<Cart> findAbandonedGuestCarts(LocalDateTime thresholdDate) {
-        return jpaCartRepository.findByGuestIdIsNotNullAndUpdatedAtBefore(thresholdDate)
-                .stream()
-                .map(this::toDomain)
-                .collect(Collectors.toList());
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaCartRepository.findByGuestIdIsNotNullAndUpdatedAtBefore(thresholdDate)
+                    .stream()
+                    .map(this::toDomain)
+                    .collect(Collectors.toList()));
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find abandoned guest carts", e);
+        }
     }
 
     @Override
     public Optional<CartItem> findItemById(UUID id) {
-        return jpaCartItemRepository.findById(id).map(this::toDomainItem);
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaCartItemRepository.findById(id).map(this::toDomainItem));
+            scope.join();
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find cart item by id", e);
+        }
     }
 
     private Cart toDomain(CartEntity entity) {

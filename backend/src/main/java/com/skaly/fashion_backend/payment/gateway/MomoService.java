@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.payment.gateway;
 
-import com.skaly.fashion_backend.payment.Payment;
+import com.skaly.fashion_backend.payment.domain.Payment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class MomoService implements PaymentGateway {
         try {
             String orderId = UUID.randomUUID().toString();
             String requestId = UUID.randomUUID().toString();
-            String orderInfo = "Payment for order " + payment.getOrder().getId();
+            String orderInfo = "Payment for order " + payment.getOrderId();
             String amount = payment.getAmount().toString();
 
             String rawHash = "accessKey=" + accessKey +

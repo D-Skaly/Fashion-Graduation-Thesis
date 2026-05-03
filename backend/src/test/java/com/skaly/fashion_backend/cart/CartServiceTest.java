@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 class CartServiceTest extends PostgresIntegrationSupport {
 
-    @MockitoBean
+    @MockBean
     private VectorStore vectorStore;
 
     @Autowired

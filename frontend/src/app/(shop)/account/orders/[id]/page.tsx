@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ArrowLeft, Package, Truck, MapPin, CreditCard, Clock, AlertCircle } from "lucide-react";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import api from "@/lib/axios";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -110,7 +110,6 @@ const getStatusColor = (status: string) => {
 
 export default function OrderDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const orderId = params.id as string;
 
@@ -132,6 +131,9 @@ export default function OrderDetailPage() {
     enabled: !!orderId,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  void isShippingLoading;
+
   const cancelMutation = useMutation({
     mutationFn: async (reason: string) => {
       const response = await api.put(`/orders/${orderId}/cancel`, { reason });
@@ -142,8 +144,9 @@ export default function OrderDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["order", orderId] });
       queryClient.invalidateQueries({ queryKey: ["order-history", orderId] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to cancel order");
+    onError: (error: unknown) => {
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      toast.error(axiosError.response?.data?.message || "Failed to cancel order");
     },
   });
 

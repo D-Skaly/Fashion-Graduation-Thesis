@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, Suspense, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,7 @@ import { Separator } from "@/components/ui/separator";
 
 function PaymentCallbackContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [message, setMessage] = useState("Processing your payment...");
-
+  
   const orderId = searchParams.get("orderId");
   const method = searchParams.get("method");
   
@@ -22,50 +19,52 @@ function PaymentCallbackContent() {
   const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
   const resultCode = searchParams.get("resultCode"); // Momo
 
+  // Determine initial status and message from URL parameters
+  const initialState = useMemo(() => {
+    // VNPay success code is '00'
+    if (vnp_ResponseCode === "00") {
+      return { status: "success" as const, message: "Your payment has been processed successfully!" };
+    } 
+    
+    if (vnp_ResponseCode) {
+      return { status: "error" as const, message: `Payment failed (Error code: ${vnp_ResponseCode}). Please try again or contact support.` };
+    }
+    
+    // Momo success code is '0'
+    if (resultCode === "0") {
+      return { status: "success" as const, message: "Your payment has been processed successfully!" };
+    } 
+    
+    if (resultCode) {
+      return { status: "error" as const, message: `Payment failed (Error code: ${resultCode}). Please try again or contact support.` };
+    }
+
+    if (orderId && method) {
+      return { status: "loading" as const, message: "Processing your payment..." };
+    }
+
+    return { status: "error" as const, message: "Invalid payment session. Please try again from your cart." };
+  }, [vnp_ResponseCode, resultCode, orderId, method]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [status, setStatus] = useState<"loading" | "success" | "error">(initialState.status);
+  const [message, setMessage] = useState(initialState.message);
+
   useEffect(() => {
-    // If we have a direct callback from payment gateway
-    if (vnp_ResponseCode || resultCode) {
-      // VNPay success code is '00'
-      if (vnp_ResponseCode === "00") {
-        setStatus("success");
-        setMessage("Your payment has been processed successfully!");
-      } else if (vnp_ResponseCode) {
-        setStatus("error");
-        setMessage(`Payment failed (Error code: ${vnp_ResponseCode}). Please try again or contact support.`);
-      }
-      
-      // Momo success code is '0'
-      if (resultCode === "0") {
-        setStatus("success");
-        setMessage("Your payment has been processed successfully!");
-      } else if (resultCode) {
-        setStatus("error");
-        setMessage(`Payment failed (Error code: ${resultCode}). Please try again or contact support.`);
-      }
-    } else if (orderId && method) {
-      // Initial redirect from checkout - simulate processing
+    // Only handle loading/redirect state updates in effect
+    if (initialState.status === "loading" && orderId && method) {
       const timer = setTimeout(() => {
-        // Redirect to payment gateway URL
+        // In real implementation, this would redirect to payment gateway URL
         if (method === "VNPAY") {
-          // In real implementation, this would redirect to VNPay payment URL
-          // window.location.href = `/api/v1/payments/vnpay/create?orderId=${orderId}`;
-          setStatus("loading");
           setMessage("Redirecting to VNPay payment gateway...");
         } else if (method === "MOMO") {
-          // In real implementation, this would redirect to Momo payment URL
-          // window.location.href = `/api/v1/payments/momo/create?orderId=${orderId}`;
-          setStatus("loading");
           setMessage("Redirecting to MoMo payment gateway...");
         }
       }, 1500);
 
       return () => clearTimeout(timer);
-    } else {
-      // Invalid access
-      setStatus("error");
-      setMessage("Invalid payment session. Please try again from your cart.");
     }
-  }, [orderId, method, vnp_ResponseCode, resultCode]);
+  }, [initialState.status, orderId, method]);
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-lg">

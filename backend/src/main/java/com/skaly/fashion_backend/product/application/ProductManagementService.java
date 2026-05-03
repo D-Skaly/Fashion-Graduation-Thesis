@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.product.application;
 
-import com.skaly.fashion_backend.common.ResourceNotFoundException;
+import com.skaly.fashion_backend.common.domain.ResourceNotFoundException;
 import com.skaly.fashion_backend.product.application.event.ProductCreatedEvent;
 import com.skaly.fashion_backend.product.domain.model.Category;
 import com.skaly.fashion_backend.product.domain.model.Product;

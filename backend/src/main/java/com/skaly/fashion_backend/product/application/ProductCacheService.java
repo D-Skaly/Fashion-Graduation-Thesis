@@ -1,11 +1,13 @@
 package com.skaly.fashion_backend.product.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skaly.fashion_backend.product.domain.model.Product;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
 import com.skaly.fashion_backend.product.interfaces.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ProductCacheService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final ObjectMapper objectMapper;
 
     // Cache key structure
     private static final String CACHE_PREFIX = "fashion:";
@@ -42,40 +45,85 @@ public class ProductCacheService {
 
     public ProductResponse getProductById(UUID id) {
         String key = PRODUCT_DETAIL_PREFIX + id;
-        ProductResponse cached = (ProductResponse) redisTemplate.opsForValue().get(key);
-        
-        if (cached != null) {
+        Object cachedObj = redisTemplate.opsForValue().get(key);
+
+        if (cachedObj != null) {
             log.debug("Cache hit for product: {}", id);
-            return cached;
+            try {
+                return objectMapper.convertValue(cachedObj, ProductResponse.class);
+            } catch (Exception e) {
+                log.error("Failed to convert cached product, evicting key: {}", key, e);
+                redisTemplate.delete(key);
+            }
         }
 
         log.debug("Cache miss for product: {}", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         ProductResponse response = productMapper.toProductResponseFromDomain(product);
-        
+
         redisTemplate.opsForValue().set(key, response, DETAIL_TTL);
         return response;
     }
 
     public Page<ProductResponse> getFeaturedProducts(Pageable pageable) {
-        // NOTE: We don't cache Page objects directly here yet as requested in original code comment,
-        // but we'll maintain the structure. If production-level, we might want to cache the first page.
-        return productRepository.findFeaturedProducts(pageable)
+        String key = PRODUCT_LIST_PREFIX + "featured:" + pageable.getPageNumber() + ":" + pageable.getPageSize();
+        Object cachedObj = redisTemplate.opsForValue().get(key);
+
+        if (cachedObj != null) {
+            log.debug("Cache hit for featured products");
+            try {
+                return objectMapper.convertValue(cachedObj,
+                        objectMapper.getTypeFactory().constructParametricType(PageImpl.class, ProductResponse.class));
+            } catch (Exception e) {
+                log.error("Failed to convert cached featured products, evicting key: {}", key, e);
+                redisTemplate.delete(key);
+            }
+        }
+
+        log.debug("Cache miss for featured products");
+        Page<ProductResponse> result = productRepository.findFeaturedProducts(pageable)
                 .map(productMapper::toProductResponseFromDomain);
+
+        redisTemplate.opsForValue().set(key, result, LIST_TTL);
+        return result;
     }
 
     public Page<ProductResponse> getNewArrivals(Pageable pageable) {
-        return productRepository.findNewArrivals(pageable)
+        String key = PRODUCT_LIST_PREFIX + "new-arrivals:" + pageable.getPageNumber() + ":" + pageable.getPageSize();
+        Object cachedObj = redisTemplate.opsForValue().get(key);
+
+        if (cachedObj != null) {
+            log.debug("Cache hit for new arrivals");
+            try {
+                return objectMapper.convertValue(cachedObj,
+                        objectMapper.getTypeFactory().constructParametricType(PageImpl.class, ProductResponse.class));
+            } catch (Exception e) {
+                log.error("Failed to convert cached new arrivals, evicting key: {}", key, e);
+                redisTemplate.delete(key);
+            }
+        }
+
+        log.debug("Cache miss for new arrivals");
+        Page<ProductResponse> result = productRepository.findNewArrivals(pageable)
                 .map(productMapper::toProductResponseFromDomain);
+
+        redisTemplate.opsForValue().set(key, result, LIST_TTL);
+        return result;
     }
 
     public List<String> getAllBrands() {
-        List<String> cached = (List<String>) redisTemplate.opsForValue().get(BRANDS_KEY);
-        
-        if (cached != null) {
+        Object cachedObj = redisTemplate.opsForValue().get(BRANDS_KEY);
+
+        if (cachedObj != null) {
             log.debug("Cache hit for brands");
-            return cached;
+            try {
+                return objectMapper.convertValue(cachedObj,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            } catch (Exception e) {
+                log.error("Failed to convert cached brands, evicting key: {}", BRANDS_KEY, e);
+                redisTemplate.delete(BRANDS_KEY);
+            }
         }
 
         log.debug("Cache miss for brands");
@@ -85,11 +133,17 @@ public class ProductCacheService {
     }
 
     public List<String> getAllTags() {
-        List<String> cached = (List<String>) redisTemplate.opsForValue().get(TAGS_KEY);
-        
-        if (cached != null) {
+        Object cachedObj = redisTemplate.opsForValue().get(TAGS_KEY);
+
+        if (cachedObj != null) {
             log.debug("Cache hit for tags");
-            return cached;
+            try {
+                return objectMapper.convertValue(cachedObj,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            } catch (Exception e) {
+                log.error("Failed to convert cached tags, evicting key: {}", TAGS_KEY, e);
+                redisTemplate.delete(TAGS_KEY);
+            }
         }
 
         log.debug("Cache miss for tags");
@@ -179,4 +233,3 @@ public class ProductCacheService {
         log.info("Warmed up cache for {} products", productIds.size());
     }
 }
-

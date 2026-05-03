@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order.infrastructure.persistence.entities;
 
-import com.skaly.fashion_backend.order.OrderStatus;
+import com.skaly.fashion_backend.order.domain.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

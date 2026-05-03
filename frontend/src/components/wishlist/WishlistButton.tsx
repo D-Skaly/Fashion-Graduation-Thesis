@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Heart, HeartOff, Loader2 } from "lucide-react";
+import { Heart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import api from "@/lib/axios";
+import { cn } from "@/lib/utils";
 
 interface WishlistButtonProps {
     productId: string;
     variant?: "default" | "ghost" | "outline";
     size?: "default" | "sm" | "icon";
+    className?: string;
 }
 
 const checkWishlist = async (productId: string) => {
@@ -27,14 +29,14 @@ const toggleWishlist = async (productId: string) => {
     return data;
 };
 
-export function WishlistButton({ productId, variant = "ghost", size = "icon" }: WishlistButtonProps) {
+export function WishlistButton({ productId, variant = "ghost", size = "icon", className }: WishlistButtonProps) {
     const queryClient = useQueryClient();
-    const { toast } = useToast();
     const [optimisticAdded, setOptimisticAdded] = useState(false);
 
     const { data: isInWishlist = false, isLoading } = useQuery({
         queryKey: ["wishlist", productId],
         queryFn: () => checkWishlist(productId),
+        retry: false,
     });
 
     const mutation = useMutation({
@@ -44,24 +46,23 @@ export function WishlistButton({ productId, variant = "ghost", size = "icon" }: 
             queryClient.invalidateQueries({ queryKey: ["wishlist", productId] });
             queryClient.invalidateQueries({ queryKey: ["wishlist-count"] });
             
-            toast({
-                title: data.added ? "Đã thêm vào danh sách yêu thích" : "Đã xóa khỏi danh sách yêu thích",
-                description: data.added ? "Sản phẩm đã được lưu" : "Sản phẩm đã bị xóa",
-            });
+            if (data.added) {
+                toast.success("Added to wishlist", { description: "Product has been saved" });
+            } else {
+                toast.info("Removed from wishlist", { description: "Product has been removed" });
+            }
             
             setOptimisticAdded(false);
         },
         onError: () => {
             setOptimisticAdded(false);
-            toast({
-                variant: "destructive",
-                title: "Lỗi",
-                description: "Không thể thực hiện thao tác. Vui lòng thử lại.",
-            });
+            toast.error("Error", { description: "Unable to perform action. Please try again." });
         },
     });
 
-    const handleToggle = () => {
+    const handleToggle = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         setOptimisticAdded(!isInWishlist);
         mutation.mutate();
     };
@@ -74,18 +75,20 @@ export function WishlistButton({ productId, variant = "ghost", size = "icon" }: 
             size={size}
             onClick={handleToggle}
             disabled={isLoading || mutation.isPending}
-            className={isAdded ? "text-red-500 hover:text-red-600" : ""}
+            className={cn(
+                "transition-all duration-300 rounded-full",
+                isAdded ? "text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" : "hover:bg-secondary",
+                className
+            )}
         >
             {mutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
-            ) : isAdded ? (
-                <Heart className="h-4 w-4 fill-current" />
             ) : (
-                <HeartOff className="h-4 w-4" />
+                <Heart className={cn("h-4 w-4 transition-all duration-300", isAdded && "fill-current scale-110")} />
             )}
-            {size !== "icon" && (
-                <span className="ml-2">{isAdded ? "Đã lưu" : "Lưu"}</span>
-            )}
+            <span className="sr-only">
+                {isAdded ? "Remove from wishlist" : "Add to wishlist"}
+            </span>
         </Button>
     );
 }

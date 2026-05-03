@@ -1,15 +1,11 @@
 package com.skaly.fashion_backend.ai;
 
-import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
-import com.skaly.fashion_backend.recommendation.infrastructure.springai.SpringAiAIModelAdapter;
+import com.skaly.fashion_backend.ai.domain.port.AIModelPort;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skaly.fashion_backend.common.GlobalExceptionHandler;
-import com.skaly.fashion_backend.product.application.ProductEmbeddingService;
-import com.skaly.fashion_backend.product.domain.model.Product;
-import com.skaly.fashion_backend.product.domain.port.ProductRepository;
+import com.skaly.fashion_backend.recommendation.application.RecommendProductInteractor;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,11 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AiAssistantIntegrationTest {
 
     @Test
-    void postChat_ShouldReturnAiAnswer_WhenChatModelIsAvailable() throws Exception {
-        ChatModel chatModel = mock(ChatModel.class);
-        when(chatModel.call(anyString())).thenReturn("Gợi ý: Áo blazer + quần tây đen");
+    void postChat_ShouldReturnAiAnswer_WhenChatClientIsAvailable() throws Exception {
+        AIModelPort port = mock(AIModelPort.class);
+        when(port.completeChatPrompt(anyString())).thenReturn("Gợi ý: Áo blazer + quần tây đen");
 
-        AIModelPort port = new SpringAiAIModelAdapter(chatModel, new ObjectMapper());
         AiAssistantProperties properties = new AiAssistantProperties(
                 true,
                 1000,
@@ -40,14 +35,11 @@ class AiAssistantIntegrationTest {
                 new AiAssistantProperties.Timeout(2000),
                 new AiAssistantProperties.RateLimit(true, 20, 60));
 
-        ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
-        ProductRepository productRepository = mock(ProductRepository.class);
-        when(productEmbeddingService.embedQuery(anyString())).thenReturn(new float[]{0.1f});
-        when(productRepository.findTopKByEmbeddingVectorClosestTo(any(), anyInt())).thenReturn(Collections.emptyList());
-
         ChatSessionService chatSessionService = mock(ChatSessionService.class);
-        FashionAssistantService service = new FashionAssistantService(port, properties, new SimpleMeterRegistry(), productEmbeddingService, productRepository, chatSessionService);
-        AiController controller = new AiController(service);
+        FashionAssistantService service = new FashionAssistantService(port, properties, new SimpleMeterRegistry(), chatSessionService);
+        SizeRecommendationService sizeRecommendationService = mock(SizeRecommendationService.class);
+        RecommendProductInteractor recommendProductInteractor = mock(RecommendProductInteractor.class);
+        AiController controller = new AiController(service, sizeRecommendationService, recommendProductInteractor);
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -62,29 +54,16 @@ class AiAssistantIntegrationTest {
 
     @Test
     void chat_ShouldIncludeProductContext_WhenFound() {
-        ChatModel chatModel = mock(ChatModel.class);
-        when(chatModel.call(anyString())).thenReturn("Answer");
+        AIModelPort port = mock(AIModelPort.class);
+        when(port.completeChatPrompt(anyString())).thenReturn("Answer");
 
-        AIModelPort port = new SpringAiAIModelAdapter(chatModel, new ObjectMapper());
         AiAssistantProperties properties = new AiAssistantProperties(true, 1000, new AiAssistantProperties.Retry(1, 1), new AiAssistantProperties.Timeout(1000), new AiAssistantProperties.RateLimit(false, 0, 0));
         
-        ProductEmbeddingService productEmbeddingService = mock(ProductEmbeddingService.class);
-        ProductRepository productRepository = mock(ProductRepository.class);
-        Product product = Product.builder()
-                .id(UUID.randomUUID())
-                .name("Test Shirt")
-                .basePrice(new BigDecimal("100"))
-                .description("Desc")
-                .build();
-
-        when(productEmbeddingService.embedQuery(anyString())).thenReturn(new float[]{0.1f});
-        when(productRepository.findTopKByEmbeddingVectorClosestTo(any(), anyInt())).thenReturn(Collections.singletonList(product));
-
         ChatSessionService chatSessionService = mock(ChatSessionService.class);
-        FashionAssistantService service = new FashionAssistantService(port, properties, new SimpleMeterRegistry(), productEmbeddingService, productRepository, chatSessionService);
+        FashionAssistantService service = new FashionAssistantService(port, properties, new SimpleMeterRegistry(), chatSessionService);
 
         service.chat("shirt");
         
-        verify(chatModel).call(anyString());
+        verify(port).completeChatPrompt(anyString());
     }
 }

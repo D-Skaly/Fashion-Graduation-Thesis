@@ -5,7 +5,7 @@ import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.BodyProfile;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.BodyProfileRepository;
-import com.skaly.fashion_backend.user.UserRepository;
+import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

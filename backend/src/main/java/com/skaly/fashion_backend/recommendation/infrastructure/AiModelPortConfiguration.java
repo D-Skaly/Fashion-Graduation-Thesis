@@ -5,7 +5,7 @@ import com.skaly.fashion_backend.recommendation.domain.port.AIModelPort;
 import com.skaly.fashion_backend.recommendation.infrastructure.gemini.GeminiAIAdapter;
 import com.skaly.fashion_backend.recommendation.infrastructure.gemini.GeminiRestProperties;
 import com.skaly.fashion_backend.recommendation.infrastructure.springai.SpringAiAIModelAdapter;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,10 +35,10 @@ public class AiModelPortConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(ChatModel.class)
+    @ConditionalOnBean(ChatClient.Builder.class)
     @ConditionalOnMissingBean(AIModelPort.class)
-    AIModelPort springAiAdapter(ChatModel chatModel, ObjectMapper objectMapper) {
-        return new SpringAiAIModelAdapter(chatModel, objectMapper);
+    AIModelPort springAiAdapter(ChatClient.Builder chatClientBuilder, ObjectMapper objectMapper) {
+        return new SpringAiAIModelAdapter(chatClientBuilder, objectMapper);
     }
 
     @Bean

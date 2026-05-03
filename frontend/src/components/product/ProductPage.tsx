@@ -17,6 +17,7 @@ import { ColorSelector } from "./ColorSelector";
 import { QuantitySelector } from "./QuantitySelector";
 import { AddToCartButton } from "./AddToCartButton";
 import { ReviewList } from "./ReviewList";
+import { VirtualTryOn } from "@/components/ai/VirtualTryOn";
 import { cn } from "@/lib/utils";
 
 // Types
@@ -86,6 +87,10 @@ export function ProductPage() {
     const [quantity, setQuantity] = useState(1);
     const [isAdded, setIsAdded] = useState(false);
 
+    // Compute effective selected values (with defaults)
+    const effectiveSelectedColor = selectedColor ?? (uniqueColors.length > 0 ? uniqueColors[0] : null);
+    const effectiveSelectedSize = selectedSize ?? (uniqueSizes.length > 0 ? uniqueSizes[0] : null);
+
     const { data: product, isLoading, isError } = useQuery({
         queryKey: ["product", id],
         queryFn: () => fetchProduct(id),
@@ -110,31 +115,23 @@ export function ProductPage() {
 
     // Stock Map for Sizes
     const stockMap = useMemo(() => {
-        if (!product?.variants || !selectedColor) return {};
+        if (!product?.variants || !effectiveSelectedColor) return {};
         
         const map: Record<string, number> = {};
         product.variants
-            .filter(v => v.color === selectedColor)
+            .filter(v => v.color === effectiveSelectedColor)
             .forEach(v => {
                 map[v.size] = v.stockQuantity;
             });
         
         return map;
-    }, [product, selectedColor]);
+    }, [product, effectiveSelectedColor]);
 
     // Find Selected Variant
     const selectedVariant = useMemo(() => {
-        if (!product?.variants || !selectedColor || !selectedSize) return null;
-        return product.variants.find(v => v.color === selectedColor && v.size === selectedSize);
-    }, [product, selectedColor, selectedSize]);
-
-    // Set defaults on load
-    useEffect(() => {
-        if (product?.variants && product.variants.length > 0) {
-            if (!selectedColor && uniqueColors.length > 0) setSelectedColor(uniqueColors[0]);
-            if (!selectedSize && uniqueSizes.length > 0) setSelectedSize(uniqueSizes[0]);
-        }
-    }, [product, uniqueColors, uniqueSizes]);
+        if (!product?.variants || !effectiveSelectedColor || !effectiveSelectedSize) return null;
+        return product.variants.find(v => v.color === effectiveSelectedColor && v.size === effectiveSelectedSize);
+    }, [product, effectiveSelectedColor, effectiveSelectedSize]);
 
     // Add to Cart Mutation
     const addToCartMutation = useMutation({
@@ -156,8 +153,9 @@ export function ProductPage() {
             // Reset success state after 2 seconds
             setTimeout(() => setIsAdded(false), 2000);
         },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Failed to add to cart");
+        onError: (error: unknown) => {
+            const axiosError = error as { response?: { data?: { message?: string } } };
+            toast.error(axiosError.response?.data?.message || "Failed to add to cart");
         }
     });
 
@@ -175,7 +173,7 @@ export function ProductPage() {
     }
 
     if (isError || !product) {
-        return <div className="container mx-auto px-4 py-32 text-center">Product not found</div>;
+        return <div className="container mx-auto px-4 py-32 text-center border rounded-xl bg-muted/20">Product not found</div>;
     }
 
     const currentPrice = product.basePrice + (selectedVariant?.priceAdjustment || 0);
@@ -184,10 +182,10 @@ export function ProductPage() {
 
     return (
         <div className="container mx-auto px-4 py-10 md:py-16">
-            <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+            <div className="grid md:grid-cols-12 gap-12 lg:gap-16">
                 
                 {/* Gallery */}
-                <div>
+                <div className="md:col-span-7 lg:col-span-8">
                     <ImageGallery 
                         images={product.images || []} 
                         productName={product.name}
@@ -195,125 +193,150 @@ export function ProductPage() {
                 </div>
 
                 {/* Product Info */}
-                <div className="space-y-8">
+                <div className="md:col-span-5 lg:col-span-4 space-y-8 sticky top-24 self-start">
                     <div>
-                        <Badge variant="secondary" className="mb-3">{product.categoryName}</Badge>
-                        {product.isFeatured && (
-                            <Badge className="mb-3 ml-2 bg-amber-500 hover:bg-amber-600">Featured</Badge>
-                        )}
-                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{product.name}</h1>
-                        <div className="flex items-end gap-4">
-                            <span className="text-2xl font-bold">
-                                {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(currentPrice)}
-                            </span>
-                            {product.soldCount > 0 && (
-                                <span className="text-sm text-muted-foreground">
-                                    {product.soldCount} sold
-                                </span>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            <Badge variant="secondary" className="bg-secondary/50 hover:bg-secondary text-xs uppercase tracking-wider">{product.categoryName}</Badge>
+                            {product.isFeatured && (
+                                <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-0 text-xs uppercase tracking-wider">Featured</Badge>
                             )}
                         </div>
-                        {product.brand && (
-                            <p className="text-sm text-muted-foreground mt-1">Brand: {product.brand}</p>
-                        )}
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter mb-4 leading-tight">{product.name}</h1>
+                        <div className="flex items-end gap-4 mb-2">
+                            <span className="text-3xl font-light tracking-tight">
+                                {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(currentPrice)}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
+                            {product.soldCount > 0 && (
+                                <span className="flex items-center">
+                                    🔥 <span className="ml-1 font-medium text-foreground">{product.soldCount}</span> sold
+                                </span>
+                            )}
+                            {product.brand && (
+                                <span>Brand: <span className="font-medium text-foreground">{product.brand}</span></span>
+                            )}
+                        </div>
                     </div>
 
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed font-light text-sm md:text-base">
                         {product.description}
                     </p>
 
-                    <Separator />
+                    <Separator className="bg-border/50" />
 
                     {/* Selectors */}
                     <div className="space-y-6">
                         {/* Color */}
                         {uniqueColors.length > 0 && (
-                            <ColorSelector
-                                colors={uniqueColors}
-                                selectedColor={selectedColor}
-                                onSelectColor={setSelectedColor}
-                            />
+                            <div className="space-y-3">
+                                <ColorSelector
+                                    colors={uniqueColors}
+                                    selectedColor={effectiveSelectedColor}
+                                    onSelectColor={setSelectedColor}
+                                />
+                            </div>
                         )}
 
                         {/* Size */}
                         {uniqueSizes.length > 0 && (
-                            <SizeSelector
-                                sizes={uniqueSizes}
-                                selectedSize={selectedSize}
-                                onSelectSize={setSelectedSize}
-                                stockMap={stockMap}
-                            />
+                            <div className="space-y-3">
+                                <SizeSelector
+                                    sizes={uniqueSizes}
+                                    selectedSize={effectiveSelectedSize}
+                                    onSelectSize={setSelectedSize}
+                                    stockMap={stockMap}
+                                />
+                            </div>
                         )}
                         
                         {/* Quantity */}
-                        <QuantitySelector
-                            quantity={quantity}
-                            onQuantityChange={setQuantity}
-                            max={selectedVariant?.stockQuantity || 99}
-                        />
+                        <div className="space-y-3">
+                            <QuantitySelector
+                                quantity={quantity}
+                                onQuantityChange={setQuantity}
+                                max={selectedVariant?.stockQuantity || 99}
+                            />
+                        </div>
                     </div>
 
-                    <Separator />
+                    <Separator className="bg-border/50" />
 
                     {/* Actions */}
-                    <div className="flex gap-4">
-                        <AddToCartButton
-                            isPending={addToCartMutation.isPending}
-                            isSuccess={isAdded}
-                            disabled={!selectedVariant || selectedVariant.stockQuantity < 1}
-                            outOfStock={selectedVariant?.stockQuantity === 0}
-                            onClick={() => addToCartMutation.mutate()}
+                    <div className="flex flex-col gap-3">
+                        <div className="flex gap-3">
+                            <div className="flex-1">
+                                <AddToCartButton
+                                    isPending={addToCartMutation.isPending}
+                                    isSuccess={isAdded}
+                                    disabled={!selectedVariant || selectedVariant.stockQuantity < 1}
+                                    outOfStock={selectedVariant?.stockQuantity === 0}
+                                    onClick={() => addToCartMutation.mutate()}
+                                />
+                            </div>
+                            <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border/50 hover:bg-secondary/50">
+                                <Heart className="h-5 w-5" />
+                            </Button>
+                            <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border/50 hover:bg-secondary/50">
+                                <Share2 className="h-5 w-5" />
+                            </Button>
+                        </div>
+                        
+                        {/* AI Virtual Try-on Component */}
+                        <VirtualTryOn 
+                            productId={product.id}
+                            productName={product.name}
+                            productImage={product.images?.[0]?.url || "/placeholder.jpg"}
                         />
-                        <Button variant="outline" size="icon" className="h-12 w-12">
-                            <Heart className="h-5 w-5" />
-                        </Button>
-                        <Button variant="outline" size="icon" className="h-12 w-12">
-                            <Share2 className="h-5 w-5" />
-                        </Button>
                     </div>
 
                     {/* Features */}
-                    <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <Truck className="h-4 w-4" />
-                            <span>Free shipping over $100</span>
+                    <div className="grid grid-cols-2 gap-4 py-4 rounded-xl bg-secondary/20 px-4 mt-6">
+                        <div className="flex items-center gap-3 text-sm font-medium">
+                            <div className="bg-background p-2 rounded-lg shadow-sm">
+                                <Truck className="h-4 w-4 text-primary" />
+                            </div>
+                            <span>Free shipping<br/><span className="text-xs text-muted-foreground font-normal">over $100</span></span>
                         </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <ShieldCheck className="h-4 w-4" />
-                            <span>Lifetime Warranty</span>
+                        <div className="flex items-center gap-3 text-sm font-medium">
+                            <div className="bg-background p-2 rounded-lg shadow-sm">
+                                <ShieldCheck className="h-4 w-4 text-primary" />
+                            </div>
+                            <span>Lifetime<br/><span className="text-xs text-muted-foreground font-normal">Warranty</span></span>
                         </div>
                     </div>
 
                     {/* Product Details */}
-                    <div className="space-y-3 text-sm">
-                        {product.material && (
+                        <div className="space-y-3 text-sm">
+                            {product.material && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Material:</span>
+                                    <span className="font-medium">{product.material}</span>
+                                </div>
+                            )}
+                            {product.careInstructions && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Care:</span>
+                                    <span className="font-medium">{product.careInstructions}</span>
+                                </div>
+                            )}
+                            {product.dimensions && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Dimensions:</span>
+                                    <span className="font-medium">{product.dimensions}</span>
+                                </div>
+                            )}
+                            {product.weight && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Weight:</span>
+                                    <span className="font-medium">{product.weight} kg</span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
-                                <span className="text-muted-foreground">Material:</span>
-                                <span className="font-medium">{product.material}</span>
+                                <span className="text-muted-foreground">SKU:</span>
+                                <span className="font-medium">{selectedVariant?.skuCode || product.sku}</span>
                             </div>
-                        )}
-                        {product.careInstructions && (
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Care:</span>
-                                <span className="font-medium">{product.careInstructions}</span>
-                            </div>
-                        )}
-                        {product.dimensions && (
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Dimensions:</span>
-                                <span className="font-medium">{product.dimensions}</span>
-                            </div>
-                        )}
-                        {product.weight && (
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Weight:</span>
-                                <span className="font-medium">{product.weight} kg</span>
-                            </div>
-                        )}
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">SKU:</span>
-                            <span className="font-medium">{selectedVariant?.skuCode || product.sku}</span>
                         </div>
-                    </div>
 
                     {/* Tags */}
                     {product.tags && product.tags.length > 0 && (

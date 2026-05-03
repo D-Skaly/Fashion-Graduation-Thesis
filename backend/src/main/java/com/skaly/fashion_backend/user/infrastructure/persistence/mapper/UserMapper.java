@@ -27,6 +27,7 @@ public class UserMapper {
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .lastLoginAt(entity.getLastLoginAt())
+                .loyaltyPoints(entity.getLoyaltyPoints())
                 .build();
     }
 
@@ -47,6 +48,7 @@ public class UserMapper {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .lastLoginAt(user.getLastLoginAt())
+                .loyaltyPoints(user.getLoyaltyPoints())
                 .build();
     }
 }

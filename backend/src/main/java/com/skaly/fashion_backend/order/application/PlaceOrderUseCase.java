@@ -1,27 +1,25 @@
 package com.skaly.fashion_backend.order.application;
 
-import com.skaly.fashion_backend.cart.api.dto.CartDto;
-import com.skaly.fashion_backend.cart.api.dto.CartItemDto;
-import com.skaly.fashion_backend.cart.application.CartService;
-import com.skaly.fashion_backend.order.OrderDto;
+import com.skaly.fashion_backend.order.application.OrderDto;
 import com.skaly.fashion_backend.order.OrderEventService;
-import com.skaly.fashion_backend.order.OrderItemDto;
+import com.skaly.fashion_backend.order.application.OrderItemDto;
 import com.skaly.fashion_backend.order.OrderInventoryGateway;
-import com.skaly.fashion_backend.order.OrderPricingService;
-import com.skaly.fashion_backend.order.OrderStatus;
-import com.skaly.fashion_backend.order.PlaceOrderRequest;
+import com.skaly.fashion_backend.order.domain.OrderStatus;
+import com.skaly.fashion_backend.order.application.PlaceOrderRequest;
+import com.skaly.fashion_backend.order.application.event.ClearCartRequestedEvent;
+import com.skaly.fashion_backend.order.domain.OrderPricingService;
 import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.order.domain.entities.OrderItem;
-import com.skaly.fashion_backend.order.OrderRepository;
+import com.skaly.fashion_backend.order.application.OrderRepository;
 import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
-import com.skaly.fashion_backend.user.api.dto.UserInternalResponse;
-import com.skaly.fashion_backend.user.application.UserInternalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,48 +27,47 @@ import java.util.stream.Collectors;
 public class PlaceOrderUseCase {
 
     private final OrderRepository orderRepository;
-    private final UserInternalService userInternalService;
-    private final CartService cartService;
     private final OrderInventoryGateway orderInventoryGateway;
     private final OrderPricingService orderPricingService;
     private final OrderEventService orderEventService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public OrderDto execute(String userEmail, PlaceOrderRequest request) {
-        UserInternalResponse user = userInternalService.getUserByEmail(userEmail);
-        CartDto cart = getValidatedCart(userEmail);
+    public OrderDto execute(UUID userId, String userEmail, List<CartItemRequest> cartItems, PlaceOrderRequest request) {
+        if (cartItems.isEmpty()) {
+            throw new IllegalStateException("Cart is empty");
+        }
 
         Order order = Order.builder()
-                .userId(user.id())
+                .userId(userId)
                 .status(OrderStatus.PENDING)
                 .shippingAddress(request.shippingAddress())
                 .build();
 
-        BigDecimal totalAmount = addOrderItems(order, cart.items());
+        BigDecimal totalAmount = addOrderItems(order, cartItems);
         order.setTotalAmount(totalAmount);
 
         Order savedOrder = orderRepository.save(order);
         orderEventService.publishOrderCreated(savedOrder);
 
-        // Clear cart after successful order creation
-        cartService.clearCart(userEmail, null);
+        // Publish event to clear cart (async)
+        eventPublisher.publishEvent(new ClearCartRequestedEvent(userId, userEmail));
 
         return mapToDto(savedOrder);
     }
 
-    private CartDto getValidatedCart(String userEmail) {
-        CartDto cart = cartService.getCart(userEmail, null);
-        if (cart.items().isEmpty()) {
-            throw new IllegalStateException("Cart is empty");
-        }
-        return cart;
-    }
+    public record CartItemRequest(
+            UUID productVariantId,
+            Integer quantity,
+            BigDecimal snapshotPrice
+    ) {}
 
-    private BigDecimal addOrderItems(Order order, List<CartItemDto> cartItems) {
+    private BigDecimal addOrderItems(Order order, List<CartItemRequest> cartItems) {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        for (CartItemDto cartItem : cartItems) {
-            ProductVariantInternalResponse variant = orderInventoryGateway.getProductVariant(cartItem.productVariantId());
+        for (CartItemRequest cartItem : cartItems) {
+            ProductVariantInternalResponse variant = orderInventoryGateway
+                    .getProductVariant(cartItem.productVariantId());
             BigDecimal unitPrice = orderPricingService.calculateUnitPrice(variant);
             OrderItem orderItem = OrderItem.builder()
                     .productVariantId(variant.id())
@@ -88,7 +85,8 @@ public class PlaceOrderUseCase {
     private OrderDto mapToDto(Order order) {
         List<OrderItemDto> itemDtos = order.getItems().stream()
                 .map(item -> {
-                    ProductVariantInternalResponse variant = orderInventoryGateway.getProductVariant(item.getProductVariantId());
+                    ProductVariantInternalResponse variant = orderInventoryGateway
+                            .getProductVariant(item.getProductVariantId());
                     BigDecimal subtotal = item.getSnapshotPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity()));
                     return new OrderItemDto(

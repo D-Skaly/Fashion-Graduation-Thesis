@@ -27,4 +27,7 @@ tmp/
 # Dependencies (root tooling / experiments)
 node_modules/
 
+# Build artifacts
+build/
+
 # Subdirectories have their own .gitignore files

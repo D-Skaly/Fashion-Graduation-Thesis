@@ -43,19 +43,6 @@ export function RichTextEditor({ value, onChange, placeholder = "Enter content..
         }
     };
 
-    const ToolbarButton = ({ icon: Icon, onClick, title, isActive }: any) => (
-        <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className={cn(isActive && "bg-secondary")}
-            onClick={onClick}
-            title={title}
-        >
-            <Icon className="h-4 w-4" />
-        </Button>
-    );
-
     return (
         <Card>
             <CardContent className="p-0">
@@ -162,9 +149,30 @@ export function RichTextEditor({ value, onChange, placeholder = "Enter content..
                     style={{ minHeight }}
                     dangerouslySetInnerHTML={{ __html: value }}
                     onInput={(e) => onChange(e.currentTarget.innerHTML)}
-                    placeholder={placeholder}
+                    data-placeholder={placeholder}
+                    aria-label={placeholder}
                 />
             </CardContent>
         </Card>
     );
 }
+
+interface ToolbarButtonProps {
+    icon: React.ElementType;
+    onClick: () => void;
+    title: string;
+    isActive?: boolean;
+}
+
+const ToolbarButton = ({ icon: Icon, onClick, title, isActive }: ToolbarButtonProps) => (
+    <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className={cn(isActive && "bg-secondary")}
+        onClick={onClick}
+        title={title}
+    >
+        <Icon className="h-4 w-4" />
+    </Button>
+);

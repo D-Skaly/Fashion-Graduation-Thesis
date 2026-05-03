@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { AiStylistFAB } from "@/components/ui/AiStylistFAB";
 
 export default function ShopLayout({
     children,
@@ -13,6 +14,7 @@ export default function ShopLayout({
                 {children}
             </main>
             <Footer />
+            <AiStylistFAB />
         </div>
     );
 }

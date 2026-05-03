@@ -1,12 +1,17 @@
 package com.skaly.fashion_backend.ai.tryon.infrastructure.persistence.jpa;
 
-import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
+import com.skaly.fashion_backend.ai.tryon.domain.JobStatus;
+import com.skaly.fashion_backend.ai.tryon.domain.port.TryOnJob;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * JPA entity for Try-On job persistence.
+ * Maps to "try_on_jobs" table.
+ */
 @Entity
 @Table(name = "try_on_jobs")
 @Getter
@@ -20,9 +25,8 @@ public class TryOnJobEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
 
     @Column(name = "product_id", nullable = false)
     private UUID productId;
@@ -44,20 +48,37 @@ public class TryOnJobEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public enum JobStatus {
-        PENDING, PROCESSING, COMPLETED, FAILED
+    /**
+     * Converts this entity to the domain model.
+     */
+    public TryOnJob toDomain() {
+        return TryOnJob.builder()
+                .id(this.id)
+                .userId(this.userId)
+                .productId(this.productId)
+                .userImageUrl(this.userImageUrl)
+                .resultImageUrl(this.resultImageUrl)
+                .status(this.status)
+                .errorMessage(this.errorMessage)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
+                .build();
     }
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (status == null) status = JobStatus.PENDING;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    /**
+     * Converts a domain model to this entity.
+     */
+    public static TryOnJobEntity fromDomain(TryOnJob domain) {
+        return TryOnJobEntity.builder()
+                .id(domain.getId())
+                .userId(domain.getUserId())
+                .productId(domain.getProductId())
+                .userImageUrl(domain.getUserImageUrl())
+                .resultImageUrl(domain.getResultImageUrl())
+                .status(domain.getStatus())
+                .errorMessage(domain.getErrorMessage())
+                .createdAt(domain.getCreatedAt())
+                .updatedAt(domain.getUpdatedAt())
+                .build();
     }
 }
-

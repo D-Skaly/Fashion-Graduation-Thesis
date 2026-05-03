@@ -3,23 +3,23 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 @Entity('admin_plans')
 export class AdminPlan {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'text' })
-  draftInsights: string;
+  draftInsights!: string;
 
   @Column({ type: 'float' })
-  confidence: number;
+  confidence!: number;
 
   @Column({ default: false })
-  requiresHumanApproval: boolean;
+  requiresHumanApproval!: boolean;
 
   @Column({ default: 'DRAFT' })
-  status: 'DRAFT' | 'APPROVED' | 'REJECTED';
+  status!: 'DRAFT' | 'APPROVED' | 'REJECTED';
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ nullable: true })
-  reviewerComment: string;
+  reviewerComment!: string | null;
 }
