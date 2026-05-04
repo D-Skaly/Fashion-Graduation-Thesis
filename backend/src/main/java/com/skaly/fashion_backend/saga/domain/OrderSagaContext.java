@@ -1,56 +1,127 @@
 package com.skaly.fashion_backend.saga.domain;
 
 import com.skaly.fashion_backend.payment.domain.Payment;
-import com.skaly.fashion_backend.order.domain.entities.Order;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.skaly.fashion_backend.product.domain.model.ProductVariant;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Context for Order Saga transactions.
- * Carries data between saga steps.
+ * Context object for order-related saga operations.
+ * Holds state shared across saga steps.
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class OrderSagaContext {
+
     private UUID orderId;
-    private Order order;
+    private UUID customerId;
+    private String orderNumber;
+    private String orderStatus;
+    private final Map<UUID, Integer> productQuantities = new ConcurrentHashMap<>();
     private Payment payment;
-    private String errorMessage;
-    private boolean failed;
-    
-    /**
-     * Check if the saga has failed.
-     */
-    public boolean hasFailed() {
-        return failed;
+    private String failureReason;
+    private boolean compensating = false;
+    private final Map<String, Object> customData = new ConcurrentHashMap<>();
+    private boolean compensationRequired = false;
+
+    public OrderSagaContext() {
     }
-    
-    /**
-     * Mark the saga as failed with error message.
-     */
-    public void markAsFailed(String errorMessage) {
-        this.failed = true;
-        this.errorMessage = errorMessage;
+
+    public OrderSagaContext(UUID orderId, UUID customerId) {
+        this.orderId = orderId;
+        this.customerId = customerId;
     }
-    
-    /**
-     * Set the created order.
-     */
-    public void setOrder(Order order) {
-        this.order = order;
-        this.orderId = order != null ? order.getId() : null;
+
+    public void addProduct(UUID productVariantId, int quantity) {
+        productQuantities.put(productVariantId, quantity);
     }
-    
-    /**
-     * Set the created payment.
-     */
+
+    public void removeProduct(UUID productVariantId) {
+        productQuantities.remove(productVariantId);
+    }
+
+    public Map<UUID, Integer> getProductQuantities() {
+        return new ConcurrentHashMap<>(productQuantities);
+    }
+
+    public UUID getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(UUID orderId) {
+        this.orderId = orderId;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public void setFailureReason(String failureReason) {
+        this.failureReason = failureReason;
+    }
+
+    public boolean isCompensating() {
+        return compensating;
+    }
+
+    public void setCompensating(boolean compensating) {
+        this.compensating = compensating;
+    }
+
+    public boolean isCompensationRequired() {
+        return compensationRequired;
+    }
+
+    public void setCompensationRequired(boolean compensationRequired) {
+        this.compensationRequired = compensationRequired;
+    }
+
+    public void setCustomData(String key, Object value) {
+        customData.put(key, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getCustomData(String key) {
+        return (T) customData.get(key);
+    }
+
+    public boolean hasCustomData(String key) {
+        return customData.containsKey(key);
+    }
+
+    public void clearCustomData() {
+        customData.clear();
     }
 }

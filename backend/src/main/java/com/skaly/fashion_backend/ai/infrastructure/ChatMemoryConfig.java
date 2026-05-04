@@ -2,7 +2,6 @@ package com.skaly.fashion_backend.ai.infrastructure;
 
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,10 +14,11 @@ public class ChatMemoryConfig {
     
     /**
      * ChatMemory bean for storing conversation history.
+     * Using default MessageWindowChatMemory implementation.
      */
     @Bean
     public ChatMemory chatMemory() {
-        return new InMemoryChatMemory();
+        return ChatMemory.MAX_MESSAGES;
     }
     
     /**

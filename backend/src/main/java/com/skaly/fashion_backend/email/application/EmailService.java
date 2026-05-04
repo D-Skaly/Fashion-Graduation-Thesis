@@ -1,6 +1,7 @@
 package com.skaly.fashion_backend.email.application;
 
 import com.skaly.fashion_backend.common.infrastructure.config.AppProperties;
+import com.skaly.fashion_backend.common.infrastructure.config.EmailProperties;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

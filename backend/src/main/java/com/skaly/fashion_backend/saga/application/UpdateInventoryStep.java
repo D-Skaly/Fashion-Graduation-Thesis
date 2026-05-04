@@ -18,7 +18,7 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
     private final SagaInventoryService sagaInventoryService;
 
     @Override
-    public String getName() {
+    public String getStepName() {
         return "UpdateInventory";
     }
 
@@ -26,8 +26,8 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
     public void execute(OrderSagaContext context) {
         log.info("Updating inventory for order: {}", context.getOrderId());
 
-        Map<UUID, Integer> variantsWithQuantity = context.getProductVariantsWithQuantity();
-        Map<UUID, Integer> originalStocks = context.getOriginalStockQuantities();
+        Map<UUID, Integer> variantsWithQuantity = context.getProductQuantities();
+        Map<UUID, Integer> originalStocks = new java.util.HashMap<>();
 
         for (Map.Entry<UUID, Integer> entry : variantsWithQuantity.entrySet()) {
             UUID variantId = entry.getKey();
@@ -47,7 +47,7 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
                     sagaInventoryService.getCurrentStock(variantId));
         }
 
-        context.setOriginalStockQuantities(originalStocks);
+        context.setCustomData("originalStocks", originalStocks);
     }
 
     @Override
@@ -55,14 +55,17 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
         log.info("Compensating UpdateInventory: restoring stock for order {}", context.getOrderId());
 
         try {
-            Map<UUID, Integer> originalStocks = context.getOriginalStockQuantities();
+            @SuppressWarnings("unchecked")
+            Map<UUID, Integer> originalStocks = (Map<UUID, Integer>) context.getCustomData("originalStocks");
 
-            for (Map.Entry<UUID, Integer> entry : originalStocks.entrySet()) {
-                UUID variantId = entry.getKey();
-                Integer originalStock = entry.getValue();
+            if (originalStocks != null) {
+                for (Map.Entry<UUID, Integer> entry : originalStocks.entrySet()) {
+                    UUID variantId = entry.getKey();
+                    Integer originalStock = entry.getValue();
 
-                sagaInventoryService.restoreStock(variantId, originalStock);
-                log.info("Restored stock for variant {}: {}", variantId, originalStock);
+                    sagaInventoryService.restoreStock(variantId, originalStock);
+                    log.info("Restored stock for variant {}: {}", variantId, originalStock);
+                }
             }
         } catch (Exception e) {
             log.error("Failed to compensate UpdateInventory", e);
@@ -71,6 +74,6 @@ public class UpdateInventoryStep implements SagaStep<OrderSagaContext> {
 
     @Override
     public boolean canCompensate(OrderSagaContext context) {
-        return context.getOriginalStockQuantities() != null && !context.getOriginalStockQuantities().isEmpty();
+        return context.hasCustomData("originalStocks");
     }
 }

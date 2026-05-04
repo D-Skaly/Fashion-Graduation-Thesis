@@ -15,11 +15,6 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
     private final SagaOrderService sagaOrderService;
 
     @Override
-    public String getName() {
-        return "CreateOrder";
-    }
-
-    @Override
     public void execute(OrderSagaContext context) {
         log.info("Creating order with orderNumber: {}", context.getOrderNumber());
         String orderStatus = sagaOrderService.getOrderStatus(context.getOrderId());
@@ -42,5 +37,10 @@ public class CreateOrderStep implements SagaStep<OrderSagaContext> {
     @Override
     public boolean canCompensate(OrderSagaContext context) {
         return context.getOrderId() != null;
+    }
+
+    @Override
+    public String getStepName() {
+        return "CreateOrder";
     }
 }

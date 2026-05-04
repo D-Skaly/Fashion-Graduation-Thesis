@@ -25,7 +25,7 @@ public class SagaOrchestrator<T> {
         try {
             // Execute all steps in order
             for (SagaStep<T> step : steps) {
-                log.info("Executing saga step: {}", step.getName());
+                log.info("Executing saga step: {}", step.getStepName());
                 step.execute(context);
                 currentStepIndex++;
             }
@@ -33,7 +33,7 @@ public class SagaOrchestrator<T> {
             log.info("Saga execution completed successfully");
             return true;
         } catch (Exception e) {
-            log.error("Saga execution failed at step: {}, compensating...", steps.get(currentStepIndex).getName(), e);
+            log.error("Saga execution failed at step: {}, compensating...", steps.get(currentStepIndex).getStepName(), e);
             compensate(context);
             return false;
         }
@@ -45,11 +45,11 @@ public class SagaOrchestrator<T> {
             SagaStep<T> step = steps.get(i);
             try {
                 if (step.canCompensate(context)) {
-                    log.info("Compensating saga step: {}", step.getName());
+                    log.info("Compensating saga step: {}", step.getStepName());
                     step.compensate(context);
                 }
             } catch (Exception e) {
-                log.error("Failed to compensate step: {}", step.getName(), e);
+                log.error("Failed to compensate step: {}", step.getStepName(), e);
                 // Continue compensating other steps even if one fails
             }
         }

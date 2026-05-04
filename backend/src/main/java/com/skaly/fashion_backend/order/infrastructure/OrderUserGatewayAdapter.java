@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order.infrastructure;
 
-import com.skaly.fashion_backend.order.OrderUserGateway;
+import com.skaly.fashion_backend.order.domain.port.OrderUserGateway;
 import com.skaly.fashion_backend.user.application.UserInternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

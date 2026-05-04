@@ -1,11 +1,11 @@
 package com.skaly.fashion_backend.auth.application;
 
-import com.skaly.fashion_backend.auth.interfaces.api.AuthenticationRequest;
-import com.skaly.fashion_backend.auth.interfaces.api.AuthenticationResponse;
-import com.skaly.fashion_backend.auth.interfaces.api.RegisterRequest;
-import com.skaly.fashion_backend.security.JwtUtils;
-import com.skaly.fashion_backend.security.token.RefreshTokenService;
-import com.skaly.fashion_backend.security.token.TokenBlacklistService;
+import com.skaly.fashion_backend.auth.interfaces.dto.AuthenticationRequest;
+import com.skaly.fashion_backend.auth.interfaces.dto.AuthenticationResponse;
+import com.skaly.fashion_backend.auth.interfaces.dto.RegisterRequest;
+import com.skaly.fashion_backend.common.infrastructure.security.JwtUtils;
+import com.skaly.fashion_backend.common.infrastructure.security.token.RefreshTokenService;
+import com.skaly.fashion_backend.common.infrastructure.security.token.TokenBlacklistService;
 import com.skaly.fashion_backend.user.domain.entities.Provider;
 import com.skaly.fashion_backend.user.domain.entities.Role;
 import com.skaly.fashion_backend.user.domain.entities.User;
@@ -41,18 +41,18 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationResponse register(RegisterRequest request, String deviceInfo, String ipAddress) {
         // ✅ Validate password strength
-        validatePasswordStrength(request.password());
+        validatePasswordStrength(request.getPassword());
 
         // Check if user already exists
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already registered");
         }
 
         var user = User.builder()
-                .firstName(request.firstname())
-                .lastName(request.lastname())
-                .email(request.email())
-                .passwordHash(passwordEncoder.encode(request.password()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .provider(Provider.LOCAL)
                 .build();
@@ -68,14 +68,14 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.email(),
-                            request.password()));
+                            request.getEmail(),
+                            request.getPassword()));
         } catch (BadCredentialsException e) {
-            log.warn("Failed login attempt for: {}", request.email());
+            log.warn("Failed login attempt for: {}", request.getEmail());
             throw e;
         }
 
-        var user = userRepository.findByEmail(request.email())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
         // Update last login time

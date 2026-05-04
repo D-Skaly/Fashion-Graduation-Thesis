@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -229,14 +230,14 @@ public class CartService {
 
     private void validateInventoryAndPrices(Cart cart) {
         List<UUID> variantIds = cart.getItems().stream()
-                .map(com.skaly.fashion_backend.cart.domain.entities.CartItem::getProductVariantId)
+                .map(CartItem::getProductVariantId)
                 .toList();
         Map<UUID, ProductVariantInfo> variants = productCartServicePort.getProductVariantsBatch(variantIds);
 
         for (CartItem item : cart.getItems()) {
             ProductVariantInfo variant = variants.get(item.getProductVariantId());
             if (variant == null) {
-                continue; // Skip items with invalid variants
+                continue;
             }
 
             BigDecimal currentPrice = variant.basePrice();
@@ -279,7 +280,7 @@ public class CartService {
 
     private CartDto mapToDto(Cart cart) {
         List<UUID> variantIds = cart.getItems().stream()
-                .map(com.skaly.fashion_backend.cart.domain.entities.CartItem::getProductVariantId)
+                .map(CartItem::getProductVariantId)
                 .toList();
         Map<UUID, ProductVariantInfo> variants = productCartServicePort.getProductVariantsBatch(variantIds);
 
@@ -287,7 +288,6 @@ public class CartService {
                 .map(item -> {
                     ProductVariantInfo variant = variants.get(item.getProductVariantId());
                     if (variant == null) {
-                        // Return DTO with default values for missing variant
                         return new CartItemDto(
                                 item.getId(),
                                 item.getProductVariantId(),
@@ -341,44 +341,4 @@ public class CartService {
                 total
         );
     }
-
-                    BigDecimal currentUnit = variant.basePrice();
-                    if (variant.priceAdjustment() != null) {
-                        currentUnit = currentUnit.add(variant.priceAdjustment());
-                    }
-                    BigDecimal lineSubtotal = item.getSnapshotPrice()
-                            .multiply(BigDecimal.valueOf(item.getQuantity()));
-                    boolean outOfStock = variant.stockQuantity() == null
-                            || variant.stockQuantity() <= 0
-                            || variant.stockQuantity() < item.getQuantity();
-                    return new CartItemDto(
-                            item.getId(),
-                            item.getProductVariantId(),
-                            variant.productName(),
-                            variant.size(),
-                            variant.color(),
-                            currentUnit,
-                            item.getSnapshotPrice(),
-                            item.getQuantity(),
-                            lineSubtotal,
-                            outOfStock,
-                            item.isQuantityAdjusted()
-                    );
-                })
-                .collect(Collectors.toList());
-
-        BigDecimal subTotal = calculateSubTotal(cart);
-        BigDecimal total = subTotal.subtract(cart.getDiscountAmount()).max(BigDecimal.ZERO);
-
-        return new CartDto(
-                cart.getId(),
-                cart.getGuestId(),
-                itemDtos,
-                cart.getCouponCode(),
-                cart.getDiscountAmount(),
-                subTotal,
-                total
-        );
-    }
 }
-
