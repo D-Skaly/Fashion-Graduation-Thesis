@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api/v1';
 
@@ -8,16 +7,14 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: true, // Quan trọng: Cho phép gửi HttpOnly cookies
 });
 
-// Request interceptor: attach JWT token
+// Request interceptor: HttpOnly cookies will be sent automatically
+// Không cần manually set Authorization header vì cookie sẽ tự động gửi
 api.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
+    // HttpOnly cookies are sent automatically with withCredentials: true
     return config;
   },
   (error) => Promise.reject(error)
@@ -35,8 +32,8 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid — clear and dispatch auth error event
-      Cookies.remove('token');
+      // Token expired or invalid — dispatch auth error event
+      // Backend should clear HttpOnly cookie, frontend just needs to update UI state
       if (typeof window !== 'undefined') {
         // Dispatch custom event for auth error - components can listen to this
         window.dispatchEvent(new CustomEvent('auth:unauthorized'));

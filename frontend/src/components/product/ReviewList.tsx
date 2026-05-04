@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface Review {
     id: string;
@@ -141,7 +142,7 @@ export function ReviewList({ reviews, averageRating, totalReviews, onHelpfulVote
                                 </span>
                             </div>
 
-                            <p className="text-muted-foreground">{review.comment}</p>
+                            <p className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(review.comment) }} />
 
                             {review.images && review.images.length > 0 && (
                                 <div className="flex gap-2">

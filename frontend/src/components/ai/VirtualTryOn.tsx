@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Upload, RefreshCw } from "lucide-react";
@@ -22,8 +22,9 @@ export function VirtualTryOn({ productImage, productName, productId }: VirtualTr
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isUploading, setIsUploading] = useState(false);
     const [resultImage, setResultImage] = useState<string | null>(null);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [jobId, setJobId] = useState<string | null>(null);
+    const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -50,6 +51,59 @@ export function VirtualTryOn({ productImage, productName, productId }: VirtualTr
         }
     };
 
+    // Effect for polling job status
+    useEffect(() => {
+        // Clear any existing interval/timeout
+        const clearPolling = () => {
+            if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+                pollIntervalRef.current = null;
+            }
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
+        };
+
+        if (!jobId || !isGenerating) {
+            clearPolling();
+            return clearPolling;
+        }
+
+        // Start polling
+        pollIntervalRef.current = setInterval(async () => {
+            try {
+                const statusResponse = await api.get(`/tryon/${jobId}`);
+                const job = statusResponse.data.data;
+
+                if (job.status === "COMPLETED") {
+                    clearPolling();
+                    setResultImage(job.resultImageUrl);
+                    setIsGenerating(false);
+                    toast.success("Virtual Try-On completed!");
+                } else if (job.status === "FAILED") {
+                    clearPolling();
+                    setIsGenerating(false);
+                    toast.error("Try-On failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Failed to check job status", error);
+            }
+        }, 2000);
+
+        // Timeout after 60 seconds
+        timeoutRef.current = setTimeout(() => {
+            clearPolling();
+            if (isGenerating) {
+                setIsGenerating(false);
+                toast.error("Try-On is taking too long. Please try again.");
+            }
+        }, 60000);
+
+        // Cleanup on unmount or when dependencies change
+        return clearPolling;
+    }, [jobId, isGenerating]);
+
     const handleTryOn = async () => {
         if (!userImageFile) return;
         setIsGenerating(true);
@@ -68,38 +122,9 @@ export function VirtualTryOn({ productImage, productName, productId }: VirtualTr
                 },
             });
 
-            const jobId = response.data.data.id;
-            setJobId(jobId);
-
-            // Step 3: Poll for result
-            const pollInterval = setInterval(async () => {
-                try {
-                    const statusResponse = await api.get(`/tryon/${jobId}`);
-                    const job = statusResponse.data.data;
-
-                    if (job.status === "COMPLETED") {
-                        clearInterval(pollInterval);
-                        setResultImage(job.resultImageUrl);
-                        setIsGenerating(false);
-                        toast.success("Virtual Try-On completed!");
-                    } else if (job.status === "FAILED") {
-                        clearInterval(pollInterval);
-                        setIsGenerating(false);
-                        toast.error("Try-On failed. Please try again.");
-                    }
-                } catch (error) {
-                    console.error("Failed to check job status", error);
-                }
-            }, 2000);
-
-            // Timeout after 60 seconds
-            setTimeout(() => {
-                clearInterval(pollInterval);
-                if (isGenerating) {
-                    setIsGenerating(false);
-                    toast.error("Try-On is taking too long. Please try again.");
-                }
-            }, 60000);
+            const newJobId = response.data.data.id;
+            setJobId(newJobId);
+            // Polling will start via useEffect
 
         } catch (error) {
             console.error("Try-On failed", error);
