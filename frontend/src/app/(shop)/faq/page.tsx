@@ -166,7 +166,7 @@ export default function FAQPage() {
         <CardContent className="pt-6 text-center">
           <h3 className="font-bold mb-2">Still have questions?</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Cant find what you're looking for? Our support team is here to help.
+            Can’t find what you’re looking for? Our support team is here to help.
           </p>
           <Button asChild>
             <Link href="/contact">Contact Support</Link>

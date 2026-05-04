@@ -63,7 +63,7 @@ export default function AboutUsPage() {
               style to bring you a unique shopping experience.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Our journey began when we realized that traditional shopping couldn't keep up with 
+              Our journey began when we realized that traditional shopping couldn’t keep up with 
               modern needs. We embraced AI, virtual try-ons, and body measurement technology 
               to bridge the gap between online shopping and perfect fit.
             </p>

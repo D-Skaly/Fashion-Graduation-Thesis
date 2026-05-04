@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Loader2, Save, ArrowLeft, Sparkles, Image as ImageIcon, Box, Activity } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -59,12 +59,20 @@ interface Product {
   featured: boolean;
 }
 
+interface AddressData {
+  fullName: string;
+  phone: string;
+  address: string;
+  isDefault?: boolean;
+}
+
 export default function ProductEditPage() {
   const params = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
   const productId = params.id as string;
   const [images, setImages] = useState<string[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const { data: product, isLoading: isProductLoading } = useQuery<Product>({
     queryKey: ["product", productId],
@@ -96,9 +104,9 @@ export default function ProductEditPage() {
     },
   });
 
-  // Populate form when product data is loaded
+  // Populate form when product data is loaded - only once
   useEffect(() => {
-    if (product) {
+    if (product && !isInitialized) {
       form.reset({
         name: product.name,
         description: product.description,
@@ -109,8 +117,9 @@ export default function ProductEditPage() {
       if (product.images) {
         setImages(product.images);
       }
+      setIsInitialized(true);
     }
-  }, [product, form]);
+  }, [product, form, isInitialized]);
 
   const mutation = useMutation({
     mutationFn: async (values: ProductFormValues) => {
@@ -132,7 +141,7 @@ export default function ProductEditPage() {
       router.push("/admin/products");
     },
     onError: (error: unknown) => {
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      const axiosError = error as { response?: { data?: { message?: string } };
       toast.error(axiosError.response?.data?.message || "Failed to update product");
     },
   });
@@ -181,10 +190,10 @@ export default function ProductEditPage() {
             {/* Basic Info */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Activity className="h-4 w-4" />
-                  Basic Information
-                </CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Activity className="h-4 w-4" />
+                    Basic Information
+                  </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <FormField
@@ -192,36 +201,36 @@ export default function ProductEditPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter product name"
-                          className="h-11"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                        <FormLabel>Product Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter product name"
+                            className="h-11"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                   )}
-                />
+              />
 
                 <FormField
                   control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe the product..."
-                          className="min-h-[160px] resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Describe the product..."
+                            className="min-h-[160px] resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                   )}
-                />
+              />
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -247,7 +256,7 @@ export default function ProductEditPage() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                />
 
                   <FormField
                     control={form.control}
@@ -267,7 +276,7 @@ export default function ProductEditPage() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                />
                 </div>
 
                 <FormField
@@ -289,17 +298,17 @@ export default function ProductEditPage() {
                       </FormControl>
                     </div>
                   )}
-                />
-              </CardContent>
-            </Card>
+              />
+          </CardContent>
+        </Card>
 
             {/* Images */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ImageIcon className="h-4 w-4" />
-                  Product Images
-                </CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <ImageIcon className="h-4 w-4" />
+                    Product Images
+                  </CardTitle>
               </CardHeader>
               <CardContent>
                 <ImageUploader
@@ -326,14 +335,14 @@ export default function ProductEditPage() {
             >
               {mutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
               ) : (
                 <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
-                </>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Changes
+                  </>
               )}
             </Button>
           </div>

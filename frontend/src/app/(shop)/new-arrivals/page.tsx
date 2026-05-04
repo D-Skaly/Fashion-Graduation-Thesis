@@ -23,10 +23,7 @@ interface Product {
   images?: string[];
   createdAt: string;
   featured?: boolean;
-<<<<<<< ours
-=======
   category?: string;
->>>>>>> theirs
 }
 
 const fetchNewArrivals = async (days: number): Promise<Product[]> => {
@@ -104,10 +101,7 @@ export default function NewArrivalsPage() {
                     name: product.name,
                     price: product.basePrice,
                     image: product.images?.[0],
-<<<<<<< ours
-=======
                     category: product.category || "uncategorized",
->>>>>>> theirs
                     isNew: true,
                   }}
                 />

@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-<<<<<<< ours
-=======
 import { motion } from "framer-motion";
->>>>>>> theirs
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ruler, CheckCircle2, Loader2, Shirt, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -104,7 +101,7 @@ export default function BodyMeasurementPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-secondary/20 rounded-xl">
                   <p className="text-sm text-muted-foreground">Height</p>
-                  <p className="text-2xl font-bold">{measurements.height}"</p>
+                  <p className="text-2xl font-bold">{measurements.height}</p>
                 </div>
                 <div className="text-center p-4 bg-secondary/20 rounded-xl">
                   <p className="text-sm text-muted-foreground">Weight</p>
@@ -112,11 +109,11 @@ export default function BodyMeasurementPage() {
                 </div>
                 <div className="text-center p-4 bg-secondary/20 rounded-xl">
                   <p className="text-sm text-muted-foreground">Chest</p>
-                  <p className="text-2xl font-bold">{measurements.chest}"</p>
+                  <p className="text-2xl font-bold">{measurements.chest}</p>
                 </div>
                 <div className="text-center p-4 bg-secondary/20 rounded-xl">
                   <p className="text-sm text-muted-foreground">Waist</p>
-                  <p className="text-2xl font-bold">{measurements.waist}"</p>
+                  <p className="text-2xl font-bold">{measurements.waist}</p>
                 </div>
               </div>
             </CardContent>

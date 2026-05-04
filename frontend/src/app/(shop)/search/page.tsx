@@ -99,7 +99,7 @@ export default function SearchPage() {
         {query && (
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              {results?.length || 0} result(s) for "{query}"
+              {results?.length || 0} result(s) for “{query}”
             </p>
             <div className="flex items-center gap-2">
               <Select value={sortBy} onValueChange={setSortBy}>

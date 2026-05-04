@@ -28,29 +28,29 @@ export function SearchBox({
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    const stored = localStorage.getItem("recent-searches");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {}
+    }
+    return [];
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Load recent searches from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem("recent-searches");
-    if (stored) {
-      try {
-        setRecentSearches(JSON.parse(stored));
-      } catch {}
-    }
-  }, []);
-
   // Save recent search
   const saveRecentSearch = (search: string) => {
-    const updated = [
-      search,
-      ...recentSearches.filter((s) => s !== search),
-    ].slice(0, MAX_RECENT_SEARCHES);
-    setRecentSearches(updated);
-    localStorage.setItem("recent-searches", JSON.stringify(updated));
+    setRecentSearches((prev) => {
+      const updated = [
+        search,
+        ...prev.filter((s) => s !== search),
+      ].slice(0, MAX_RECENT_SEARCHES);
+      localStorage.setItem("recent-searches", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   // Clear recent searches

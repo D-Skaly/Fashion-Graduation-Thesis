@@ -78,8 +78,8 @@ export default function ForgotPasswordPage() {
           >
             <h2 className="text-3xl font-light">Forgot Your Password?</h2>
             <p className="text-white/60 leading-relaxed">
-              Don't worry, it happens to the best of us. Enter your email address
-              and we'll send you a link to reset your password.
+              Don’t worry, it happens to the best of us. Enter your email address
+              and we’ll send you a link to reset your password.
             </p>
           </motion.div>
         </div>
@@ -145,7 +145,7 @@ export default function ForgotPasswordPage() {
                 <Mail className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
               <p className="text-muted-foreground">
-                If an account exists with that email, you'll receive a password reset link shortly.
+                If an account exists with that email, you’ll receive a password reset link shortly.
               </p>
             </motion.div>
           )}

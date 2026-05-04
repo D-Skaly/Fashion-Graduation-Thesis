@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface AccessibilityContextType {
   announce: (message: string, priority?: "polite" | "assertive") => void;
@@ -10,17 +10,20 @@ interface AccessibilityContextType {
 const AccessibilityContext = createContext<AccessibilityContextType | null>(null);
 
 export function AccessibilityProvider({ children }: { children: ReactNode }) {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
 
   useEffect(() => {
-    // Check for reduced motion preference
+    if (typeof window === 'undefined') return;
+    
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
-
+    
     const handleChange = (e: MediaQueryListEvent) => {
       setReducedMotion(e.matches);
     };
-
+    
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);

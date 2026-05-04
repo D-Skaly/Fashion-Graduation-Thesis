@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
 import { Loader2, Mail, CheckCircle2, XCircle, RefreshCw, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,15 +42,8 @@ export default function VerifyEmailPage() {
     },
   });
 
-  useEffect(() => {
-    if (params.token) {
-      verifyEmail(params.token);
-    } else {
-      setStatus("idle");
-    }
-  }, [params.token]);
-
-  async function verifyEmail(token: string) {
+  // Define verifyEmail function before it's used in useEffect
+  const verifyEmail = useCallback(async (token: string) => {
     setStatus("loading");
     try {
       await apiService.auth.verifyEmail(token);
@@ -66,9 +58,9 @@ export default function VerifyEmailPage() {
       setStatus("error");
       toast.error("Verification failed. The link may have expired.");
     }
-  }
+  }, [router]);
 
-  async function onResend(values: z.infer<typeof resendSchema>) {
+  const onResend = useCallback(async (values: z.infer<typeof resendSchema>) => {
     try {
       await apiService.auth.resendVerification(values.email);
       toast.success("Verification email sent! Please check your inbox.");
@@ -76,7 +68,15 @@ export default function VerifyEmailPage() {
     } catch (error) {
       toast.error("Failed to resend verification email. Please try again.");
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    if (params.token) {
+      verifyEmail(params.token);
+    } else {
+      setStatus("idle");
+    }
+  }, [params.token, verifyEmail]);
 
   return (
     <div className="w-full lg:grid lg:grid-cols-2 min-h-[calc(100dvh-4rem)]">

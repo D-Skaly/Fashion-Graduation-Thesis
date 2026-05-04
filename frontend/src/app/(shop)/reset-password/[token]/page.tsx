@@ -6,11 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-<<<<<<< ours
-import { Loader2, Eye, EyeOff, Lock, CheckCircle2, XCircle } from "lucide-react";
-=======
 import { Loader2, Eye, EyeOff, Lock, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
->>>>>>> theirs
 import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";

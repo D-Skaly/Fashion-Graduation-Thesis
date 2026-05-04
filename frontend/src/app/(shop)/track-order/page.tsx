@@ -4,11 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-<<<<<<< ours
-import { Search, Truck, Package, CheckCircle2, Clock, AlertCircle } from "lucide-react";
-=======
 import { Search, Truck, Package, CheckCircle2, Clock, AlertCircle, Loader2 } from "lucide-react";
->>>>>>> theirs
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";

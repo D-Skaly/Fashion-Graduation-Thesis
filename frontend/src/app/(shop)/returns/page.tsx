@@ -13,7 +13,7 @@ export default function ReturnsPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Returns & Exchanges</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          We want you to love your purchase. If something isn't right, we're here to help.
+          We want you to love your purchase. If something isn’t right, we’re here to help.
         </p>
       </div>
 

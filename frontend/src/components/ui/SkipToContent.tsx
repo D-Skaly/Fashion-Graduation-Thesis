@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface SkipToContentProps {
   contentId?: string;
 }
 
 export function SkipToContent({ contentId = "main-content" }: SkipToContentProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [mounted, setMounted] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return true;
+  });
 
   if (!mounted) return null;
 

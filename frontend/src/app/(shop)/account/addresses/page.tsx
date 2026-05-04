@@ -36,11 +36,7 @@ const addressSchema = z.object({
   fullName: z.string().min(2, "Name is required"),
   phone: z.string().min(10, "Valid phone number required"),
   address: z.string().min(10, "Address is required"),
-<<<<<<< ours
   isDefault: z.boolean().default(false),
-=======
-  isDefault: z.boolean(),
->>>>>>> theirs
 });
 
 type AddressFormValues = z.infer<typeof addressSchema>;
