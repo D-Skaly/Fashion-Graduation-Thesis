@@ -10,6 +10,7 @@ vi.mock('next/navigation', () => ({
   }),
   useParams: () => ({}),
   useSearchParams: () => [new URLSearchParams(), vi.fn()],
+  usePathname: () => '/',
 }));
 
 // Mock Next.js Image component
@@ -20,11 +21,10 @@ vi.mock('next/image', () => ({
   },
 }));
 
-// Mock js-cookie
-vi.mock('js-cookie', () => ({
-  default: {
-    get: vi.fn(),
-    set: vi.fn(),
-    remove: vi.fn(),
-  },
+// Mock Next.js font
+vi.mock('next/font/google', () => ({
+  Outfit: () => ({
+    variable: '--font-outfit',
+    style: { fontFamily: 'var(--font-outfit)' },
+  }),
 }));

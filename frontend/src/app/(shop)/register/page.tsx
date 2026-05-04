@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
@@ -70,7 +68,8 @@ export default function RegisterPage() {
 
       // Store token and login immediately
       if (typeof access_token === "string") {
-        Cookies.set("token", access_token, { expires: 1 });
+        // Backend should set HttpOnly cookie
+        // Don't set cookie in frontend anymore
       }
 
       toast.success("Account created successfully!", {

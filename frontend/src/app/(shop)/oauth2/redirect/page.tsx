@@ -2,22 +2,24 @@
 
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Cookies from "js-cookie";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 function RedirectHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { checkAuth } = useAuth();
 
   useEffect(() => {
     const token = searchParams.get("token");
 
     if (token) {
-      // Set the token matching backend standard
-      Cookies.set("token", token, { expires: 1 });
+      // Backend should have set HttpOnly cookie
+      // Just refresh auth state
+      checkAuth();
       toast.success("Đăng nhập Google thành công!");
-
+      
       // Redirect to account dashboard
       router.push("/account");
       router.refresh();
@@ -25,7 +27,7 @@ function RedirectHandler() {
       toast.error("Có lỗi xảy ra trong quá trình đăng nhập Google.");
       router.push("/login");
     }
-  }, [router, searchParams]);
+  }, [router, searchParams, checkAuth]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50/50">

@@ -6,11 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AiStylistFAB } from "@/components/ui/AiStylistFAB";
 import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-<<<<<<< ours
-import SkipToContent from "@/components/ui/SkipToContent";
-=======
 import { SkipToContent } from "@/components/ui/SkipToContent";
->>>>>>> theirs
 import { AccessibilityProvider } from "@/providers/AccessibilityProvider";
 
 const outfit = Outfit({

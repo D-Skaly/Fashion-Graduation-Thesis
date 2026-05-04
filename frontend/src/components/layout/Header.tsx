@@ -16,21 +16,13 @@ import { useState, useEffect } from "react";
 import { SemanticSearchDialog } from "@/components/ui/SemanticSearchDialog";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 import { cn } from "@/lib/utils";
-import Cookies from "js-cookie";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(() => !!Cookies.get("token"));
+    const { isAuthenticated } = useAuth();
     const pathname = usePathname();
-
-     
-    useEffect(() => {
-        const hasToken = !!Cookies.get("token");
-        if (hasToken !== isLoggedIn) {
-            setTimeout(() => setIsLoggedIn(hasToken), 0);
-        }
-    }, [pathname, isLoggedIn]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -155,7 +147,7 @@ export function Header() {
                             isScrolled ? "hover:bg-white/10 text-white" : "hover:bg-black/5"
                         )} />
 
-                        {isLoggedIn ? (
+                        {isAuthenticated ? (
                             <Button
                                 variant="ghost"
                                 size="icon"

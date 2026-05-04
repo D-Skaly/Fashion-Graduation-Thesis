@@ -38,10 +38,10 @@ interface Cart {
 
 // Validation Schema
 const checkoutSchema = z.object({
-  fullName: z.string().min(2, "Full Name is required"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  address: z.string().min(10, "Address must be at least 10 characters"),
-  note: z.string().optional(),
+  fullName: z.string().min(2, "Full Name must be at least 2 characters").max(100, "Full Name too long"),
+  phone: z.string().regex(/^[0-9+\-\s()]{10,15}$/, "Invalid phone number format").min(10, "Phone number must be at least 10 digits"),
+  address: z.string().min(10, "Address must be at least 10 characters").max(200, "Address too long"),
+  note: z.string().max(500, "Note too long").optional(),
   paymentMethod: z.nativeEnum(PaymentMethod),
 });
 

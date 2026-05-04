@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const sidebarLinks = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -31,11 +31,17 @@ const sidebarLinks = [
 export function AdminSidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { logout } = useAuth();
 
-    const handleLogout = () => {
-        Cookies.remove("token");
-        toast.success("Signed out successfully");
-        router.push("/login");
+    const handleLogout = async () => {
+        try {
+            await logout();
+            toast.success("Signed out successfully");
+            router.push("/login");
+        } catch (error) {
+            console.error("Logout failed", error);
+            toast.error("Failed to sign out");
+        }
     };
 
     return (
