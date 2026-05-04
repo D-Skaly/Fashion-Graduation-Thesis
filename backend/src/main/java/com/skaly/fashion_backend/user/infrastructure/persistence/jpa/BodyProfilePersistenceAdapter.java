@@ -1,8 +1,8 @@
 package com.skaly.fashion_backend.user.infrastructure.persistence.jpa;
-import com.skaly.fashion_backend.user.BodyProfileEntity;
 
-import com.skaly.fashion_backend.user.BodyProfile;
-import com.skaly.fashion_backend.user.BodyProfileRepository;
+import com.skaly.fashion_backend.user.domain.BodyProfileRepository;
+import com.skaly.fashion_backend.user.domain.model.BodyProfile;
+import com.skaly.fashion_backend.user.infrastructure.persistence.entities.BodyProfileEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

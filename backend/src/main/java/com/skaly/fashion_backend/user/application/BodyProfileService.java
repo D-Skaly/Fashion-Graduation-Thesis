@@ -1,10 +1,10 @@
 package com.skaly.fashion_backend.user.application;
 
 import com.skaly.fashion_backend.common.infrastructure.config.AiServiceProperties;
-import com.skaly.fashion_backend.user.api.dto.BodyProfileDto;
-import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
-import com.skaly.fashion_backend.user.BodyProfile;
-import com.skaly.fashion_backend.user.BodyProfileRepository;
+import com.skaly.fashion_backend.user.interfaces.dto.BodyProfileDto;
+import com.skaly.fashion_backend.user.interfaces.dto.SizeRecommendation;
+import com.skaly.fashion_backend.user.domain.model.BodyProfile;
+import com.skaly.fashion_backend.user.domain.BodyProfileRepository;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.UserRepository;
 
@@ -30,24 +30,27 @@ public class BodyProfileService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         BodyProfile profile = bodyProfileRepository.findByUserId(userId)
-                .orElseGet(() -> BodyProfile.builder().userId(userId).build());
+                .stream().findFirst()
+                .orElse(BodyProfile.builder().userId(userId).build());
 
-        profile.setHeight(dto.height());
-        profile.setWeight(dto.weight());
-        profile.setChest(dto.chest());
-        profile.setWaist(dto.waist());
-        profile.setHips(dto.hips());
+        profile.setHeight(dto.getHeight());
+        profile.setWeight(dto.getWeight());
+        profile.setChest(dto.getChest());
+        profile.setWaist(dto.getWaist());
+        profile.setHips(dto.getHip());
 
         return bodyProfileRepository.save(profile);
     }
 
     public BodyProfile getByUserId(UUID userId) {
         return bodyProfileRepository.findByUserId(userId)
+                .stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("Body profile not found"));
     }
 
     public SizeRecommendation recommendSize(UUID userId, UUID productId) {
         BodyProfile profile = bodyProfileRepository.findByUserId(userId)
+                .stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("Body profile not found"));
         
         // Try to get recommendation from FastAPI AI Service

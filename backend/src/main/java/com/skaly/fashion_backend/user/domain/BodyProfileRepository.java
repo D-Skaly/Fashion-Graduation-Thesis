@@ -1,11 +1,15 @@
-package com.skaly.fashion_backend.user.infrastructure.persistence.jpa;
+package com.skaly.fashion_backend.user.domain;
 
-import com.skaly.fashion_backend.user.domain.model.BodyProfile;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Domain repository interface for BodyProfile (Port in Clean Architecture).
+ * Lives in user/domain/ layer.
+ */
 public interface BodyProfileRepository {
+    
     Optional<BodyProfile> findByUserId(UUID userId);
+    
     BodyProfile save(BodyProfile bodyProfile);
 }
-

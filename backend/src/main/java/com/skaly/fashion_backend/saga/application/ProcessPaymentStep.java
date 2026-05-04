@@ -17,12 +17,12 @@ public class ProcessPaymentStep implements SagaStep<OrderSagaContext> {
     private final SagaPaymentService sagaPaymentService;
 
     @Override
-    public String getName() {
+    public String getStepName() {
         return "ProcessPayment";
     }
 
     @Override
-    public void execute(OrderSagaContext context) {
+    public void execute(OrderSagaContext context) throws Exception {
         log.info("Processing payment for order: {}", context.getOrderId());
 
         Payment payment = sagaPaymentService.completeIfPending(context.getOrderId());

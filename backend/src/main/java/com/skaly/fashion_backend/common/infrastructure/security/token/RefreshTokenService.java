@@ -1,7 +1,7 @@
 package com.skaly.fashion_backend.common.infrastructure.security.token;
 
 import com.skaly.fashion_backend.common.infrastructure.config.RefreshTokenProperties;
-import com.skaly.fashion_backend.security.JwtUtils;
+import com.skaly.fashion_backend.common.infrastructure.security.JwtUtils;
 import com.skaly.fashion_backend.user.domain.entities.User;
 import com.skaly.fashion_backend.user.infrastructure.persistence.entities.UserEntity;
 import com.skaly.fashion_backend.user.infrastructure.persistence.jpa.JpaUserRepository;

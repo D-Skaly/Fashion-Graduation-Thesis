@@ -1,9 +1,9 @@
 package com.skaly.fashion_backend.order.application;
 
 import com.skaly.fashion_backend.order.application.OrderDto;
-import com.skaly.fashion_backend.order.OrderEventService;
+import com.skaly.fashion_backend.order.domain.port.OrderEventService;
 import com.skaly.fashion_backend.order.application.OrderItemDto;
-import com.skaly.fashion_backend.order.OrderInventoryGateway;
+import com.skaly.fashion_backend.order.domain.port.OrderInventoryGateway;
 import com.skaly.fashion_backend.order.domain.OrderStatus;
 import com.skaly.fashion_backend.order.application.PlaceOrderRequest;
 import com.skaly.fashion_backend.order.application.event.ClearCartRequestedEvent;
@@ -11,7 +11,7 @@ import com.skaly.fashion_backend.order.domain.OrderPricingService;
 import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.order.domain.entities.OrderItem;
 import com.skaly.fashion_backend.order.application.OrderRepository;
-import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
+import com.skaly.fashion_backend.order.domain.port.ProductVariantInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class PlaceOrderUseCase {
         order.setTotalAmount(totalAmount);
 
         Order savedOrder = orderRepository.save(order);
-        orderEventService.publishOrderCreated(savedOrder);
+        orderEventService.publishOrderPlaced(savedOrder);
 
         // Publish event to clear cart (async)
         eventPublisher.publishEvent(new ClearCartRequestedEvent(userId, userEmail));
@@ -66,11 +66,11 @@ public class PlaceOrderUseCase {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (CartItemRequest cartItem : cartItems) {
-            ProductVariantInternalResponse variant = orderInventoryGateway
+            ProductVariantInfo variant = orderInventoryGateway
                     .getProductVariant(cartItem.productVariantId());
             BigDecimal unitPrice = orderPricingService.calculateUnitPrice(variant);
             OrderItem orderItem = OrderItem.builder()
-                    .productVariantId(variant.id())
+                    .productVariantId(variant.variantId())
                     .quantity(cartItem.quantity())
                     .snapshotPrice(unitPrice)
                     .build();
@@ -85,7 +85,7 @@ public class PlaceOrderUseCase {
     private OrderDto mapToDto(Order order) {
         List<OrderItemDto> itemDtos = order.getItems().stream()
                 .map(item -> {
-                    ProductVariantInternalResponse variant = orderInventoryGateway
+                    ProductVariantInfo variant = orderInventoryGateway
                             .getProductVariant(item.getProductVariantId());
                     BigDecimal subtotal = item.getSnapshotPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity()));

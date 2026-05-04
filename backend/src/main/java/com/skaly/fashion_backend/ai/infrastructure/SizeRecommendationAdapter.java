@@ -2,7 +2,7 @@ package com.skaly.fashion_backend.ai.infrastructure;
 
 import com.skaly.fashion_backend.ai.domain.port.SizeRecommendationPort;
 import com.skaly.fashion_backend.product.domain.port.ProductRepository;
-import com.skaly.fashion_backend.user.BodyProfileRepository;
+import com.skaly.fashion_backend.user.domain.BodyProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +43,7 @@ public class SizeRecommendationAdapter implements SizeRecommendationPort {
     @Override
     public BodyMeasurements getBodyMeasurements(UUID userId) {
         var profile = bodyProfileRepository.findByUserId(userId)
+                .stream().findFirst()
                 .orElseThrow(() -> new com.skaly.fashion_backend.common.domain.ResourceNotFoundException(
                         "Body profile not found for user: " + userId));
 

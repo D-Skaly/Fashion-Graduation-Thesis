@@ -1,10 +1,10 @@
 package com.skaly.fashion_backend.user.interfaces;
 
 import com.skaly.fashion_backend.common.domain.ApiResponse;
-import com.skaly.fashion_backend.user.api.dto.BodyProfileDto;
-import com.skaly.fashion_backend.user.api.dto.SizeRecommendation;
+import com.skaly.fashion_backend.user.interfaces.dto.BodyProfileDto;
+import com.skaly.fashion_backend.user.interfaces.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.application.BodyProfileService;
-import com.skaly.fashion_backend.user.BodyProfile;
+import com.skaly.fashion_backend.user.domain.model.BodyProfile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -2,6 +2,7 @@ package com.skaly.fashion_backend.payment.application;
 
 import com.skaly.fashion_backend.payment.domain.Payment;
 import com.skaly.fashion_backend.payment.domain.PaymentStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.UUID;
  * Repository interface for Payment (Port in Clean Architecture).
  * Lives in payment/application/ (use cases layer).
  */
-public interface PaymentRepository {
+public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     
     Payment save(Payment payment);
     

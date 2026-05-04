@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.order.domain.port;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ProductVariantInfo(

@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.common.infrastructure.security;
 
-import com.skaly.fashion_backend.user.CustomOAuth2UserService;
+import com.skaly.fashion_backend.user.infrastructure.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,9 @@
 package com.skaly.fashion_backend.ai.interfaces;
 
+import com.skaly.fashion_backend.ai.application.FashionAssistantService;
+import com.skaly.fashion_backend.ai.application.SizeRecommendationService;
+import com.skaly.fashion_backend.ai.interfaces.dto.AiChatRequest;
+import com.skaly.fashion_backend.ai.interfaces.dto.AiChatResponse;
 import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.recommendation.application.RecommendProductInteractor;
 import com.skaly.fashion_backend.recommendation.domain.model.ProductRecommendationResponse;
