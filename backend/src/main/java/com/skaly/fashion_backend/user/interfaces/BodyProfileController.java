@@ -4,7 +4,7 @@ import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.user.interfaces.dto.BodyProfileDto;
 import com.skaly.fashion_backend.user.interfaces.dto.SizeRecommendation;
 import com.skaly.fashion_backend.user.application.BodyProfileService;
-import com.skaly.fashion_backend.user.domain.model.BodyProfile;
+import com.skaly.fashion_backend.user.domain.BodyProfile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

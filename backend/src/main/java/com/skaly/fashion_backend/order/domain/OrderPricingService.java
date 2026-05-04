@@ -1,6 +1,6 @@
 package com.skaly.fashion_backend.order.domain;
 
-import com.skaly.fashion_backend.product.interfaces.dto.ProductVariantInternalResponse;
+import com.skaly.fashion_backend.order.domain.port.ProductVariantInfo;
 
 import java.math.BigDecimal;
 
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  */
 public class OrderPricingService {
 
-    public BigDecimal calculateUnitPrice(ProductVariantInternalResponse variant) {
+    public BigDecimal calculateUnitPrice(ProductVariantInfo variant) {
         return variant.price();
     }
 

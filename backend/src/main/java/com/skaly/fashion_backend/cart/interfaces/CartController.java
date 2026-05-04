@@ -70,9 +70,10 @@ public class CartController {
             Authentication authentication) {
         String email = getUserEmail(authentication);
         if (email == null) {
-            return ResponseEntity.status(401).body(ApiResponse.error(401, "Authentication required for merging"));
+            return ResponseEntity.status(401).body(ApiResponse.error("401", "Authentication required for merging"));
         }
-        return ResponseEntity.ok(ApiResponse.success(cartService.mergeCart(email, request.guestId())));
+        String guestId = request.getGuestCartId() != null ? request.getGuestCartId().toString() : null;
+        return ResponseEntity.ok(ApiResponse.success(cartService.mergeCart(email, guestId)));
     }
 
     @PostMapping("/coupon")
@@ -81,6 +82,6 @@ public class CartController {
             Authentication authentication,
             @RequestHeader(value = "X-Guest-Id", required = false) String guestId) {
         return ResponseEntity.ok(ApiResponse
-                .success(cartService.applyCoupon(getUserEmail(authentication), guestId, request.couponCode())));
+                .success(cartService.applyCoupon(getUserEmail(authentication), guestId, request.getCouponCode())));
     }
 }

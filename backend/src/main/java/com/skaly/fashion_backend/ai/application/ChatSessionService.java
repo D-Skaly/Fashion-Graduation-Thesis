@@ -38,7 +38,7 @@ public class ChatSessionService {
         }
         ChatSession session = ChatSession.builder()
                 .userId(userId)
-                .title(title)
+                .sessionName(title)
                 .isActive(true)
                 .build();
         return sessionRepository.save(session);
@@ -82,7 +82,7 @@ public class ChatSessionService {
     public void addMessage(UUID sessionId, String content, String role) {
         ChatSession session = getSession(sessionId);
         ChatMessage message = ChatMessage.builder()
-                .session(session)
+                .sessionId(session.getId())
                 .content(content)
                 .role(role)
                 .build();
@@ -98,7 +98,7 @@ public class ChatSessionService {
     @Transactional
     public void updateSessionTitle(UUID sessionId, String title) {
         ChatSession session = getSession(sessionId);
-        session.setTitle(title);
+        session.setSessionName(title);
         sessionRepository.save(session);
     }
 

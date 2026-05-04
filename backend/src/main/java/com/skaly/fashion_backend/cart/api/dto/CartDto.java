@@ -18,9 +18,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CartDto {
     private UUID id;
-    private UUID userId;
-    private BigDecimal totalAmount;
-    private Integer totalItems;
-    private Boolean isGuestCart;
+    private String guestId;
     private java.util.List<CartItemDto> items;
+    private String couponCode;
+    private BigDecimal discountAmount;
+    private BigDecimal subTotal;
+    private BigDecimal total;
 }

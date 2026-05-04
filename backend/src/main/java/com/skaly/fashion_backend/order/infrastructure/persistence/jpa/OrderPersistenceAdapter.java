@@ -2,7 +2,7 @@ package com.skaly.fashion_backend.order.infrastructure.persistence.jpa;
 
 import com.skaly.fashion_backend.order.application.OrderNoteRepository;
 import com.skaly.fashion_backend.order.application.OrderRepository;
-import com.skaly.fashion_backend.order.domain.OrderStatusHistoryRepository;
+import com.skaly.fashion_backend.order.application.OrderStatusHistoryRepository;
 import com.skaly.fashion_backend.order.application.ShippingRepository;
 import com.skaly.fashion_backend.order.domain.entities.Order;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderNoteEntity;

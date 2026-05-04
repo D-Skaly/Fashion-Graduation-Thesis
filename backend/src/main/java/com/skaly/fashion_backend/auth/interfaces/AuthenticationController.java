@@ -1,5 +1,6 @@
 package com.skaly.fashion_backend.auth.interfaces;
 
+import com.skaly.fashion_backend.auth.interfaces.dto.*;
 import com.skaly.fashion_backend.auth.application.AuthenticationService;
 import com.skaly.fashion_backend.common.domain.ApiResponse;
 import com.skaly.fashion_backend.user.domain.entities.User;
@@ -46,14 +47,16 @@ public class AuthenticationController {
         String deviceInfo = extractDeviceInfo(httpRequest);
         String ipAddress = extractIpAddress(httpRequest);
         return ResponseEntity.ok(ApiResponse.success(
-                service.refreshToken(request.refreshToken(), deviceInfo, ipAddress)));
+                service.refreshToken(request.getRefreshToken(), deviceInfo, ipAddress)));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
             @RequestBody LogoutRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        service.logout(request.accessToken(), request.refreshToken());
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestHeader("Authorization") String authHeader) {
+        String accessToken = authHeader.substring(7); // Remove "Bearer "
+        service.logout(accessToken, request.getRefreshToken());
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 

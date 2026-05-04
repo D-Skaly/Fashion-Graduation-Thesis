@@ -18,6 +18,8 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, UUID>
 
     @EntityGraph(value = "ProductEntity.detail", type = EntityGraph.EntityGraphType.LOAD)
     Optional<ProductEntity> findById(UUID id);
+    
+    Optional<ProductEntity> findByNameAndIsActiveTrue(String name);
 
     @Query(value = "SELECT * FROM products p WHERE p.embedding_vector IS NOT NULL ORDER BY p.embedding_vector <=> cast(:vector as vector) LIMIT :limit", nativeQuery = true)
     List<ProductEntity> findTopKByEmbeddingVectorClosestTo(@Param("vector") float[] vector, @Param("limit") int limit);

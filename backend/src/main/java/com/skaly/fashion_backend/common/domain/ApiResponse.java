@@ -40,11 +40,15 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, message, data);
     }
 
-    public static ApiResponse<Void> error(String message) {
+    public static <T> ApiResponse<T> created(T data) {
+        return new ApiResponse<>(true, "Resource created successfully", data);
+    }
+
+    public static <T> ApiResponse<T> error(String message) {
         return new ApiResponse<>(false, message, null);
     }
 
-    public static ApiResponse<Void> error(String errorCode, String message) {
+    public static <T> ApiResponse<T> error(String errorCode, String message) {
         return new ApiResponse<>(false, message, errorCode);
     }
 

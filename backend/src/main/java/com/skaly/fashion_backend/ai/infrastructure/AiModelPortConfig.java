@@ -34,7 +34,7 @@ public class AiModelPortConfig {
                 .defaultAdvisors(
                         messageChatMemoryAdvisor,
                         RetrievalAugmentationAdvisor.builder()
-                                .documentRetriever(vectorStore::similaritySearch)
+                                .documentRetriever(query -> vectorStore.similaritySearch(query.text()))
                                 .build()
                 )
                 .build();

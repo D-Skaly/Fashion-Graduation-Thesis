@@ -23,6 +23,7 @@ public class OrderSagaContext {
     private boolean compensating = false;
     private final Map<String, Object> customData = new ConcurrentHashMap<>();
     private boolean compensationRequired = false;
+    private Map<UUID, Integer> originalStockQuantities = new ConcurrentHashMap<>();
 
     public OrderSagaContext() {
     }
@@ -92,6 +93,19 @@ public class OrderSagaContext {
         this.failureReason = failureReason;
     }
 
+    public void setErrorMessage(String errorMessage) {
+        this.failureReason = errorMessage;
+    }
+
+    public void setUserId(UUID userId) {
+        this.customerId = userId;
+    }
+
+    public void setProductVariantsWithQuantity(Map<UUID, Integer> quantities) {
+        this.productQuantities.clear();
+        this.productQuantities.putAll(quantities);
+    }
+
     public boolean isCompensating() {
         return compensating;
     }
@@ -123,5 +137,13 @@ public class OrderSagaContext {
 
     public void clearCustomData() {
         customData.clear();
+    }
+
+    public Map<UUID, Integer> getOriginalStockQuantities() {
+        return originalStockQuantities;
+    }
+
+    public void setOriginalStockQuantities(Map<UUID, Integer> originalStockQuantities) {
+        this.originalStockQuantities = originalStockQuantities;
     }
 }

@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import com.skaly.fashion_backend.common.domain.AiServiceUnavailableException;
 import reactor.core.publisher.Flux;
 
 import java.util.UUID;
@@ -93,7 +94,7 @@ public class FashionAssistantService {
     }
 
     private String preparePrompt(String message, UUID sessionId, int maxHistoryMessages) {
-        if (!properties.enabled() || aiModelPort == null) {
+        if (!properties.isEnabled() || aiModelPort == null) {
             unavailableCounter.increment();
             throw new AiServiceUnavailableException(
                     "AI assistant is currently unavailable. Please configure AI_ASSISTANT_ENABLED=true and a valid API key.");
@@ -103,9 +104,9 @@ public class FashionAssistantService {
         if (cleanedMessage.isBlank()) {
             throw new IllegalArgumentException("message must not be blank");
         }
-        if (cleanedMessage.length() > properties.maxMessageLength()) {
+        if (cleanedMessage.length() > properties.getMaxMessageLength()) {
             throw new IllegalArgumentException(
-                    "message exceeds maximum length of " + properties.maxMessageLength() + " characters");
+                    "message exceeds maximum length of " + properties.getMaxMessageLength() + " characters");
         }
 
         String context = "";

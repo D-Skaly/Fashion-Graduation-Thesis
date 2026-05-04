@@ -100,7 +100,7 @@ public class AuthenticationService {
                 tokenPair.accessToken(),
                 tokenPair.refreshToken(),
                 jwtExpiration / 1000, // Convert to seconds
-                tokenPair.refreshTokenExpiry(),
+                tokenPair.refreshTokenExpiry().toEpochMilli(),
                 mapToUserInfo(user)
         );
     }
@@ -145,7 +145,7 @@ public class AuthenticationService {
                 accessToken,
                 refreshToken.getToken(),
                 jwtExpiration / 1000, // Convert to seconds
-                refreshToken.getExpiryDate(),
+                refreshToken.getExpiryDate().toEpochMilli(),
                 mapToUserInfo(user)
         );
     }

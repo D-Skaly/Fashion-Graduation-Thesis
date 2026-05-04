@@ -57,6 +57,17 @@ public class ProductPersistenceAdapter implements ProductRepository, CategoryRep
     }
 
     @Override
+    public Optional<Product> findByName(String name) {
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var future = scope.fork(() -> jpaProductRepository.findByNameAndIsActiveTrue(name));
+            scope.join();
+            return future.get().map(mapper::toDomain);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find product by name", e);
+        }
+    }
+
+    @Override
     public Optional<Category> findCategoryById(UUID id) {
         return jpaCategoryRepository.findById(id).map(mapper::toCategoryDomain);
     }

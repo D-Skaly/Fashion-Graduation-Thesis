@@ -107,7 +107,7 @@ public class RefreshTokenService {
         if (validTokenCount >= refreshTokenProperties.getMaxTokensPerUser()) {
             // Get oldest tokens and revoke them
             List<RefreshToken> tokens = refreshTokenRepository.findAllValidByUserId(userId, Instant.now());
-            if (tokens.size() >= maxTokensPerUser) {
+            if (tokens.size() >= refreshTokenProperties.getMaxTokensPerUser()) {
                  // Revoke oldest tokens (by creation date)
                 tokens.stream()
                         .sorted((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()))

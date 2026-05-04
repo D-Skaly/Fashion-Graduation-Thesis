@@ -17,10 +17,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CartItemDto {
     private UUID id;
-    private UUID productId;
+    private UUID variantId;
     private String productName;
-    private String variantInfo;
+    private String size;
+    private String color;
+    private BigDecimal currentPrice;
+    private BigDecimal snapshotPrice;
     private Integer quantity;
-    private BigDecimal pricePerItem;
     private BigDecimal subtotal;
+    private boolean outOfStock;
+    private boolean isQuantityAdjusted;
 }

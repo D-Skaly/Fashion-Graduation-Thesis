@@ -48,10 +48,10 @@ public class CartService {
     @Transactional
     public CartDto addToCart(String userEmail, String guestId, AddToCartRequest request) {
         Cart cart = resolveCart(userEmail, guestId);
-        ProductVariantInfo variant = productCartServicePort.getProductVariantInfo(request.productVariantId());
+        ProductVariantInfo variant = productCartServicePort.getProductVariantInfo(request.getVariantId());
 
         if (variant == null) {
-            throw new ResourceNotFoundException("Product variant not found: " + request.productVariantId());
+            throw new ResourceNotFoundException("Product variant not found: " + request.getVariantId());
         }
 
         BigDecimal currentPrice = variant.basePrice();
@@ -65,12 +65,12 @@ public class CartService {
 
         if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + request.quantity());
+            item.setQuantity(item.getQuantity() + request.getQuantity());
             item.setSnapshotPrice(currentPrice);
         } else {
             CartItem newItem = CartItem.builder()
                     .productVariantId(variant.id())
-                    .quantity(request.quantity())
+                    .quantity(request.getQuantity())
                     .snapshotPrice(currentPrice)
                     .addedAt(LocalDateTime.now())
                     .build();
@@ -88,7 +88,7 @@ public class CartService {
         Cart cart = resolveCart(userEmail, guestId);
 
         Optional<CartItem> itemInCart = cart.getItems().stream()
-                .filter(i -> i.getId().equals(request.cartItemId()))
+                .filter(i -> i.getId().equals(request.getCartItemId()))
                 .findFirst();
         
         if (itemInCart.isEmpty()) {
@@ -96,10 +96,10 @@ public class CartService {
         }
 
         CartItem cartItem = itemInCart.get();
-        if (request.quantity() <= 0) {
+        if (request.getQuantity() <= 0) {
             cart.removeItem(cartItem.getId());
         } else {
-            cartItem.setQuantity(request.quantity());
+            cartItem.setQuantity(request.getQuantity());
         }
 
         validateInventoryAndPrices(cart);

@@ -57,7 +57,7 @@ public class AiChatRateLimitInterceptor implements HandlerInterceptor {
                 response.setStatus(429);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.getWriter().write(objectMapper.writeValueAsString(
-                        ApiResponse.error(429, "Too many AI chat requests. Please try again later.")));
+                        ApiResponse.error("429", "Too many AI chat requests. Please try again later.")));
                 return false;
             }
 

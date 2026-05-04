@@ -30,7 +30,7 @@ public class EmailService {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(emailProperties.getFrom());
+            helper.setFrom(emailProperties.getFromAddress());
             helper.setTo(to);
             helper.setSubject(subject);
 

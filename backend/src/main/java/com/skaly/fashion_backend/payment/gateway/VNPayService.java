@@ -30,7 +30,7 @@ public class VNPayService implements PaymentGateway {
             vnpParams.put("vnp_Version", "2.1.0");
             vnpParams.put("vnp_Command", "pay");
             vnpParams.put("vnp_TmnCode", vnPayProperties.getTmnCode());
-            vnpParams.put("vnp_Amount", String.valueOf(payment.getAmount().multiply(BigDecimal.valueOf(100)).longValue()));
+            vnpParams.put("vnp_Amount", String.valueOf(payment.getAmount() * 100));
             vnpParams.put("vnp_CurrCode", "VND");
             vnpParams.put("vnp_TxnRef", vnpTxnRef);
             vnpParams.put("vnp_OrderInfo", "Payment for order " + payment.getOrderId());

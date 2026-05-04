@@ -43,18 +43,18 @@ public class AiController {
     @GetMapping("/chat")
     public ResponseEntity<ApiResponse<AiChatResponse>> chat(@RequestParam @NotBlank String message) {
         String answer = fashionAssistantService.chat(message);
-        return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer)));
+        return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer, null)));
     }
 
     @PostMapping("/chat")
     public ResponseEntity<ApiResponse<AiChatResponse>> chat(@Valid @RequestBody AiChatRequest request) {
-        String answer = fashionAssistantService.chat(request.message());
-        return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer)));
+        String answer = fashionAssistantService.chat(request.getMessage());
+        return ResponseEntity.ok(ApiResponse.success(new AiChatResponse(answer, request.getSessionId())));
     }
 
     @PostMapping(value = "/chat/stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
     public reactor.core.publisher.Flux<String> streamChat(@Valid @RequestBody AiChatRequest request) {
-        return fashionAssistantService.chatStream(request.message(), null, 0);
+        return fashionAssistantService.chatStream(request.getMessage(), null, 0);
     }
 
     @PostMapping("/reindex")

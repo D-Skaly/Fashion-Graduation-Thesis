@@ -12,20 +12,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ChatMemoryConfig {
     
-    /**
-     * ChatMemory bean for storing conversation history.
-     * Using default MessageWindowChatMemory implementation.
-     */
     @Bean
     public ChatMemory chatMemory() {
-        return ChatMemory.MAX_MESSAGES;
+        return new ChatMemory() {
+            private final java.util.Map<String, java.util.List<org.springframework.ai.chat.messages.Message>> memory = new java.util.concurrent.ConcurrentHashMap<>();
+            @Override
+            public void add(String id, java.util.List<org.springframework.ai.chat.messages.Message> messages) {
+                memory.put(id, messages);
+            }
+            @Override
+            public java.util.List<org.springframework.ai.chat.messages.Message> get(String id) {
+                return memory.getOrDefault(id, java.util.List.of());
+            }
+            @Override
+            public void clear(String id) {
+                memory.remove(id);
+            }
+        };
     }
     
-    /**
-     * MessageChatMemoryAdvisor for maintaining conversation context.
-     */
     @Bean
     public MessageChatMemoryAdvisor messageChatMemoryAdvisor(ChatMemory chatMemory) {
-        return new MessageChatMemoryAdvisor(chatMemory);
+        return MessageChatMemoryAdvisor.builder(chatMemory).build();
     }
 }

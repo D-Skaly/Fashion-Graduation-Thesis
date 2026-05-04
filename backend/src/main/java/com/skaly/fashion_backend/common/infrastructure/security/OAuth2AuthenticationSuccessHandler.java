@@ -30,9 +30,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        User user = oAuth2User.getUser();
-
-        String token = jwtUtils.generateToken(user);
+        String token = jwtUtils.generateToken(oAuth2User);
 
         // Target redirect URI to frontend containing the JWT token
         String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect")

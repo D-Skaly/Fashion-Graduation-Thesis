@@ -49,6 +49,16 @@ public class JwtUtils {
         return generateToken(extraClaims, user.getEmail());
     }
 
+    public String generateToken(com.skaly.fashion_backend.user.domain.model.CustomOAuth2User user) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getId().toString());
+        // Assume the first role is the primary role for the token
+        String role = user.getRoles().stream().findFirst().orElse("ROLE_USER");
+        extraClaims.put("role", role);
+        extraClaims.put("email", user.getEmail());
+        return generateToken(extraClaims, user.getEmail());
+    }
+
     private String generateToken(Map<String, Object> extraClaims, String username) {
         return Jwts.builder()
                 .setClaims(extraClaims)
@@ -96,7 +106,7 @@ public class JwtUtils {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

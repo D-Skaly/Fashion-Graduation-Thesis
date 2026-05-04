@@ -9,11 +9,13 @@ import com.skaly.fashion_backend.order.domain.port.ProductVariantInfo;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.OrderStatusHistoryEntity;
 import com.skaly.fashion_backend.order.infrastructure.persistence.entities.ShippingEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
  * Place-order logic lives in {@link PlaceOrderUseCase}.
  * Cross-module dependencies are resolved via gateway ports, not direct service imports.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {

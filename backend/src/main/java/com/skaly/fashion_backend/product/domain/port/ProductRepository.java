@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface ProductRepository {
     Product save(Product product);
     Optional<Product> findById(UUID id);
+    Optional<Product> findByName(String name);
     Page<Product> findAll(Pageable pageable);
     
     List<Product> findTopKByEmbeddingVectorClosestTo(float[] vector, int limit);
